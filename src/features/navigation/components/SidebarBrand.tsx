@@ -4,7 +4,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Calculator } from "lucide-react";
+import { Building } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 /**
@@ -20,7 +20,7 @@ export default function SidebarBrand() {
           render={<NavLink to={ROUTE_PATHS.dashboard} />}
         >
           <span className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Calculator className="size-4" aria-hidden="true" />
+            <Building className="size-4" aria-hidden="true" />
           </span>
 
           <span className="grid flex-1 text-left leading-tight">

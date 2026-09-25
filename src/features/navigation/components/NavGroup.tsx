@@ -49,6 +49,9 @@ function isPathActive(pathname: string, path: string) {
   return pathname === path || pathname.startsWith(`${path}/`);
 }
 
+const activeNavClass =
+  "bg-primary/5! text-primary! hover:text-primary! focus:text-primary! [&_svg]:text-primary! [&_span]:text-primary!";
+
 /**
  * Muestra el grupo como una sección desplegable cuando el sidebar está abierto.
  */
@@ -73,6 +76,7 @@ function ExpandedNavGroup({
       <SidebarMenuButton
         isActive={isGroupActive}
         render={<CollapsibleTrigger />}
+        className={cn(isGroupActive && activeNavClass)}
       >
         <GroupIcon aria-hidden="true" />
         <span className="min-w-0 flex-1 truncate">{group.label}</span>
@@ -94,6 +98,7 @@ function ExpandedNavGroup({
                 <SidebarMenuSubButton
                   isActive={isActive}
                   render={<NavLink to={item.to} />}
+                  className={cn(isActive && activeNavClass)}
                 >
                   <ItemIcon aria-hidden="true" />
                   <span className="text-xs">{item.label}</span>
@@ -124,6 +129,7 @@ function CollapsedNavGroup({ group, pathname }: GroupVariantsProps) {
           openOnHover
           delay={0}
           render={<SidebarMenuButton isActive={isGroupActive} />}
+          className={cn(isGroupActive && activeNavClass)}
         >
           <GroupIcon aria-hidden="true" />
           <span>{group.label}</span>
@@ -135,7 +141,7 @@ function CollapsedNavGroup({ group, pathname }: GroupVariantsProps) {
           sideOffset={15}
           className="w-56"
         >
-          <DropdownMenuGroup>
+          <DropdownMenuGroup className="space-y-1">
             <DropdownMenuLabel>{group.label}</DropdownMenuLabel>
             {group.items.map((item) => {
               const ItemIcon = item.icon;
@@ -145,7 +151,10 @@ function CollapsedNavGroup({ group, pathname }: GroupVariantsProps) {
                 <DropdownMenuItem
                   key={item.to}
                   render={<NavLink to={item.to} />}
-                  className={cn(isActive && "bg-accent text-accent-foreground")}
+                  className={cn(
+                    isActive && activeNavClass,
+                    isActive && "[&_svg_*]:text-primary!",
+                  )}
                 >
                   <ItemIcon aria-hidden="true" />
                   <span>{item.label}</span>

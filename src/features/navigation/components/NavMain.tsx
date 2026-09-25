@@ -17,6 +17,9 @@ interface NavMainProps {
   items: readonly SidebarItem[];
 }
 
+const activeNavClass =
+  "bg-primary/5! text-primary! hover:text-primary! focus:text-primary! [&_svg]:text-primary! [&_span]:text-primary!";
+
 /**
  * Muestra las opciones principales del sidebar
  */
@@ -51,15 +54,10 @@ export default function NavMain({ items }: NavMainProps) {
                   isActive={isActive}
                   tooltip={item.label}
                   render={<NavLink to={item.to} />}
-                  className={cn(isActive && "bg-primary/5!")}
+                  className={cn(isActive && activeNavClass)}
                 >
-                  <ItemIcon
-                    aria-hidden="true"
-                    className={cn(isActive && "text-primary")}
-                  />
-                  <span className={cn(isActive && "text-primary")}>
-                    {item.label}
-                  </span>
+                  <ItemIcon aria-hidden="true" />
+                  <span>{item.label}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             );
