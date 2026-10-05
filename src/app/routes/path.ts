@@ -15,7 +15,6 @@ export const ROUTE_PATHS = {
   gestionPersonal: {
     empleados: "/empleados",
     solicitudes: "/solicitudes",
-    movimientosLaborales: "/movimientos-laborales",
   },
 
   organizacion: {
@@ -23,13 +22,12 @@ export const ROUTE_PATHS = {
     cargos: "/cargos",
   },
 
-  asistenciaTurnos: {
-    resumenAsistencia: "/resumen-asistencia",
+  asistencia: {
+    jornadas: "/jornadas",
     marcaciones: "/marcaciones",
-    incidencias: "/incidencias",
-    turnos: "/turnos",
-    asignacionTurnos: "/asignacion-turnos",
   },
+
+  auditoria: "/auditoria",
 
   perfil: "/perfil",
 } as const;
