@@ -1,14 +1,9 @@
 import { RouterProvider } from "react-router-dom";
-import { router } from "./app/routes/router";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { router } from "@/app/routes/router";
 
 /**
- * Conecta la aplicación con el sistema de navegación
+ * Renderiza las rutas principales de la aplicación
  */
 export default function App() {
-  return (
-    <TooltipProvider delay={0}>
-      <RouterProvider router={router} />
-    </TooltipProvider>
-  );
+  return <RouterProvider router={router} />;
 }
