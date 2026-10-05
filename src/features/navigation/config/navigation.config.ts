@@ -1,16 +1,13 @@
 import {
-  ArrowLeftRight,
   Briefcase,
   Building2,
   CalendarClock,
   CalendarDays,
-  ChartBar,
   ClipboardList,
-  Clock,
   LayoutDashboard,
   Network,
   ScanLine,
-  TriangleAlert,
+  Shield,
   UserRound,
   Users,
 } from "lucide-react";
@@ -43,11 +40,6 @@ export const RRHH_SIDEBAR_ITEMS = [
         to: ROUTE_PATHS.gestionPersonal.solicitudes,
         icon: ClipboardList,
       },
-      {
-        label: "Movimientos Laborales",
-        to: ROUTE_PATHS.gestionPersonal.movimientosLaborales,
-        icon: ArrowLeftRight,
-      },
     ],
   },
   {
@@ -69,34 +61,25 @@ export const RRHH_SIDEBAR_ITEMS = [
   },
   {
     type: "group",
-    label: "Asistencia y turnos",
+    label: "Asistencia",
     icon: CalendarClock,
     items: [
       {
-        label: "Resumen de asistencia",
-        to: ROUTE_PATHS.asistenciaTurnos.resumenAsistencia,
-        icon: ChartBar,
+        label: "Jornadas",
+        to: ROUTE_PATHS.asistencia.jornadas,
+        icon: CalendarDays,
       },
       {
         label: "Marcaciones",
-        to: ROUTE_PATHS.asistenciaTurnos.marcaciones,
+        to: ROUTE_PATHS.asistencia.marcaciones,
         icon: ScanLine,
       },
-      {
-        label: "Incidencias",
-        to: ROUTE_PATHS.asistenciaTurnos.incidencias,
-        icon: TriangleAlert,
-      },
-      {
-        label: "Turnos",
-        to: ROUTE_PATHS.asistenciaTurnos.turnos,
-        icon: Clock,
-      },
-      {
-        label: "Asignación de turnos",
-        to: ROUTE_PATHS.asistenciaTurnos.asignacionTurnos,
-        icon: CalendarDays,
-      },
     ],
+  },
+  {
+    type: "link",
+    label: "Auditoría",
+    icon: Shield,
+    to: ROUTE_PATHS.auditoria,
   },
 ] as const satisfies readonly SidebarItem[];
