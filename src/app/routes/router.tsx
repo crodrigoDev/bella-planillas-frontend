@@ -7,6 +7,8 @@ import NotFoundPage from "@/pages/not-found/NotFoundPage";
 import { ROUTE_PATHS } from "@/app/routes/path";
 import { pendingPages } from "./pending-pages";
 import EnConstruccionPage from "@/pages/construccion/EnConstruccionPage";
+import AuthLayout from "../layouts/AuthLayout";
+import LoginPage from "@/pages/auth/LoginPage";
 
 /**
  * Relaciona las URLs de la aplicación con sus páginas y layouts.
@@ -18,6 +20,15 @@ export const router = createBrowserRouter([
   {
     path: ROUTE_PATHS.root,
     element: <Navigate to={ROUTE_PATHS.dashboard} replace />,
+  },
+  {
+    element: <AuthLayout />,
+    children: [
+      {
+        path: ROUTE_PATHS.auth.login,
+        element: <LoginPage />,
+      },
+    ],
   },
   {
     element: <AppLayout />,
