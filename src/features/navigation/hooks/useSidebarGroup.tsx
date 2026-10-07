@@ -1,6 +1,18 @@
 import { useState } from "react";
 import type { SidebarItem } from "../types/navigation.types";
 
+/**
+ * Administra que grupo del sidebar permanece abierto
+ *
+ * @remarks
+ * Inicialmente abre el grupo que contiene la ruta actual
+ * Permite cambiarlo manualmente y lo sincroniza al navegar a otra ruta
+ * Si la nueva ruta no pertenece a ningún grupo, cierra todos los grupos
+ *
+ * @param items - Opciones de navegación disponibles
+ * @param pathname - Ruta actual
+ * @returns El grupo abierto y la función para actualizarlo
+ */
 export function useSidebarGroup(
   items: readonly SidebarItem[],
   pathname: string,

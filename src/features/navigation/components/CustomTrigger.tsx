@@ -3,6 +3,9 @@ import { useSidebar } from "@/components/ui/sidebar";
 import { cn } from "cn";
 import { ChevronRight } from "lucide-react";
 
+/**
+ * Alterna el sidebar entre expandido y colapsado
+ */
 export function CustomTrigger() {
   const { toggleSidebar, state } = useSidebar();
 

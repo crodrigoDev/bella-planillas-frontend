@@ -5,6 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import LoginForm from "@/features/auth/components/LoginForm";
 
 /**
  * Presenta la Card de acceso a la aplicación
@@ -22,7 +23,9 @@ export default function LoginPage() {
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="px-8">{/* LoginForm */}</CardContent>
+      <CardContent className="px-8">
+        <LoginForm />
+      </CardContent>
     </Card>
   );
 }
