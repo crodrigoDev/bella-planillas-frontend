@@ -28,6 +28,7 @@ export default function PasswordInput(props: PasswordInputProps) {
           type="button"
           size="icon-sm"
           disabled={props.disabled}
+          aria-label="Mostrar contraseña"
           aria-pressed={showPassword}
           onClick={() => setShowPassword(!showPassword)}
         >
