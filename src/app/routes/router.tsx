@@ -1,20 +1,21 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
-
+import { ROUTE_PATHS } from "@/app/routes/path";
+import { pendingPages } from "@/app/routes/pending-pages";
+import GuestRoute from "@/features/auth/components/GuestRoute";
+import ProtectedRoute from "@/features/auth/components/ProtectedRoute";
+import AuthLayout from "@/app/layouts/AuthLayout";
 import AppLayout from "@/app/layouts/AppLayout";
 import DashboardPage from "@/pages/dashboard/DashboardPage";
 import NotFoundPage from "@/pages/not-found/NotFoundPage";
-
-import { ROUTE_PATHS } from "@/app/routes/path";
-import { pendingPages } from "./pending-pages";
 import EnConstruccionPage from "@/pages/construccion/EnConstruccionPage";
-import AuthLayout from "../layouts/AuthLayout";
 import LoginPage from "@/pages/auth/LoginPage";
 
 /**
  * Relaciona las URLs de la aplicación con sus páginas y layouts.
  *
- * Las rutas internas del sistema comparten `AppLayout`; las rutas especiales, como la
- * pagina no encontrada, se manejan fuera de ese layout
+ * @remarks
+ * Las páginas internas de `AppLayout` requieren de una sesión.
+ * Las páginas de `AuthLayout` no requieren de una sesión
  */
 export const router = createBrowserRouter([
   {
@@ -22,25 +23,35 @@ export const router = createBrowserRouter([
     element: <Navigate to={ROUTE_PATHS.dashboard} replace />,
   },
   {
-    element: <AuthLayout />,
+    element: <GuestRoute />,
     children: [
       {
-        path: ROUTE_PATHS.auth.login,
-        element: <LoginPage />,
+        element: <AuthLayout />,
+        children: [
+          {
+            path: ROUTE_PATHS.auth.login,
+            element: <LoginPage />,
+          },
+        ],
       },
     ],
   },
   {
-    element: <AppLayout />,
+    element: <ProtectedRoute />,
     children: [
       {
-        path: ROUTE_PATHS.dashboard,
-        element: <DashboardPage />,
+        element: <AppLayout />,
+        children: [
+          {
+            path: ROUTE_PATHS.dashboard,
+            element: <DashboardPage />,
+          },
+          ...pendingPages.map(({ path, title }) => ({
+            path,
+            element: <EnConstruccionPage title={title} />,
+          })),
+        ],
       },
-      ...pendingPages.map(({ path, title }) => ({
-        path,
-        element: <EnConstruccionPage title={title} />,
-      })),
     ],
   },
   {

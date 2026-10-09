@@ -1,4 +1,5 @@
-import { ROUTE_PATHS } from "@/app/routes/path";
+import { useMutation } from "@tanstack/react-query";
+import type { LoginDTO } from "@jyp/shared-contracts";
 import {
   Card,
   CardContent,
@@ -6,31 +7,24 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import LoginForm from "@/features/auth/components/LoginForm";
-import { useAuth } from "@/features/auth/hooks/useAuth";
-import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
 import { FieldError } from "@/components/ui/field";
-import type { LoginDTO } from "@jyp/shared-contracts";
-import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+import LoginForm from "@/features/auth/components/LoginForm";
 
 /**
  * Presenta la Card de acceso a la aplicación
  *
  * @remarks
- * Muestra los errores de la petición y navega al dashboard
- * después de una autenticación exitosa
+ * Muestra los errores de la petición.
+ * `GuestRoute` gestiona la redirección cuando existe una sesión.
  */
 export default function LoginPage() {
-  const navigate = useNavigate();
   const { login } = useAuth();
 
   const loginMutation = useMutation({
     mutationFn: login,
     retry: false,
-    onSuccess: () => {
-      void navigate(ROUTE_PATHS.dashboard, { replace: true });
-    },
   });
 
   /**
