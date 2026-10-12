@@ -18,15 +18,22 @@ import { CustomTrigger } from "./CustomTrigger";
 interface AppSidebarProps {
   items: readonly SidebarItem[];
   user: NavigationUser;
+  onLogout: () => void;
+  isLoggingOut: boolean;
 }
 
 /**
- * Organiza la identidad, la navegación y el usuario dentro del sidebar.
+ * Organiza la identidad, la navegación y el usuario dentro del sidebar
  *
  * Recibe las opciones y el usuario desde fuera para que el layout pueda
  * proporcionar los datos correspondientes a la sesión actual
  */
-export default function AppSidebar({ items, user }: AppSidebarProps) {
+const AppSidebar = ({
+  items,
+  user,
+  onLogout,
+  isLoggingOut,
+}: AppSidebarProps) => {
   return (
     <Sidebar collapsible="icon" className="border-sidebar-border">
       <SidebarHeader>
@@ -39,10 +46,16 @@ export default function AppSidebar({ items, user }: AppSidebarProps) {
 
       <SidebarFooter className="flex items-center">
         <CustomTrigger />
-        <NavUser user={user} />
+        <NavUser
+          user={user}
+          onLogout={onLogout}
+          isLoggingOut={isLoggingOut}
+        />
       </SidebarFooter>
 
       <SidebarRail className="hover:after:bg-primary" />
     </Sidebar>
   );
-}
+};
+
+export default AppSidebar;

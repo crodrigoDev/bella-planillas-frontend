@@ -1,4 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import type { LoginResponse } from "../types/auth.types";
 import type { LoginDTO } from "@jyp/shared-contracts";
 import { authService } from "../services/auth.service";
@@ -25,7 +26,10 @@ type InitializationState =
  * Espera a comprobar la sesión antes de mostrar las rutas
  * Los datos se conservan en memoria mientras la aplicación esté abierta
  */
-export function AuthProvider({ children }: AuthProviderProps) {
+export const AuthProvider = ({ children }: AuthProviderProps) => {
+  // Permite limpiar los datos guardados de las consultas al salir
+  const queryClient = useQueryClient();
+
   // Guarda el acceso y los datos del usuario que inició sesión
   const [session, setSession] = useState<LoginResponse | null>(null);
 
@@ -43,7 +47,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     /**
      * Busca una sesión guardada y actualiza lo que mostramos en pantalla
      */
-    async function initializeSession(): Promise<void> {
+    const initializeSession = async (): Promise<void> => {
       try {
         const restoredSession = await restoreSession();
 
@@ -61,7 +65,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           message: getApiErrorMessage(error),
         });
       }
-    }
+    };
 
     // La función maneja sus errores y no necesitamos esperar aqui
     void initializeSession();
@@ -75,10 +79,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   /**
    * Vuelve a comprobar la sesión cuando el usuario presiona Reintentar
    */
-  function retryInitialization(): void {
+  const retryInitialization = (): void => {
     setInitialization({ status: "loading" });
     setAttempt((current) => current + 1);
-  }
+  };
 
   /**
    * Autentica al usuario y guarda la sesion en memoria
@@ -91,6 +95,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     // Actualiza la sesión despues de una autenticacion exitosa
     setSession(result);
+  };
+
+  /**
+   * Cierra la sesión y borra los datos guardados del usuario
+   *
+   * @throws Si el servidor no puede confirmar el cierre de sesión
+   */
+  const logout = async (): Promise<void> => {
+    if (!session) return;
+
+    // Conserva la sesión si falla la petición para poder volver a intentar
+    await authService.logout(session.accessToken);
+
+    // Detiene las consultas pendientes antes de limpiar sus resultados
+    await queryClient.cancelQueries();
+    queryClient.clear();
+
+    // Las rutas protegidas detectan este cambio y muestran el login
+    setSession(null);
   };
 
   // Espera antes de mostrar las rutas para evitar una redirección al login
@@ -122,9 +145,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
         session: session,
         isAuthenticated: session !== null,
         login: login,
+        logout: logout,
       }}
     >
       {children}
     </AuthContext.Provider>
   );
-}
+};

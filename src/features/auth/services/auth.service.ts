@@ -33,6 +33,21 @@ export const authService = {
   },
 
   /**
+   * Solicita el cierre de sesión y deja que el servidor borre la cookie
+   *
+   * @param accessToken - Acceso del usuario que quiere salir
+   * @throws Si no se puede completar el cierre de sesión
+   */
+  logout: async (accessToken: string): Promise<void> => {
+    // Envia el acceso en los encabezados y la cookie viaja con la petición
+    await publicHttpClient.post("/auth/logout", undefined, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+  },
+
+  /**
    * Solicita un nuevo token de acceso utilizando la cookie de refresco
    *
    * @returns El nuevo token de acceso

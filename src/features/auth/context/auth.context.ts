@@ -9,6 +9,7 @@ export interface AuthContextValue {
   session: LoginResponse | null;
   isAuthenticated: boolean;
   login: (credentials: LoginDTO) => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 /**
