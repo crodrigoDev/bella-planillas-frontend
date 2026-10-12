@@ -2,17 +2,16 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 
 import AppLayout from "@/app/layouts/AppLayout";
 import DashboardPage from "@/pages/dashboard/DashboardPage";
+import AreasPage from "@/pages/areas/AreasPage";
 import NotFoundPage from "@/pages/not-found/NotFoundPage";
+import EnConstruccionPage from "@/pages/construccion/EnConstruccionPage";
 
 import { ROUTE_PATHS } from "@/app/routes/path";
 import { pendingPages } from "./pending-pages";
-import EnConstruccionPage from "@/pages/construccion/EnConstruccionPage";
 
 /**
- * Relaciona las URLs de la aplicación con sus páginas y layouts.
- *
- * Las rutas internas del sistema comparten `AppLayout`; las rutas especiales, como la
- * pagina no encontrada, se manejan fuera de ese layout
+ * Relaciona las URLs con sus páginas.
+ * Las páginas internas comparten el layout principal.
  */
 export const router = createBrowserRouter([
   {
@@ -25,6 +24,10 @@ export const router = createBrowserRouter([
       {
         path: ROUTE_PATHS.dashboard,
         element: <DashboardPage />,
+      },
+      {
+        path: ROUTE_PATHS.organizacion.areas,
+        element: <AreasPage />,
       },
       ...pendingPages.map(({ path, title }) => ({
         path,
