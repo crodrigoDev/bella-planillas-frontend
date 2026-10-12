@@ -1,7 +1,11 @@
 import type { LoginDTO } from "@jyp/shared-contracts";
-import type { LoginResponse } from "../types/auth.types";
 import { publicHttpClient } from "@/lib/api/public-http-client";
 import type { ApiResponse } from "@/lib/api/types/api.types";
+import type {
+  LoginResponse,
+  AuthProfileResponse,
+  RefreshResponse,
+} from "@/features/auth/types/auth.types";
 
 /**
  * Agrupa las operaciones de autenticación que se comunican con el backend
@@ -25,6 +29,40 @@ export const authService = {
 
     // Axios contiene el cuerpo en response.data y
     // el backend lo contiene en data
+    return response.data.data;
+  },
+
+  /**
+   * Solicita un nuevo token de acceso utilizando la cookie de refresco
+   *
+   * @returns El nuevo token de acceso
+   * @throws Si la petición falla o la sesión ya no es válida
+   */
+  refresh: async (): Promise<RefreshResponse> => {
+    const response =
+      await publicHttpClient.post<ApiResponse<RefreshResponse>>(
+        "/auth/refresh",
+      );
+
+    return response.data.data;
+  },
+
+  /**
+   * Obtiene el perfil del usuario autenticado mediante su token de acceso
+   *
+   * @param accessToken - Token que autoriza la consulta del perfil
+   * @returns Los datos del perfil autenticado
+   * @throws Si la petición falla o el token no es válido
+   */
+  profile: async (accessToken: string): Promise<AuthProfileResponse> => {
+    const response = await publicHttpClient.get<
+      ApiResponse<AuthProfileResponse>
+    >("/usuarios/me", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
     return response.data.data;
   },
 };
