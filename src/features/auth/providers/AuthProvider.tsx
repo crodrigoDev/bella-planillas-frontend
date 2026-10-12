@@ -1,4 +1,10 @@
-import { useEffect, useState, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import type { LoginResponse } from "../types/auth.types";
 import type { LoginDTO } from "@jyp/shared-contracts";
@@ -8,6 +14,7 @@ import { restoreSession } from "../services/recuperar-sesion";
 import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { connectAuthClient } from "@/lib/api/protected-http-client";
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -33,6 +40,30 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // Guarda el acceso y los datos del usuario que inició sesión
   const [session, setSession] = useState<LoginResponse | null>(null);
 
+  // Permite leer la sesión actual desde los interceptores
+  const sessionRef = useRef<LoginResponse | null>(null);
+
+  /** Actualiza el acceso para las peticiones y los datos que muestra React */
+  const saveSession = useCallback((nextSession: LoginResponse | null): void => {
+    sessionRef.current = nextSession;
+    setSession(nextSession);
+  }, []);
+
+  useEffect(() => {
+    return connectAuthClient({
+      getSession: () => sessionRef.current,
+      saveSession: (nextSession) => {
+        saveSession(nextSession);
+
+        // Borra las consultas del usuario si la sesión deja de ser válida
+        if (!nextSession) {
+          void queryClient.cancelQueries();
+          queryClient.clear();
+        }
+      },
+    });
+  }, [queryClient, saveSession]);
+
   // Controla lo que mostramos mientras comprobamos la sesión
   const [initialization, setInitialization] =
     useState<InitializationState>({ status: "loading" });
@@ -54,7 +85,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         if (!active) return;
 
         // null tambien es un resultado válido y permite mostrar el login
-        setSession(restoredSession);
+        saveSession(restoredSession);
         setInitialization({ status: "ready" });
       } catch (error) {
         if (!active) return;
@@ -74,7 +105,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       // Ignora el resultado anterior si esta comprobación ya terminó su ciclo
       active = false;
     };
-  }, [attempt]);
+  }, [attempt, saveSession]);
 
   /**
    * Vuelve a comprobar la sesión cuando el usuario presiona Reintentar
@@ -94,7 +125,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const result = await authService.login(credentials);
 
     // Actualiza la sesión despues de una autenticacion exitosa
-    setSession(result);
+    saveSession(result);
   };
 
   /**
@@ -113,7 +144,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     queryClient.clear();
 
     // Las rutas protegidas detectan este cambio y muestran el login
-    setSession(null);
+    saveSession(null);
   };
 
   // Espera antes de mostrar las rutas para evitar una redirección al login
