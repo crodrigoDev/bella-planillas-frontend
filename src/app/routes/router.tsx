@@ -19,14 +19,17 @@ import LoginPage from "@/pages/auth/LoginPage";
  * Cada página queda en su propio archivo JS. Mientras llega, React Router
  * mantiene visible la página anterior.
  */
-const lazyPage = (load: () => Promise<{ default: ComponentType }>) => async () => ({
-  Component: (await load()).default,
-});
+const lazyPage =
+  (load: () => Promise<{ default: ComponentType }>) => async () => ({
+    Component: (await load()).default,
+  });
 
 const DETALLE_EMPLEADO_TABS = [
   {
     path: ROUTE_PATHS.gestionPersonal.detalleEmpleadoContratos,
-    lazy: lazyPage(() => import("@/pages/empleados/detalle/EmpleadoContratosPage")),
+    lazy: lazyPage(
+      () => import("@/pages/empleados/detalle/EmpleadoContratosPage"),
+    ),
   },
   {
     path: ROUTE_PATHS.gestionPersonal.detalleEmpleadoDerechohabientes,
@@ -36,11 +39,15 @@ const DETALLE_EMPLEADO_TABS = [
   },
   {
     path: ROUTE_PATHS.gestionPersonal.detalleEmpleadoAsistencia,
-    lazy: lazyPage(() => import("@/pages/empleados/detalle/EmpleadoAsistenciaPage")),
+    lazy: lazyPage(
+      () => import("@/pages/empleados/detalle/EmpleadoAsistenciaPage"),
+    ),
   },
   {
     path: ROUTE_PATHS.gestionPersonal.detalleEmpleadoHistorial,
-    lazy: lazyPage(() => import("@/pages/empleados/detalle/EmpleadoHistorialPage")),
+    lazy: lazyPage(
+      () => import("@/pages/empleados/detalle/EmpleadoHistorialPage"),
+    ),
   },
 ];
 
@@ -74,7 +81,9 @@ export const router = createBrowserRouter([
           },
           {
             path: ROUTE_PATHS.auth.restablecerPassword,
-            lazy: lazyPage(() => import("@/pages/auth/RestablecerPasswordPage")),
+            lazy: lazyPage(
+              () => import("@/pages/auth/RestablecerPasswordPage"),
+            ),
           },
         ],
       },
@@ -112,7 +121,9 @@ export const router = createBrowserRouter([
             children: [
               {
                 path: ROUTE_PATHS.gestionPersonal.nuevoEmpleado,
-                lazy: lazyPage(() => import("@/pages/empleados/NuevoEmpleadoPage")),
+                lazy: lazyPage(
+                  () => import("@/pages/empleados/NuevoEmpleadoPage"),
+                ),
               },
             ],
           },
@@ -136,7 +147,9 @@ export const router = createBrowserRouter([
             children: [
               {
                 path: ROUTE_PATHS.gestionPersonal.editarEmpleado,
-                lazy: lazyPage(() => import("@/pages/empleados/EditarEmpleadoPage")),
+                lazy: lazyPage(
+                  () => import("@/pages/empleados/EditarEmpleadoPage"),
+                ),
               },
             ],
           },
@@ -162,13 +175,16 @@ export const router = createBrowserRouter([
             children: [
               {
                 path: ROUTE_PATHS.gestionPersonal.detalleEmpleado,
-                lazy: lazyPage(() => import("@/pages/empleados/EmpleadoDetalleLayout")),
+                lazy: lazyPage(
+                  () => import("@/pages/empleados/EmpleadoDetalleLayout"),
+                ),
                 // Cada pestaña de la ficha es una ruta hija con su propio permiso
                 children: [
                   {
                     index: true,
                     lazy: lazyPage(
-                      () => import("@/pages/empleados/detalle/EmpleadoInformacionPage"),
+                      () =>
+                        import("@/pages/empleados/detalle/EmpleadoInformacionPage"),
                     ),
                   },
                   ...DETALLE_EMPLEADO_TABS.map(({ path, lazy }) => ({
@@ -180,11 +196,22 @@ export const router = createBrowserRouter([
             ],
           },
           {
+            element: <RoleRoute path={ROUTE_PATHS.organizacion.areas} />,
+            children: [
+              {
+                path: ROUTE_PATHS.organizacion.areas,
+                lazy: lazyPage(() => import("@/pages/areas/AreasPage")),
+              },
+            ],
+          },
+          {
             element: <RoleRoute path={ROUTE_PATHS.asistencia.marcaciones} />,
             children: [
               {
                 path: ROUTE_PATHS.asistencia.marcaciones,
-                lazy: lazyPage(() => import("@/pages/asistencia/MarcacionesPage")),
+                lazy: lazyPage(
+                  () => import("@/pages/asistencia/MarcacionesPage"),
+                ),
               },
             ],
           },
@@ -244,7 +271,9 @@ export const router = createBrowserRouter([
             ],
           },
           {
-            element: <RoleRoute path={ROUTE_PATHS.gestionPersonal.solicitudes} />,
+            element: (
+              <RoleRoute path={ROUTE_PATHS.gestionPersonal.solicitudes} />
+            ),
             children: [
               {
                 path: ROUTE_PATHS.gestionPersonal.solicitudes,
