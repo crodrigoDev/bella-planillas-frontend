@@ -30,7 +30,7 @@ interface NavUserProps {
 /**
  * Muestra al usuario actual y sus opciones personales en el sidebar
  */
-const NavUser = ({ user, onLogout, isLoggingOut }: NavUserProps) => {
+export default function NavUser({ user, onLogout, isLoggingOut }: NavUserProps) {
   const { isMobile } = useSidebar();
 
   // Usa las primeras letras del nombre cuando no hay una foto disponible
@@ -105,6 +105,4 @@ const NavUser = ({ user, onLogout, isLoggingOut }: NavUserProps) => {
       </SidebarMenuItem>
     </SidebarMenu>
   );
-};
-
-export default NavUser;
+}

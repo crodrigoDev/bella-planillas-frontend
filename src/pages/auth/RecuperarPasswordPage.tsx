@@ -16,7 +16,7 @@ import { authService } from "@/features/auth/services/auth.service";
 import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
 
 /** Solicita la recuperación y muestra la confirmación o el error del servidor */
-const RecuperarPasswordPage = () => {
+export default function RecuperarPasswordPage() {
   // Evita repetir automaticamente una solicitud que puede generar un correo
   const recoveryMutation = useMutation({
     mutationFn: authService.requestPasswordRecovery,
@@ -84,6 +84,4 @@ const RecuperarPasswordPage = () => {
       </CardContent>
     </Card>
   );
-};
-
-export default RecuperarPasswordPage;
+}

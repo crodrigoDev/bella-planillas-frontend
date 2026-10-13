@@ -11,7 +11,7 @@ let pendingRestore: Promise<LoginResponse | null> | null = null;
  * @returns La sesión recuperada o null cuando el servidor responde con 401
  * @throws Si ocurre otro error, como una falla en el servidor
  */
-const requestSession = async (): Promise<LoginResponse | null> => {
+async function requestSession(): Promise<LoginResponse | null> {
   try {
     // Usa la cookie guardada en el navegador para recuperar el acceso
     const { accessToken } = await authService.refresh();
@@ -37,7 +37,7 @@ const requestSession = async (): Promise<LoginResponse | null> => {
     // Los demas errores se muestran para que el usuario pueda reintentar
     throw error;
   }
-};
+}
 
 /**
  * Reutiliza la recuperación si ya hay una petición en curso
@@ -45,7 +45,7 @@ const requestSession = async (): Promise<LoginResponse | null> => {
  * @returns La sesión recuperada o null si hace falta iniciar sesión
  * @throws Si no se puede completar la recuperación
  */
-export const restoreSession = (): Promise<LoginResponse | null> => {
+export function restoreSession(): Promise<LoginResponse | null> {
   if (!pendingRestore) {
     pendingRestore = requestSession().finally(() => {
       // Libera la petición terminada para permitir otro intento
@@ -54,4 +54,4 @@ export const restoreSession = (): Promise<LoginResponse | null> => {
   }
 
   return pendingRestore;
-};
+}

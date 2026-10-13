@@ -28,12 +28,12 @@ interface AppSidebarProps {
  * Recibe las opciones y el usuario desde fuera para que el layout pueda
  * proporcionar los datos correspondientes a la sesión actual
  */
-const AppSidebar = ({
+export default function AppSidebar({
   items,
   user,
   onLogout,
   isLoggingOut,
-}: AppSidebarProps) => {
+}: AppSidebarProps) {
   return (
     <Sidebar collapsible="icon" className="border-sidebar-border">
       <SidebarHeader>
@@ -56,6 +56,4 @@ const AppSidebar = ({
       <SidebarRail className="hover:after:bg-primary" />
     </Sidebar>
   );
-};
-
-export default AppSidebar;
+}

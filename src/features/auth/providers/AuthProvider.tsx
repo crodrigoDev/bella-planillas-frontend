@@ -25,7 +25,7 @@ interface AuthProviderProps {
  * Comprueba la sesión en segundo plano y deja que cada ruta decida que mostrar
  * Los datos se conservan en memoria mientras la aplicación esté abierta
  */
-export const AuthProvider = ({ children }: AuthProviderProps) => {
+export function AuthProvider({ children }: AuthProviderProps) {
   // Permite limpiar los datos guardados de las consultas al salir
   const queryClient = useQueryClient();
 
@@ -160,4 +160,4 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       {children}
     </AuthContext.Provider>
   );
-};
+}

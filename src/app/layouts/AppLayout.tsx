@@ -13,11 +13,12 @@ import type { CSSProperties } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
+import { filterSidebarItems } from "@/features/navigation/utils/filter-sidebar-items";
 
 /**
  * Comparte el sidebar y la estructura principal entre las páginas internas
  */
-const AppLayout = () => {
+export default function AppLayout() {
   const { session, logout } = useAuth();
 
   // Guarda el estado del cierre de sesión para mostrar la espera o el error
@@ -27,6 +28,9 @@ const AppLayout = () => {
   });
 
   if (!session) return null;
+
+  // Usa los mismos permisos que las rutas para mostrar las opciones del usuario
+  const sidebarItems = filterSidebarItems(RRHH_SIDEBAR_ITEMS, session.usuario.rol);
 
   // Adapta los datos reales al formato que necesita el sidebar
   const user: NavigationUser = {
@@ -49,7 +53,7 @@ const AppLayout = () => {
       style={{ "--sidebar-width-icon": "4rem" } as CSSProperties}
     >
       <AppSidebar
-        items={RRHH_SIDEBAR_ITEMS}
+        items={sidebarItems}
         user={user}
         onLogout={handleLogout}
         isLoggingOut={logoutMutation.isPending}
@@ -75,6 +79,4 @@ const AppLayout = () => {
       </SidebarInset>
     </SidebarProvider>
   );
-};
-
-export default AppLayout;
+}

@@ -3,6 +3,7 @@ import { ROUTE_PATHS } from "@/app/routes/path";
 import { pendingPages } from "@/app/routes/pending-pages";
 import GuestRoute from "@/features/auth/components/GuestRoute";
 import ProtectedRoute from "@/features/auth/components/ProtectedRoute";
+import RoleRoute from "@/features/auth/components/RoleRoute";
 import AuthLayout from "@/app/layouts/AuthLayout";
 import AppLayout from "@/app/layouts/AppLayout";
 import DashboardPage from "@/pages/dashboard/DashboardPage";
@@ -48,12 +49,22 @@ export const router = createBrowserRouter([
         element: <AppLayout />,
         children: [
           {
-            path: ROUTE_PATHS.dashboard,
-            element: <DashboardPage />,
+            element: <RoleRoute path={ROUTE_PATHS.dashboard} />,
+            children: [
+              {
+                path: ROUTE_PATHS.dashboard,
+                element: <DashboardPage />,
+              },
+            ],
           },
           ...pendingPages.map(({ path, title }) => ({
-            path,
-            element: <EnConstruccionPage title={title} />,
+            element: <RoleRoute path={path} />,
+            children: [
+              {
+                path,
+                element: <EnConstruccionPage title={title} />,
+              },
+            ],
           })),
         ],
       },

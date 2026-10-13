@@ -19,13 +19,13 @@ interface RetryConfig extends InternalAxiosRequestConfig {
 let auth: AuthConnection | null = null;
 
 /** Conecta el cliente con la sesión y devuelve una función para desconectarlo */
-export const connectAuthClient = (connection: AuthConnection) => {
+export function connectAuthClient(connection: AuthConnection) {
   auth = connection;
 
   return () => {
     if (auth === connection) auth = null;
   };
-};
+}
 
 // Reutiliza la URL, timeout y configuración de cookies
 export const protectedHttpClient = axios.create(publicHttpClient.defaults);

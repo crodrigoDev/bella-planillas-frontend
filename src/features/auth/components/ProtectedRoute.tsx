@@ -11,7 +11,7 @@ import { Spinner } from "@/components/ui/spinner";
  * Espera la comprobación de la sesión antes de permitir el acceso
  * Redirige a login cuando se confirma que no hay una sesión
  */
-const ProtectedRoute = () => {
+export default function ProtectedRoute() {
   const { isAuthenticated, initialization, retryInitialization } = useAuth();
 
   if (initialization.status === "loading") {
@@ -46,6 +46,4 @@ const ProtectedRoute = () => {
   if (!isAuthenticated) return <Navigate to={ROUTE_PATHS.auth.login} replace />;
 
   return <Outlet />;
-};
-
-export default ProtectedRoute;
+}

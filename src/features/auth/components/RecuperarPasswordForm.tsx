@@ -20,7 +20,9 @@ interface RecuperarPasswordFormProps {
 }
 
 /** Valida el documento y entrega la solicitud a la página */
-const RecuperarPasswordForm = ({ onSubmit }: RecuperarPasswordFormProps) => {
+export default function RecuperarPasswordForm({
+  onSubmit,
+}: RecuperarPasswordFormProps) {
   const {
     register,
     handleSubmit,
@@ -86,6 +88,4 @@ const RecuperarPasswordForm = ({ onSubmit }: RecuperarPasswordFormProps) => {
       </FieldGroup>
     </form>
   );
-};
-
-export default RecuperarPasswordForm;
+}
