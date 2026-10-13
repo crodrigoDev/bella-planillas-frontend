@@ -32,6 +32,17 @@ export interface RefreshResponse {
   accessToken: string;
 }
 
+/** Mensaje que devuelve el backend al solicitar la recuperación */
+export interface PasswordRecoveryResponse {
+  message: string;
+}
+
+/** Indica como va la comprobación inicial de la sesión */
+export type AuthInitializationState =
+  | { status: "loading" }
+  | { status: "ready" }
+  | { status: "error"; message: string };
+
 /**
  * Datos del perfil tal como llegan desde el servidor
  *

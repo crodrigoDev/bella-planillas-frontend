@@ -1,10 +1,11 @@
-import type { LoginDTO } from "@jyp/shared-contracts";
+import type { LoginDTO, SolicitudRecuperacionDTO } from "@jyp/shared-contracts";
 import { publicHttpClient } from "@/lib/api/public-http-client";
 import type { ApiResponse } from "@/lib/api/types/api.types";
 import type {
   LoginResponse,
   AuthProfileResponse,
   RefreshResponse,
+  PasswordRecoveryResponse,
 } from "@/features/auth/types/auth.types";
 
 /**
@@ -15,6 +16,17 @@ import type {
  * El estado de la sesión se administra fuera de este servicio
  */
 export const authService = {
+  /** Solicita instrucciones de recuperación usando el documento del usuario */
+  requestPasswordRecovery: async (
+    values: SolicitudRecuperacionDTO,
+  ): Promise<PasswordRecoveryResponse> => {
+    const response = await publicHttpClient.post<
+      ApiResponse<PasswordRecoveryResponse>
+    >("/auth/recuperar-password", values);
+
+    return response.data.data;
+  },
+
   /**
    * Envía las credenciales al backend para iniciar sesión
    *

@@ -9,6 +9,7 @@ import DashboardPage from "@/pages/dashboard/DashboardPage";
 import NotFoundPage from "@/pages/not-found/NotFoundPage";
 import EnConstruccionPage from "@/pages/construccion/EnConstruccionPage";
 import LoginPage from "@/pages/auth/LoginPage";
+import RecuperarPasswordPage from "@/pages/auth/RecuperarPasswordPage";
 
 /**
  * Relaciona las URLs de la aplicación con sus páginas y layouts.
@@ -31,6 +32,10 @@ export const router = createBrowserRouter([
           {
             path: ROUTE_PATHS.auth.login,
             element: <LoginPage />,
+          },
+          {
+            path: ROUTE_PATHS.auth.recuperarPassword,
+            element: <RecuperarPasswordPage />,
           },
         ],
       },

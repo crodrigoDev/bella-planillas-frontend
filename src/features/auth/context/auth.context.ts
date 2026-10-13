@@ -1,5 +1,5 @@
 import type { LoginDTO } from "@jyp/shared-contracts";
-import type { LoginResponse } from "../types/auth.types";
+import type { AuthInitializationState, LoginResponse } from "../types/auth.types";
 import { createContext } from "react";
 
 /**
@@ -8,6 +8,8 @@ import { createContext } from "react";
 export interface AuthContextValue {
   session: LoginResponse | null;
   isAuthenticated: boolean;
+  initialization: AuthInitializationState;
+  retryInitialization: () => void;
   login: (credentials: LoginDTO) => Promise<void>;
   logout: () => Promise<void>;
 }

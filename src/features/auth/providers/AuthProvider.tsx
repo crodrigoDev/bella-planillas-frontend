@@ -6,31 +6,23 @@ import {
   type ReactNode,
 } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import type { LoginResponse } from "../types/auth.types";
+import type { AuthInitializationState, LoginResponse } from "../types/auth.types";
 import type { LoginDTO } from "@jyp/shared-contracts";
 import { authService } from "../services/auth.service";
 import { AuthContext } from "../context/auth.context";
 import { restoreSession } from "../services/recuperar-sesion";
 import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
-import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
 import { connectAuthClient } from "@/lib/api/protected-http-client";
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
-// Indica si seguimos comprobando la sesión, terminamos o hubo un error
-type InitializationState =
-  | { status: "loading" }
-  | { status: "ready" }
-  | { status: "error"; message: string };
-
 /**
  * Recupera la sesión al abrir la aplicación y la comparte con sus componentes
  *
  * @remarks
- * Espera a comprobar la sesión antes de mostrar las rutas
+ * Comprueba la sesión en segundo plano y deja que cada ruta decida que mostrar
  * Los datos se conservan en memoria mientras la aplicación esté abierta
  */
 export const AuthProvider = ({ children }: AuthProviderProps) => {
@@ -43,8 +35,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // Permite leer la sesión actual desde los interceptores
   const sessionRef = useRef<LoginResponse | null>(null);
 
+  // Permite ignorar una recuperación anterior a un cambio de sesión
+  const sessionVersionRef = useRef(0);
+
   /** Actualiza el acceso para las peticiones y los datos que muestra React */
   const saveSession = useCallback((nextSession: LoginResponse | null): void => {
+    sessionVersionRef.current += 1;
     sessionRef.current = nextSession;
     setSession(nextSession);
   }, []);
@@ -64,9 +60,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     });
   }, [queryClient, saveSession]);
 
-  // Controla lo que mostramos mientras comprobamos la sesión
+  // Comparte el estado de la comprobación con las rutas protegidas
   const [initialization, setInitialization] =
-    useState<InitializationState>({ status: "loading" });
+    useState<AuthInitializationState>({ status: "loading" });
 
   // Al cambiar este numero, se vuelve a comprobar la sesión
   const [attempt, setAttempt] = useState(0);
@@ -74,6 +70,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   useEffect(() => {
     // Permite usar el resultado solo mientras esta comprobación siga vigente
     let active = true;
+    const sessionVersion = sessionVersionRef.current;
 
     /**
      * Busca una sesión guardada y actualiza lo que mostramos en pantalla
@@ -82,13 +79,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       try {
         const restoredSession = await restoreSession();
 
-        if (!active) return;
+        // Ignora el resultado si el usuario ya inició o cerró sesión
+        if (!active || sessionVersionRef.current !== sessionVersion) return;
 
         // null tambien es un resultado válido y permite mostrar el login
         saveSession(restoredSession);
         setInitialization({ status: "ready" });
       } catch (error) {
-        if (!active) return;
+        if (!active || sessionVersionRef.current !== sessionVersion) return;
 
         // Guarda un mensaje para mostrarlo junto al boton de reintentar
         setInitialization({
@@ -126,6 +124,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     // Actualiza la sesión despues de una autenticacion exitosa
     saveSession(result);
+    setInitialization({ status: "ready" });
   };
 
   /**
@@ -147,34 +146,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     saveSession(null);
   };
 
-  // Espera antes de mostrar las rutas para evitar una redirección al login
-  if (initialization.status === "loading") {
-    return (
-      <main className="flex min-h-dvh items-center justify-center gap-3">
-        <Spinner aria-label="Comprobando sesión" />
-        <p>Comprobando sesión...</p>
-      </main>
-    );
-  }
-
-  // Permite volver a intentar si falla la conexión o responde un error
-  if (initialization.status === "error") {
-    return (
-      <main className="flex min-h-dvh flex-col items-center justify-center gap-4 px-6 text-center">
-        <p role="alert">{initialization.message}</p>
-
-        <Button type="button" onClick={retryInitialization}>
-          Reintentar
-        </Button>
-      </main>
-    );
-  }
-
   return (
     <AuthContext.Provider
       value={{
         session: session,
         isAuthenticated: session !== null,
+        initialization,
+        retryInitialization,
         login: login,
         logout: logout,
       }}
