@@ -2,6 +2,9 @@ interface EnConstruccionPageProps {
   title: string;
 }
 
+/**
+ * Presenta el título de una sección cuya implementación está pendiente
+ */
 export default function EnConstruccionPage({ title }: EnConstruccionPageProps) {
   return (
     <section>

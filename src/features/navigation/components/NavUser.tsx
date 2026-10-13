@@ -1,4 +1,4 @@
-import { ChevronsUpDown, UserRound } from "lucide-react";
+import { ChevronsUpDown, LogOut, UserRound } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 import { ROUTE_PATHS } from "@/app/routes/path";
@@ -19,17 +19,21 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import type { NavigationUser } from "@/features/navigation/types/navigation.types";
+import { Spinner } from "@/components/ui/spinner";
 
 interface NavUserProps {
   user: NavigationUser;
+  onLogout: () => void;
+  isLoggingOut: boolean;
 }
 
 /**
  * Muestra al usuario actual y sus opciones personales en el sidebar
  */
-export default function NavUser({ user }: NavUserProps) {
+export default function NavUser({ user, onLogout, isLoggingOut }: NavUserProps) {
   const { isMobile } = useSidebar();
 
+  // Usa las primeras letras del nombre cuando no hay una foto disponible
   const iniciales = user.name
     .trim()
     .split(/\s+/)
@@ -42,7 +46,10 @@ export default function NavUser({ user }: NavUserProps) {
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
-          <DropdownMenuTrigger render={<SidebarMenuButton size="lg" />}>
+          <DropdownMenuTrigger
+            render={<SidebarMenuButton size="lg" />}
+            aria-busy={isLoggingOut}
+          >
             <Avatar>
               {user.avatarUrl && <AvatarImage src={user.avatarUrl} alt="" />}
               <AvatarFallback>{iniciales}</AvatarFallback>
@@ -67,9 +74,30 @@ export default function NavUser({ user }: NavUserProps) {
               <DropdownMenuLabel>{user.name}</DropdownMenuLabel>
               <DropdownMenuSeparator />
 
-              <DropdownMenuItem render={<NavLink to={ROUTE_PATHS.perfil} />}>
+              <DropdownMenuItem
+                render={<NavLink to={ROUTE_PATHS.perfil} />}
+                disabled={isLoggingOut}
+              >
                 <UserRound aria-hidden="true" />
                 <span>Mi perfil</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator />
+
+              <DropdownMenuItem
+                variant="destructive"
+                disabled={isLoggingOut}
+                closeOnClick={false}
+                onClick={onLogout}
+              >
+                {isLoggingOut ? (
+                  <Spinner aria-label="Cerrando sesión" />
+                ) : (
+                  <LogOut aria-hidden="true" />
+                )}
+                <span>
+                  {isLoggingOut ? "Cerrando sesión..." : "Cerrar sesión"}
+                </span>
               </DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>

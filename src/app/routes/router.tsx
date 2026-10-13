@@ -1,18 +1,23 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
-
+import { ROUTE_PATHS } from "@/app/routes/path";
+import { pendingPages } from "@/app/routes/pending-pages";
+import GuestRoute from "@/features/auth/components/GuestRoute";
+import ProtectedRoute from "@/features/auth/components/ProtectedRoute";
+import RoleRoute from "@/features/auth/components/RoleRoute";
+import AuthLayout from "@/app/layouts/AuthLayout";
 import AppLayout from "@/app/layouts/AppLayout";
 import DashboardPage from "@/pages/dashboard/DashboardPage";
 import NotFoundPage from "@/pages/not-found/NotFoundPage";
-
-import { ROUTE_PATHS } from "@/app/routes/path";
-import { pendingPages } from "./pending-pages";
 import EnConstruccionPage from "@/pages/construccion/EnConstruccionPage";
+import LoginPage from "@/pages/auth/LoginPage";
+import RecuperarPasswordPage from "@/pages/auth/RecuperarPasswordPage";
 
 /**
  * Relaciona las URLs de la aplicación con sus páginas y layouts.
  *
- * Las rutas internas del sistema comparten `AppLayout`; las rutas especiales, como la
- * pagina no encontrada, se manejan fuera de ese layout
+ * @remarks
+ * Las páginas internas de `AppLayout` requieren de una sesión.
+ * Las páginas de `AuthLayout` no requieren de una sesión
  */
 export const router = createBrowserRouter([
   {
@@ -20,16 +25,49 @@ export const router = createBrowserRouter([
     element: <Navigate to={ROUTE_PATHS.dashboard} replace />,
   },
   {
-    element: <AppLayout />,
+    element: <GuestRoute />,
     children: [
       {
-        path: ROUTE_PATHS.dashboard,
-        element: <DashboardPage />,
+        element: <AuthLayout />,
+        children: [
+          {
+            path: ROUTE_PATHS.auth.login,
+            element: <LoginPage />,
+          },
+          {
+            path: ROUTE_PATHS.auth.recuperarPassword,
+            element: <RecuperarPasswordPage />,
+          },
+        ],
       },
-      ...pendingPages.map(({ path, title }) => ({
-        path,
-        element: <EnConstruccionPage title={title} />,
-      })),
+    ],
+  },
+  {
+    element: <ProtectedRoute />,
+    children: [
+      {
+        element: <AppLayout />,
+        children: [
+          {
+            element: <RoleRoute path={ROUTE_PATHS.dashboard} />,
+            children: [
+              {
+                path: ROUTE_PATHS.dashboard,
+                element: <DashboardPage />,
+              },
+            ],
+          },
+          ...pendingPages.map(({ path, title }) => ({
+            element: <RoleRoute path={path} />,
+            children: [
+              {
+                path,
+                element: <EnConstruccionPage title={title} />,
+              },
+            ],
+          })),
+        ],
+      },
     ],
   },
   {
