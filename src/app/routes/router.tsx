@@ -1,4 +1,5 @@
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
+import { APP_PREVIEW_MODE } from "@/app/config/app-preview.config";
 import { ROUTE_PATHS } from "@/app/routes/path";
 import { pendingPages } from "@/app/routes/pending-pages";
 import GuestRoute from "@/features/auth/components/GuestRoute";
@@ -16,7 +17,7 @@ import RecuperarPasswordPage from "@/pages/auth/RecuperarPasswordPage";
  * Relaciona las URLs de la aplicación con sus páginas y layouts.
  *
  * @remarks
- * Las páginas internas de `AppLayout` requieren de una sesión.
+ * Las páginas internas son publicas temporalmente mientras APP_PREVIEW_MODE esté activo
  * Las páginas de `AuthLayout` no requieren de una sesión
  */
 export const router = createBrowserRouter([
@@ -43,13 +44,17 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    element: <ProtectedRoute />,
+    element: APP_PREVIEW_MODE ? <Outlet /> : <ProtectedRoute />,
     children: [
       {
         element: <AppLayout />,
         children: [
           {
-            element: <RoleRoute path={ROUTE_PATHS.dashboard} />,
+            element: APP_PREVIEW_MODE ? (
+              <Outlet />
+            ) : (
+              <RoleRoute path={ROUTE_PATHS.dashboard} />
+            ),
             children: [
               {
                 path: ROUTE_PATHS.dashboard,
@@ -58,7 +63,7 @@ export const router = createBrowserRouter([
             ],
           },
           ...pendingPages.map(({ path, title }) => ({
-            element: <RoleRoute path={path} />,
+            element: APP_PREVIEW_MODE ? <Outlet /> : <RoleRoute path={path} />,
             children: [
               {
                 path,
