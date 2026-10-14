@@ -16,6 +16,7 @@ interface ModuleSelectProps {
   onBlur?: () => void;
   inputRef?: (element: HTMLButtonElement | null) => void;
   invalid?: boolean;
+  inlineLabel?: boolean;
 }
 
 /** Usa las mismas opciones de shadcn para filtros y formularios */
@@ -27,13 +28,16 @@ export default function ModuleSelect({
   onBlur,
   inputRef,
   invalid,
+  inlineLabel = false,
 }: ModuleSelectProps) {
   const id = useId();
   return (
     <div className="min-w-0 space-y-1.5">
-      <Label htmlFor={id} className="text-xs">
-        {label}
-      </Label>
+      {!inlineLabel && (
+        <Label htmlFor={id} className="text-xs">
+          {label}
+        </Label>
+      )}
       <Select
         items={items}
         value={value}
@@ -46,9 +50,13 @@ export default function ModuleSelect({
           ref={inputRef}
           onBlur={onBlur}
           aria-invalid={invalid}
-          className="h-9 w-full min-w-0 bg-background text-xs"
+          aria-label={
+            inlineLabel ? `Filtrar por ${label.toLowerCase()}` : undefined
+          }
+          className="h-9 w-full min-w-0 bg-background text-xs text-slate-700 dark:text-foreground"
         >
-          <SelectValue placeholder="Selecciona" />
+          {inlineLabel && <span className="shrink-0">{label}:</span>}
+          <SelectValue className="min-w-0 truncate" placeholder="Selecciona" />
         </SelectTrigger>
         <SelectContent alignItemWithTrigger={false}>
           {items.map((item) => (

@@ -1,10 +1,7 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { Pencil, Plus } from "lucide-react";
-import {
-  ActualizarAreaSchema,
-  CrearAreaSchema,
-} from "@jyp/shared-contracts";
+import { ActualizarAreaSchema, CrearAreaSchema } from "@jyp/shared-contracts";
 import type { CrearAreaDto } from "@jyp/shared-contracts";
 
 import { Button } from "@/components/ui/button";
@@ -46,9 +43,7 @@ export function AreaFormDialog({
   const isEditing = Boolean(area);
 
   const [name, setName] = useState(area?.nombre ?? "");
-  const [description, setDescription] = useState(
-    area?.descripcion ?? "",
-  );
+  const [description, setDescription] = useState(area?.descripcion ?? "");
 
   const [errors, setErrors] = useState<{
     name?: string;
@@ -95,7 +90,7 @@ export function AreaFormDialog({
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
-            <span className="flex size-10 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-300">
+            <span className="flex size-10 items-center justify-center rounded-full bg-primary/5 text-primary">
               <Icon aria-hidden="true" className="size-5" />
             </span>
 
@@ -109,27 +104,22 @@ export function AreaFormDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <form
-          onSubmit={handleSubmit}
-          noValidate
-          className="space-y-5"
-        >
+        <form onSubmit={handleSubmit} noValidate className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="area-name">
+            <Label htmlFor="area-name" className="text-xs">
               Nombre de área
               <span className="text-destructive">*</span>
             </Label>
 
             <Input
               id="area-name"
+              className="h-9 bg-background text-sm md:text-xs"
               placeholder="Ej: Operaciones & Logística"
               value={name}
               onChange={(event) => setName(event.target.value)}
               aria-required="true"
               aria-invalid={Boolean(errors.name)}
-              aria-describedby={
-                errors.name ? "area-name-error" : undefined
-              }
+              aria-describedby={errors.name ? "area-name-error" : undefined}
             />
 
             {errors.name && (
@@ -144,7 +134,7 @@ export function AreaFormDialog({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="area-description">
+            <Label htmlFor="area-description" className="text-xs">
               Descripción breve (opcional)
             </Label>
 
@@ -152,15 +142,11 @@ export function AreaFormDialog({
               id="area-description"
               placeholder="Describe el alcance o funciones principales del área…"
               value={description}
-              onChange={(event) =>
-                setDescription(event.target.value)
-              }
-              className="min-h-28 resize-none"
+              onChange={(event) => setDescription(event.target.value)}
+              className="min-h-24 resize-none text-sm md:text-xs"
               aria-invalid={Boolean(errors.description)}
               aria-describedby={
-                errors.description
-                  ? "area-description-error"
-                  : undefined
+                errors.description ? "area-description-error" : undefined
               }
             />
 
@@ -190,10 +176,7 @@ export function AreaFormDialog({
               Cancelar
             </Button>
 
-            <Button
-              type="submit"
-              className="bg-indigo-600 text-white hover:bg-indigo-700"
-            >
+            <Button type="submit" className="h-9 text-xs">
               {isEditing ? "Guardar cambios" : "Registrar área"}
             </Button>
           </DialogFooter>

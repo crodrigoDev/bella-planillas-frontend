@@ -49,6 +49,8 @@ export default function NavUser({ user, onLogout, isLoggingOut }: NavUserProps) 
           <DropdownMenuTrigger
             render={<SidebarMenuButton size="lg" />}
             aria-busy={isLoggingOut}
+            aria-label="Menú de usuario"
+            title={user.name}
           >
             <Avatar>
               {user.avatarUrl && <AvatarImage src={user.avatarUrl} alt="" />}

@@ -1,5 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import type { LoginDTO } from "@jyp/shared-contracts";
+import { APP_PREVIEW_MODE } from "@/app/config/app-preview.config";
+import { ROUTE_PATHS } from "@/app/routes/path";
 import {
   Card,
   CardContent,
@@ -21,6 +24,7 @@ import LoginForm from "@/features/auth/components/LoginForm";
  */
 export default function LoginPage() {
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const loginMutation = useMutation({
     mutationFn: login,
@@ -33,6 +37,12 @@ export default function LoginPage() {
    * @param values - Credenciales validadas por el formulario
    */
   const handleLogin = async (values: LoginDTO): Promise<void> => {
+    // En la demostracion, el formulario valida los datos y permite entrar sin backend
+    if (APP_PREVIEW_MODE) {
+      void navigate(ROUTE_PATHS.dashboard, { replace: true });
+      return;
+    }
+
     try {
       await loginMutation.mutateAsync(values);
     } catch {
@@ -60,6 +70,11 @@ export default function LoginPage() {
           </FieldError>
         )}
         <LoginForm onSubmit={handleLogin} />
+        {APP_PREVIEW_MODE && (
+          <p className="mt-4 text-center text-xs text-muted-foreground">
+            Acceso de prueba: usa un DNI de 8 dígitos y una contraseña de al menos 8 caracteres
+          </p>
+        )}
       </CardContent>
     </Card>
   );

@@ -1,29 +1,23 @@
 import { useState } from "react";
-import { Plus, Search } from "lucide-react";
+import { Plus } from "lucide-react";
+import { createColumnHelper } from "@tanstack/react-table";
 import type { CrearAreaDto } from "@jyp/shared-contracts";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import DataTable from "@/components/data-table/DataTable";
+import type { DataTableFeatures } from "@/components/data-table/data-table.config";
+import ModulePage from "@/components/modules/ModulePage";
+import ModuleSearch from "@/components/modules/ModuleSearch";
+import RecordStatus from "@/components/modules/RecordStatus";
+import { AreaActions } from "./AreaActions";
+import { AreaDeactivateDialog } from "./AreaDeactivateDialog";
+import { AreaFormDialog } from "./AreaFormDialog";
+import { useAreas } from "../hooks/useAreas";
+import type { AreaViewModel } from "../types/areas.types";
 
-import { AreaActions } from "@/features/areas/components/AreaActions";
-import { AreaDeactivateDialog } from "@/features/areas/components/AreaDeactivateDialog";
-import { AreaFormDialog } from "@/features/areas/components/AreaFormDialog";
-import { useAreas } from "@/features/areas/hooks/useAreas";
-import type { AreaViewModel } from "@/features/areas/types/areas.types";
+const column = createColumnHelper<DataTableFeatures, AreaViewModel>();
 
-/**
- * Permite buscar, registrar, editar y desactivar áreas de ejemplo.
- * Los cambios permanecen en memoria hasta recargar la página.
- */
+/** Presenta las areas con los mismos estilos y tabla del listado de empleados */
 export function AreasView() {
   const {
     areas,
@@ -33,30 +27,27 @@ export function AreasView() {
     filteredAreas,
     activeAreasCount,
   } = useAreas();
-
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [selectedArea, setSelectedArea] =
-    useState<AreaViewModel | undefined>(undefined);
-  const [deactivationArea, setDeactivationArea] =
-    useState<AreaViewModel | undefined>(undefined);
+  const [selectedArea, setSelectedArea] = useState<AreaViewModel | undefined>();
+  const [deactivationArea, setDeactivationArea] = useState<
+    AreaViewModel | undefined
+  >();
   const [successMessage, setSuccessMessage] = useState("");
 
-  function handleOpenCreate() {
+  const handleOpenCreate = (): void => {
     setSelectedArea(undefined);
     setSuccessMessage("");
     setIsFormOpen(true);
-  }
-
-  function handleOpenEdit(area: AreaViewModel) {
+  };
+  const handleOpenEdit = (area: AreaViewModel): void => {
     setSelectedArea(area);
     setSuccessMessage("");
     setIsFormOpen(true);
-  }
-
-  function handleSaveArea(values: CrearAreaDto) {
+  };
+  const handleSaveArea = (values: CrearAreaDto): void => {
     if (selectedArea) {
-      setAreas((currentAreas) =>
-        currentAreas.map((area) =>
+      setAreas((current) =>
+        current.map((area) =>
           area.id === selectedArea.id
             ? {
                 ...area,
@@ -66,13 +57,10 @@ export function AreasView() {
             : area,
         ),
       );
-
-      setSuccessMessage(
-        `El área "${values.nombre}" se actualizó correctamente.`,
-      );
+      setSuccessMessage("Área actualizada correctamente");
     } else {
-      setAreas((currentAreas) => [
-        ...currentAreas,
+      setAreas((current) => [
+        ...current,
         {
           id: crypto.randomUUID(),
           nombre: values.nombre,
@@ -83,211 +71,99 @@ export function AreasView() {
           isActive: true,
         },
       ]);
-
-      setSuccessMessage(
-        `El área "${values.nombre}" se registró correctamente.`,
-      );
+      setSuccessMessage("Área registrada correctamente");
     }
-
     setSearch("");
-  }
-
-  function handleRequestDeactivate(area: AreaViewModel) {
+  };
+  const handleRequestDeactivate = (area: AreaViewModel): void => {
     if (!area.isActive) return;
-
     setSuccessMessage("");
     setDeactivationArea(area);
-  }
-
-  function handleConfirmDeactivate() {
+  };
+  const handleConfirmDeactivate = (): void => {
     if (!deactivationArea) return;
-
-    const currentArea = areas.find(
-      (area) => area.id === deactivationArea.id,
-    );
-
+    const current = areas.find((area) => area.id === deactivationArea.id);
     if (
-      !currentArea ||
-      !currentArea.isActive ||
-      currentArea.activeEmployees > 0 ||
-      currentArea.activePositions > 0
-    ) {
+      !current ||
+      !current.isActive ||
+      current.activeEmployees > 0 ||
+      current.activePositions > 0
+    )
       return;
-    }
-
-    setAreas((currentAreas) =>
-      currentAreas.map((area) =>
-        area.id === currentArea.id
-          ? { ...area, isActive: false }
-          : area,
+    setAreas((items) =>
+      items.map((area) =>
+        area.id === current.id ? { ...area, isActive: false } : area,
       ),
     );
-
-    setSuccessMessage(
-      `El área "${currentArea.nombre}" se desactivó correctamente.`,
-    );
+    setSuccessMessage("Área desactivada correctamente");
     setDeactivationArea(undefined);
-  }
+  };
+
+  const columns = column.columns([
+    column.accessor("nombre", {
+      header: "Área",
+      cell: ({ getValue }) => (
+        <p className="min-w-44 font-medium">{getValue()}</p>
+      ),
+    }),
+    column.accessor("descripcion", {
+      header: "Descripción",
+      cell: ({ getValue }) => (
+        <p className="max-w-80 whitespace-normal text-muted-foreground">
+          {getValue() || "Sin descripción"}
+        </p>
+      ),
+    }),
+    column.accessor("activeEmployees", { header: "Empleados activos" }),
+    column.accessor("activePositions", { header: "Cargos activos" }),
+    column.accessor("associatedSchedules", { header: "Jornadas asociadas" }),
+    column.accessor("isActive", {
+      header: "Estado",
+      cell: ({ getValue }) => <RecordStatus active={getValue()} />,
+    }),
+    column.display({
+      id: "acciones",
+      header: "Acciones",
+      cell: ({ row }) => (
+        <AreaActions
+          area={row.original}
+          onEdit={handleOpenEdit}
+          onDeactivate={handleRequestDeactivate}
+        />
+      ),
+    }),
+  ]);
 
   return (
-    <section className="space-y-6 p-4 md:p-8">
-      <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Áreas
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Administra las áreas de la empresa
-          </p>
-        </div>
-
-        <Button
-          onClick={handleOpenCreate}
-          className="h-11 bg-indigo-600 text-white hover:bg-indigo-700"
-        >
-          <Plus aria-hidden="true" className="size-4" />
+    <ModulePage
+      title="Áreas"
+      description="Administra las áreas de la empresa"
+      message={successMessage}
+      action={
+        <Button className="h-9 px-4 text-xs" onClick={handleOpenCreate}>
+          <Plus aria-hidden className="size-3.5" />
           Registrar área
         </Button>
-      </header>
-
-      {successMessage && (
-        <div
-          role="status"
-          className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
-        >
-          {successMessage}
-        </div>
-      )}
-
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative w-full sm:max-w-md">
-          <Search
-            aria-hidden="true"
-            className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-          />
-          <Input
-            aria-label="Buscar áreas por nombre o descripción"
-            placeholder="Buscar por nombre o descripción…"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            className="h-11 pl-10"
-          />
-        </div>
-
-        <Badge variant="secondary" className="w-fit px-3 py-1.5">
+      }
+    >
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <ModuleSearch
+          label="Buscar áreas por nombre o descripción"
+          placeholder="Buscar por nombre o descripción"
+          value={search}
+          onChange={setSearch}
+          className="w-full sm:max-w-md"
+        />
+        <Badge variant="secondary" className="text-[11px]">
           {activeAreasCount} áreas activas
         </Badge>
       </div>
-
-      <div className="overflow-hidden rounded-xl border bg-card">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-muted/40 hover:bg-muted/40">
-              <TableHead className="px-5 py-4">
-                Nombre
-              </TableHead>
-              <TableHead className="min-w-64">
-                Descripción breve
-              </TableHead>
-              <TableHead className="text-center">
-                Empleados activos
-              </TableHead>
-              <TableHead className="text-center">
-                Cargos activos
-              </TableHead>
-              <TableHead className="text-center">
-                Jornadas asociadas
-              </TableHead>
-              <TableHead className="px-5 text-center">
-                Estado
-              </TableHead>
-              <TableHead className="px-5 text-center">
-                Acciones
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            {filteredAreas.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={7} className="h-40 text-center">
-                  <p className="font-medium">
-                    No se encontraron áreas
-                  </p>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Prueba con otro nombre o descripción.
-                  </p>
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredAreas.map((area) => (
-                <TableRow key={area.id}>
-                  <TableCell className="min-w-64 whitespace-normal px-5 py-6 font-medium">
-                    {area.nombre}
-                  </TableCell>
-
-                  <TableCell className="max-w-80 whitespace-normal text-muted-foreground">
-                    {area.descripcion || "Sin descripción"}
-                  </TableCell>
-
-                  <TableCell className="text-center">
-                    <span
-                      className={
-                        area.activeEmployees > 0
-                          ? "inline-flex size-9 items-center justify-center rounded-full bg-indigo-50 font-semibold text-indigo-600 dark:bg-indigo-950 dark:text-indigo-300"
-                          : "text-muted-foreground"
-                      }
-                    >
-                      {area.activeEmployees}
-                    </span>
-                  </TableCell>
-
-                  <TableCell className="text-center text-muted-foreground">
-                    {area.activePositions}
-                  </TableCell>
-
-                  <TableCell className="text-center text-muted-foreground">
-                    {area.associatedSchedules}
-                  </TableCell>
-
-                  <TableCell className="px-5 text-center">
-                    <Badge
-                      variant="outline"
-                      className={
-                        area.isActive
-                          ? "gap-1.5 border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
-                          : "gap-1.5 border-border bg-muted text-muted-foreground"
-                      }
-                    >
-                      <span
-                        aria-hidden="true"
-                        className="size-1.5 rounded-full bg-current"
-                      />
-                      {area.isActive ? "Activo" : "Inactivo"}
-                    </Badge>
-                  </TableCell>
-
-                  <TableCell className="px-5 text-center">
-                    <AreaActions
-                      area={area}
-                      onEdit={handleOpenEdit}
-                      onDeactivate={handleRequestDeactivate}
-                    />
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-
-        <div
-          role="status"
-          className="border-t px-5 py-4 text-sm text-muted-foreground"
-        >
-          Mostrando {filteredAreas.length} de {areas.length} áreas
-        </div>
-      </div>
-
+      <DataTable
+        columns={columns}
+        data={filteredAreas}
+        getRowId={(area) => area.id}
+        caption="Áreas de la empresa"
+      />
       {isFormOpen && (
         <AreaFormDialog
           isOpen={isFormOpen}
@@ -296,7 +172,6 @@ export function AreasView() {
           onSave={handleSaveArea}
         />
       )}
-
       {deactivationArea && (
         <AreaDeactivateDialog
           area={deactivationArea}
@@ -304,6 +179,6 @@ export function AreasView() {
           onConfirm={handleConfirmDeactivate}
         />
       )}
-    </section>
+    </ModulePage>
   );
 }

@@ -57,7 +57,7 @@ export default function DashboardMetrics({ data }: { data: DashboardData }) {
       {metrics.map((metric) => (
         <Card
           key={metric.label}
-          className="gap-0 border border-indigo-100/80 py-5 shadow-sm ring-0 dark:border-border"
+          className="gap-0 border border-border py-5 shadow-sm ring-0"
         >
           <CardContent className="space-y-3 px-5">
             <div className="flex items-center justify-between gap-2">

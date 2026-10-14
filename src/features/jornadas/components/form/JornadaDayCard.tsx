@@ -28,7 +28,7 @@ export default function JornadaDayCard({ index }: { index: number }) {
   const total = getJornadaHorasDia(dia);
   const error = errors.horario_semanal?.[index];
   return (
-    <div className="overflow-hidden rounded-xl border border-indigo-100 dark:border-border">
+    <div className="overflow-hidden rounded-xl border border-border">
       <div className="flex items-center gap-3 bg-primary/[0.02] px-4 py-3">
         <Switch
           id={`dia-${index}`}

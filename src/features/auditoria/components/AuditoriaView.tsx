@@ -89,6 +89,7 @@ export default function AuditoriaView() {
     >
       <div className="grid items-end gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <ModuleSelect
+          inlineLabel
           label="Tabla"
           value={filters.tabla}
           onChange={(value) => setFilter("tabla", value)}
@@ -101,6 +102,7 @@ export default function AuditoriaView() {
           ]}
         />
         <ModuleSelect
+          inlineLabel
           label="Acción"
           value={filters.accion}
           onChange={(value) => setFilter("accion", value)}
@@ -110,6 +112,7 @@ export default function AuditoriaView() {
           ]}
         />
         <ModuleSelect
+          inlineLabel
           label="Usuario"
           value={filters.usuario}
           onChange={(value) => setFilter("usuario", value)}
@@ -117,6 +120,7 @@ export default function AuditoriaView() {
         />
         <Input
           aria-label="Filtrar por ID de registro"
+          className="h-9 bg-background text-xs"
           placeholder="ID del registro (UUID)"
           value={filters.registro}
           onChange={(event) => setFilter("registro", event.target.value)}

@@ -14,7 +14,7 @@ export default function ModuleField({
   children: ReactNode;
 }) {
   return (
-    <Field data-invalid={Boolean(error)} className="gap-1.5">
+    <Field data-invalid={Boolean(error)} className="gap-1.5 [&_[data-slot=input]]:h-9 [&_[data-slot=input]]:bg-background [&_[data-slot=input]]:text-sm md:[&_[data-slot=input]]:text-xs [&_[data-slot=textarea]]:text-sm md:[&_[data-slot=textarea]]:text-xs">
       <FieldLabel htmlFor={id} className="text-xs">
         {label}
       </FieldLabel>

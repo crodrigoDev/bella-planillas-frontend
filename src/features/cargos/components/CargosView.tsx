@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Plus } from "lucide-react";
 import { createColumnHelper } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import ModuleSearch from "@/components/modules/ModuleSearch";
 import DataTable from "@/components/data-table/DataTable";
 import type { DataTableFeatures } from "@/components/data-table/data-table.config";
 import ModulePage from "@/components/modules/ModulePage";
@@ -100,20 +100,21 @@ export default function CargosView() {
       description="Organiza los puestos y sus bandas salariales"
       message={message}
       action={
-        <Button size="sm" onClick={() => setEditing(null)}>
+        <Button className="h-9 px-4 text-xs" onClick={() => setEditing(null)}>
           <Plus aria-hidden />
           Nuevo cargo
         </Button>
       }
     >
       <div className="grid items-end gap-3 sm:grid-cols-3">
-        <Input
-          aria-label="Buscar cargos"
+        <ModuleSearch
+          label="Buscar cargos"
           placeholder="Buscar por nombre o descripción"
           value={search}
-          onChange={(event) => setSearch(event.target.value)}
+          onChange={setSearch}
         />
         <ModuleSelect
+          inlineLabel
           label="Área"
           value={area}
           onChange={setArea}
@@ -126,6 +127,7 @@ export default function CargosView() {
           ]}
         />
         <ModuleSelect
+          inlineLabel
           label="Estado"
           value={estado}
           onChange={setEstado}

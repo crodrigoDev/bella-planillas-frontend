@@ -85,14 +85,15 @@ export default function MarcacionesView() {
       description="Consulta entradas, salidas y registros de descanso"
       message={message}
       action={
-        <Button size="sm" onClick={() => setCreating(true)}>
+        <Button className="h-9 px-4 text-xs" onClick={() => setCreating(true)}>
           <Plus aria-hidden />
           Registrar marcación
         </Button>
       }
     >
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid items-end gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <ModuleSelect
+          inlineLabel
           label="Empleado"
           value={filters.empleado}
           onChange={(value) => setFilter("empleado", value)}
@@ -105,6 +106,7 @@ export default function MarcacionesView() {
           ]}
         />
         <ModuleSelect
+          inlineLabel
           label="Tipo"
           value={filters.tipo}
           onChange={(value) => setFilter("tipo", value)}
@@ -117,6 +119,7 @@ export default function MarcacionesView() {
           Desde
           <Input
             type="date"
+            className="h-9 bg-background text-xs"
             value={filters.inicio}
             onChange={(event) => setFilter("inicio", event.target.value)}
           />
@@ -125,6 +128,7 @@ export default function MarcacionesView() {
           Hasta
           <Input
             type="date"
+            className="h-9 bg-background text-xs"
             value={filters.fin}
             onChange={(event) => setFilter("fin", event.target.value)}
           />

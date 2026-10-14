@@ -19,7 +19,7 @@ export default function DashboardPanel({
 }) {
   return (
     <Card
-      className={`gap-0 border border-indigo-100/80 py-0 shadow-sm ring-0 dark:border-border ${className}`}
+      className={`gap-0 border border-border py-0 shadow-sm ring-0 ${className}`}
     >
       <header className="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
         <div>

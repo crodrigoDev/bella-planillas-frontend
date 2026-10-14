@@ -10,6 +10,7 @@ import DataTable from "@/components/data-table/DataTable";
 import type { DataTableFeatures } from "@/components/data-table/data-table.config";
 import ModulePage from "@/components/modules/ModulePage";
 import ModuleSelect from "@/components/modules/ModuleSelect";
+import ModuleSearch from "@/components/modules/ModuleSearch";
 import {
   enumItems,
   moduleDate,
@@ -129,20 +130,21 @@ export default function SolicitudesView() {
       description="Revisa vacaciones, permisos y novedades del personal"
       message={message}
       action={
-        <Button size="sm" onClick={() => setCreating(true)}>
+        <Button className="h-9 px-4 text-xs" onClick={() => setCreating(true)}>
           <Plus aria-hidden />
           Nueva solicitud
         </Button>
       }
     >
       <div className="grid items-end gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        <Input
-          aria-label="Buscar solicitudes"
+        <ModuleSearch
+          label="Buscar solicitudes"
           placeholder="Buscar por código, nombre o documento"
           value={filters.search}
-          onChange={(event) => setFilter("search", event.target.value)}
+          onChange={(value) => setFilter("search", value)}
         />
         <ModuleSelect
+          inlineLabel
           label="Tipo"
           value={filters.tipo}
           onChange={(value) => setFilter("tipo", value)}
@@ -152,6 +154,7 @@ export default function SolicitudesView() {
           ]}
         />
         <ModuleSelect
+          inlineLabel
           label="Estado"
           value={filters.estado}
           onChange={(value) => setFilter("estado", value)}
@@ -168,6 +171,7 @@ export default function SolicitudesView() {
           ]}
         />
         <ModuleSelect
+          inlineLabel
           label="Área"
           value={filters.area}
           onChange={(value) => setFilter("area", value)}
@@ -183,6 +187,7 @@ export default function SolicitudesView() {
           Registro desde
           <Input
             type="date"
+            className="h-9 bg-background text-xs"
             value={filters.desde}
             onChange={(event) => setFilter("desde", event.target.value)}
           />
@@ -191,6 +196,7 @@ export default function SolicitudesView() {
           Registro hasta
           <Input
             type="date"
+            className="h-9 bg-background text-xs"
             value={filters.hasta}
             onChange={(event) => setFilter("hasta", event.target.value)}
           />

@@ -89,7 +89,7 @@ export default function CrearJornadaForm() {
         className="flex min-h-[calc(100dvh-150px)] flex-col"
       >
         <JornadaSteps step={step} />
-        <Card className="mb-6 border border-indigo-100 py-0 shadow-sm ring-0 dark:border-border">
+        <Card className="mb-6 border border-border py-0 shadow-sm ring-0">
           <CardContent className="p-5 sm:p-6">
             {step === 0 && <JornadaGeneralFields />}
             {step === 1 && <JornadaScheduleFields />}

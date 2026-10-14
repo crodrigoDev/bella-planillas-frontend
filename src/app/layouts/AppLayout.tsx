@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
@@ -14,17 +14,20 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
 import { filterSidebarItems } from "@/features/navigation/utils/filter-sidebar-items";
 import { canAccessRoute } from "@/features/auth/config/route-access.config";
+import { PERFIL_MOCK } from "@/features/perfil/data/perfil.mock";
 
 /**
  * Comparte el sidebar y la estructura principal entre las páginas internas
  */
 export default function AppLayout() {
   const { session, logout } = useAuth();
+  const navigate = useNavigate();
 
   // Guarda el estado del cierre de sesión para mostrar la espera o el error
   const logoutMutation = useMutation({
     mutationFn: logout,
     retry: false,
+    onSuccess: () => { void navigate(ROUTE_PATHS.auth.login, { replace: true }); },
   });
 
   // Muestra las opciones de RRHH mientras revisamos el diseño sin sesión
@@ -33,17 +36,25 @@ export default function AppLayout() {
 
   const sidebarItems = filterSidebarItems(RRHH_SIDEBAR_ITEMS, role);
 
-  // La vista publica no necesita inventar un usuario ni una sesión
+  // Muestra el perfil de ejemplo en la demostracion y la cuenta real al iniciar sesion
   const user: NavigationUser | null =
-    !APP_PREVIEW_MODE && session
-      ? { name: session.usuario.nombre, email: session.usuario.email }
-      : null;
+    APP_PREVIEW_MODE
+      ? { name: PERFIL_MOCK.empleado?.nombre_completo ?? "Recursos Humanos", email: PERFIL_MOCK.email }
+      : session
+        ? { name: session.usuario.nombre, email: session.usuario.email }
+        : null;
 
   /**
    * Solicita el cierre de sesión desde el menú del usuario
    */
   const handleLogout = (): void => {
-    if (APP_PREVIEW_MODE || !session || logoutMutation.isPending) return;
+    if (logoutMutation.isPending) return;
+
+    // Sin una sesion real, salir de la demostracion solo lleva al login
+    if (!session) {
+      void navigate(ROUTE_PATHS.auth.login, { replace: true });
+      return;
+    }
 
     // La mutación guarda los errores para mostrarlos en la página
     logoutMutation.mutate();

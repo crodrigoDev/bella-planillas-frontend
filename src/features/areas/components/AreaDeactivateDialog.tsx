@@ -31,8 +31,7 @@ export function AreaDeactivateDialog({
   onClose,
   onConfirm,
 }: AreaDeactivateDialogProps) {
-  const isBlocked =
-    area.activeEmployees > 0 || area.activePositions > 0;
+  const isBlocked = area.activeEmployees > 0 || area.activePositions > 0;
 
   const Icon = isBlocked ? TriangleAlert : CircleHelp;
 
@@ -70,10 +69,7 @@ export function AreaDeactivateDialog({
 
         <AlertDialogFooter>
           {isBlocked ? (
-            <Button
-              onClick={onClose}
-              className="bg-indigo-600 text-white hover:bg-indigo-700"
-            >
+            <Button onClick={onClose} className="h-9 text-xs">
               Entendido
             </Button>
           ) : (

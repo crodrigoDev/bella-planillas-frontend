@@ -9,7 +9,7 @@ import {
   DuracionJornadaEnum,
 } from "@jyp/shared-contracts";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import ModuleSearch from "@/components/modules/ModuleSearch";
 import DataTable from "@/components/data-table/DataTable";
 import type { DataTableFeatures } from "@/components/data-table/data-table.config";
 import ModulePage from "@/components/modules/ModulePage";
@@ -160,7 +160,7 @@ export default function JornadasView() {
       message={message}
       action={
         <Button
-          size="sm"
+          className="h-9 px-4 text-xs"
           render={<Link to={ROUTE_PATHS.asistencia.crearJornada} />}
         >
           <Plus aria-hidden />
@@ -168,16 +168,17 @@ export default function JornadasView() {
         </Button>
       }
     >
-      <Input
-        className="max-w-md bg-background"
-        aria-label="Buscar jornadas"
+      <ModuleSearch
+        className="max-w-md"
+        label="Buscar jornadas"
         placeholder="Buscar por nombre o descripción"
         value={search}
-        onChange={(event) => setSearch(event.target.value)}
+        onChange={setSearch}
       />
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         {choices.map((choice) => (
           <ModuleSelect
+            inlineLabel
             key={choice.key}
             label={choice.label}
             value={filters[choice.key]}

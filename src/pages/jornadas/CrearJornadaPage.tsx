@@ -6,7 +6,7 @@ import CrearJornadaForm from "@/features/jornadas/components/crear/CrearJornadaF
 /** Presenta el registro de jornada en una pagina completa */
 export default function CrearJornadaPage() {
   return (
-    <section className="-m-4 min-h-full bg-[#f5f5fc] p-4 dark:bg-background sm:p-6 lg:p-8">
+    <section className="-m-4 min-h-full bg-[#faf9ff] p-4 text-slate-700 dark:bg-background dark:text-foreground sm:p-6 lg:p-8">
       <div className="mx-auto max-w-4xl">
         <Link
           to={ROUTE_PATHS.asistencia.jornadas}
@@ -16,8 +16,10 @@ export default function CrearJornadaPage() {
           Volver a jornadas
         </Link>
         <header className="mt-5">
-          <h1 className="text-xl font-semibold">Nueva jornada</h1>
-          <p className="mt-1 text-xs text-muted-foreground">
+          <h1 className="text-xl font-semibold tracking-tight text-slate-950 dark:text-foreground">
+            Nueva jornada
+          </h1>
+          <p className="mt-1 text-xs text-slate-500 dark:text-muted-foreground">
             Define una plantilla reutilizable para los empleados de las áreas
             aplicables
           </p>
