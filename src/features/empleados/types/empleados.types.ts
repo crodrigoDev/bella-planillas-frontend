@@ -2,9 +2,9 @@ import type {
   CrearEmpleadoDto,
   ListarEmpleadosQueryDto,
 } from "@jyp/shared-contracts";
-import type { PaginatedApiResponse } from "@/lib/api/types/api.types";
 
-export type EmpleadosQuery = Partial<ListarEmpleadosQueryDto>;
+// Conserva los filtros del contrato y deja la paginacion a la tabla
+export type EmpleadosQuery = Omit<ListarEmpleadosQueryDto, "page" | "limit">;
 
 export interface EmpleadoCatalogo {
   id: string;
@@ -18,25 +18,11 @@ type DatosEmpleado = Required<
     | "nombre"
     | "apellido"
     | "nro_documento"
-    | "documento_id"
     | "email"
-    | "telefono"
-    | "sexo"
-    | "estado_civil"
-    | "nacionalidad"
-    | "fecha_nacimiento"
-    | "direccion"
-    | "referencia_direccion"
-    | "ubigeo"
-    | "distrito"
-    | "provincia"
-    | "departamento"
     | "area_id"
     | "cargo_id"
     | "jornada_id"
     | "fecha_inicio"
-    | "afp_fecha_filiacion"
-    | "asig_familiar"
     | "estado_laboral"
   >
 >;
@@ -45,8 +31,6 @@ type DatosEmpleado = Required<
 export interface EmpleadoListado extends DatosEmpleado {
   id: string;
   activo: boolean;
-  fecha_cese: string | null;
-  deleted_at: string | null;
   area: EmpleadoCatalogo;
   cargo: EmpleadoCatalogo;
   jornada: (EmpleadoCatalogo & { turno: string }) | null;
@@ -55,6 +39,3 @@ export interface EmpleadoListado extends DatosEmpleado {
     regimen_salud: string;
   } | null;
 }
-
-// Shared contracts todavia no exporta una respuesta para este listado
-export type ListarEmpleadosResponse = PaginatedApiResponse<EmpleadoListado>;

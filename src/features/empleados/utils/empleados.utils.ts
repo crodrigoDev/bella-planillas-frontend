@@ -1,8 +1,7 @@
 import {
   ListarEmpleadosQuerySchema,
-  type ListarEmpleadosQueryDto,
 } from "@jyp/shared-contracts";
-import type { EmpleadoListado } from "../types/empleados.types";
+import type { EmpleadoListado, EmpleadosQuery } from "../types/empleados.types";
 
 const dateFormatter = new Intl.DateTimeFormat("es-PE", {
   day: "2-digit",
@@ -43,20 +42,11 @@ function readCatalogoParam(
   return result.success ? result.data : undefined;
 }
 
-/** Lee los filtros usando las reglas y los valores por defecto del contrato */
+/** Lee los filtros de la URL usando las reglas del contrato */
 export function getEmpleadosQuery(
   params: URLSearchParams,
-): ListarEmpleadosQueryDto {
-  const page = ListarEmpleadosQuerySchema.shape.page.safeParse(
-    params.get("page") ?? undefined,
-  );
-  const limit = ListarEmpleadosQuerySchema.shape.limit.safeParse(
-    params.get("limit") ?? undefined,
-  );
-
+): EmpleadosQuery {
   return {
-    page: page.success ? page.data : 1,
-    limit: limit.success ? limit.data : 20,
     search: params.get("search") || undefined,
     area_id: readCatalogoParam(params, "area_id"),
     cargo_id: readCatalogoParam(params, "cargo_id"),

@@ -37,13 +37,14 @@ export default function EmpleadosSearch() {
     event.preventDefault();
     const term = inputRef.current?.value.trim() ?? "";
 
-    // Conserva los filtros del listado y vuelve a su primera pagina
+    // Conserva los filtros del listado al buscar desde el header
     const params = new URLSearchParams(
       pathname === empleadosPath ? search : "",
     );
     if (term) params.set("search", term);
     else params.delete("search");
-    params.set("page", "1");
+    params.delete("page");
+    params.delete("limit");
 
     // El listado comparte este valor para filtrar sus empleados
     void navigate({ pathname: empleadosPath, search: `?${params.toString()}` });

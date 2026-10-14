@@ -37,5 +37,3 @@ export const REGIMENES_SALUD: Record<string, string> = {
   ESSALUD_Y_EPS: "EsSalud y EPS",
   SCTR: "SCTR",
 };
-
-export const EMPLEADOS_PAGE_SIZES = [10, 20, 50, 100] as const;

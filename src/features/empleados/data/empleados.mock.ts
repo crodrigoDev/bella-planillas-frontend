@@ -1,11 +1,8 @@
-import type {
-  EstadoEmpleado,
-  ListarEmpleadosQueryDto,
-} from "@jyp/shared-contracts";
+import type { EstadoEmpleado } from "@jyp/shared-contracts";
 import type {
   EmpleadoCatalogo,
   EmpleadoListado,
-  ListarEmpleadosResponse,
+  EmpleadosQuery,
 } from "../types/empleados.types";
 
 // Los catalogos usan IDs como los que espera el filtro del backend
@@ -108,19 +105,7 @@ export const EMPLEADOS_MOCK: EmpleadoListado[] = personas
       nombre,
       apellido,
       nro_documento: String(72849102 + index * 17),
-      documento_id: "40000000-0000-4000-8000-000000000001",
       email: index === 12 ? null : `empleado${index + 1}@example.com`,
-      telefono: index % 4 === 0 ? null : String(900000000 + index),
-      sexo: index % 2 === 0 ? "MASCULINO" : "FEMENINO",
-      estado_civil: index % 3 === 0 ? "CASADO" : "SOLTERO",
-      nacionalidad: "PERUANA",
-      fecha_nacimiento: `${1988 + (index % 12)}-04-15T00:00:00.000Z`,
-      direccion: index % 6 === 0 ? null : `Av. Ejemplo ${100 + index}`,
-      referencia_direccion: null,
-      ubigeo: "150101",
-      distrito: "Lima",
-      provincia: "Lima",
-      departamento: "Lima",
       area_id: area.id,
       cargo_id: cargo.id,
       jornada_id: jornada?.id ?? null,
@@ -129,10 +114,6 @@ export const EMPLEADOS_MOCK: EmpleadoListado[] = personas
       jornada,
       fecha_inicio:
         index === 15 ? null : `${2020 + (index % 6)}-10-05T00:00:00.000Z`,
-      fecha_cese: activo ? null : "2026-09-29T00:00:00.000Z",
-      deleted_at: activo ? null : "2026-09-29T00:00:00.000Z",
-      afp_fecha_filiacion: index % 4 === 0 ? null : "2020-10-05T00:00:00.000Z",
-      asig_familiar: index % 3 === 0,
       estado_laboral: activo ? estados[index % estados.length] : "CESADO",
       activo,
       dato_financiero:
@@ -146,12 +127,12 @@ export const EMPLEADOS_MOCK: EmpleadoListado[] = personas
   })
   .sort((a, b) => (a.apellido ?? "").localeCompare(b.apellido ?? "", "es-PE"));
 
-/** Usa los filtros del contrato e incluye las bajas para poder consultarlas */
+/** Filtra el arreglo local y deja que TanStack divida las paginas */
 export function getEmpleadosMock(
-  query: ListarEmpleadosQueryDto,
-): ListarEmpleadosResponse {
+  query: EmpleadosQuery,
+): EmpleadoListado[] {
   const search = query.search?.trim().toLocaleLowerCase("es-PE");
-  const filtered = EMPLEADOS_MOCK.filter((empleado) => {
+  return EMPLEADOS_MOCK.filter((empleado) => {
     if (query.area_id && empleado.area_id !== query.area_id) return false;
     if (query.cargo_id && empleado.cargo_id !== query.cargo_id) return false;
     if (query.jornada_id && empleado.jornada_id !== query.jornada_id)
@@ -168,19 +149,4 @@ export function getEmpleadosMock(
       ].some((value) => value?.toLocaleLowerCase("es-PE").includes(search))
     );
   });
-
-  const skip = (query.page - 1) * query.limit;
-  return {
-    statusCode: 200,
-    data: filtered.slice(skip, skip + query.limit),
-    meta: {
-      total: filtered.length,
-      page: query.page,
-      limit: query.limit,
-      totalPages: Math.ceil(filtered.length / query.limit),
-      message: "Operación exitosa.",
-      path: "/api/rrhh/empleado",
-      timestamp: new Date().toISOString(),
-    },
-  };
 }
