@@ -14,6 +14,7 @@ export const ROUTE_PATHS = {
 
   gestionPersonal: {
     empleados: "/empleados",
+    fichaEmpleado: "/empleados/:empleadoId",
     crearEmpleado: "/empleados/crear",
     editarEmpleado: "/empleados/:empleadoId/editar",
     importarEmpleados: "/empleados/importar",

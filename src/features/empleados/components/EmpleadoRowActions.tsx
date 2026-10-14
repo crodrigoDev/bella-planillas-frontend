@@ -1,5 +1,6 @@
 import {
   EllipsisVertical,
+  IdCard,
   Pencil,
   RefreshCw,
   UserRoundCheck,
@@ -44,6 +45,10 @@ export default function EmpleadoRowActions({
         <EllipsisVertical aria-hidden="true" className="size-4" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-52">
+        <DropdownMenuItem render={<Link to={generatePath(ROUTE_PATHS.gestionPersonal.fichaEmpleado, { empleadoId: empleado.id })} />}>
+          <IdCard aria-hidden="true" /> Ver ficha
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
         {empleado.activo ? (
           <>
             <DropdownMenuItem render={<Link to={generatePath(ROUTE_PATHS.gestionPersonal.editarEmpleado, { empleadoId: empleado.id })} />}>

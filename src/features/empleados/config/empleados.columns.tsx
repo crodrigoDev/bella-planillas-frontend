@@ -1,4 +1,6 @@
 import { createColumnHelper } from "@tanstack/react-table";
+import { generatePath, Link } from "react-router-dom";
+import { ROUTE_PATHS } from "@/app/routes/path";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -50,12 +52,13 @@ export function getEmpleadosColumns(canManage: boolean, actions: EmpleadoActions
               </AvatarFallback>
             </Avatar>
             <div className="min-w-0 max-w-64">
-              <p
-                className="truncate text-xs font-medium text-foreground"
+              <Link
+                to={generatePath(ROUTE_PATHS.gestionPersonal.fichaEmpleado, { empleadoId: empleado.id })}
+                className="block truncate text-xs font-medium text-foreground hover:text-primary hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-primary"
                 title={name}
               >
                 {name}
-              </p>
+              </Link>
               <p className="mt-0.5 flex items-center gap-1 text-[11px] text-muted-foreground">
                 <span className="shrink-0">{empleado.nro_documento}</span>
                 <span aria-hidden="true">·</span>
