@@ -82,4 +82,10 @@ export const RRHH_SIDEBAR_ITEMS = [
     icon: Shield,
     to: ROUTE_PATHS.auditoria,
   },
+  {
+    type: "link",
+    label: "Mi perfil",
+    icon: UserRound,
+    to: ROUTE_PATHS.perfil,
+  },
 ] as const satisfies readonly SidebarItem[];

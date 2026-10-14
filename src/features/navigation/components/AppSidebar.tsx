@@ -17,7 +17,7 @@ import { CustomTrigger } from "./CustomTrigger";
 
 interface AppSidebarProps {
   items: readonly SidebarItem[];
-  user: NavigationUser;
+  user: NavigationUser | null;
   onLogout: () => void;
   isLoggingOut: boolean;
 }
@@ -46,11 +46,13 @@ export default function AppSidebar({
 
       <SidebarFooter className="flex items-center">
         <CustomTrigger />
-        <NavUser
-          user={user}
-          onLogout={onLogout}
-          isLoggingOut={isLoggingOut}
-        />
+        {user && (
+          <NavUser
+            user={user}
+            onLogout={onLogout}
+            isLoggingOut={isLoggingOut}
+          />
+        )}
       </SidebarFooter>
 
       <SidebarRail className="hover:after:bg-primary" />

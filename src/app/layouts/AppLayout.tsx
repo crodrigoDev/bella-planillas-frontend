@@ -1,11 +1,10 @@
 import { Outlet } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { APP_PREVIEW_MODE } from "@/app/config/app-preview.config";
+import { ROUTE_PATHS } from "@/app/routes/path";
+import AppHeader from "@/features/navigation/components/AppHeader";
 import AppSidebar from "@/features/navigation/components/AppSidebar";
 import { RRHH_SIDEBAR_ITEMS } from "@/features/navigation/config/navigation.config";
 import type { NavigationUser } from "@/features/navigation/types/navigation.types";
@@ -14,6 +13,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
 import { filterSidebarItems } from "@/features/navigation/utils/filter-sidebar-items";
+import { canAccessRoute } from "@/features/auth/config/route-access.config";
 
 /**
  * Comparte el sidebar y la estructura principal entre las páginas internas
@@ -27,22 +27,23 @@ export default function AppLayout() {
     retry: false,
   });
 
-  if (!session) return null;
+  // Muestra las opciones de RRHH mientras revisamos el diseño sin sesión
+  const role = APP_PREVIEW_MODE ? "RRHH" : session?.usuario.rol;
+  if (!role) return null;
 
-  // Usa los mismos permisos que las rutas para mostrar las opciones del usuario
-  const sidebarItems = filterSidebarItems(RRHH_SIDEBAR_ITEMS, session.usuario.rol);
+  const sidebarItems = filterSidebarItems(RRHH_SIDEBAR_ITEMS, role);
 
-  // Adapta los datos reales al formato que necesita el sidebar
-  const user: NavigationUser = {
-    name: session.usuario.nombre,
-    email: session.usuario.email,
-  };
+  // La vista publica no necesita inventar un usuario ni una sesión
+  const user: NavigationUser | null =
+    !APP_PREVIEW_MODE && session
+      ? { name: session.usuario.nombre, email: session.usuario.email }
+      : null;
 
   /**
    * Solicita el cierre de sesión desde el menú del usuario
    */
   const handleLogout = (): void => {
-    if (logoutMutation.isPending) return;
+    if (APP_PREVIEW_MODE || !session || logoutMutation.isPending) return;
 
     // La mutación guarda los errores para mostrarlos en la página
     logoutMutation.mutate();
@@ -59,10 +60,13 @@ export default function AppLayout() {
         isLoggingOut={logoutMutation.isPending}
       />
 
-      <SidebarInset>
-        <header className="flex h-14 items-center border-b border-sidebar-border px-4">
-          <SidebarTrigger />
-        </header>
+      <SidebarInset className="min-w-0">
+        <AppHeader
+          canSearchEmpleados={canAccessRoute(
+            ROUTE_PATHS.gestionPersonal.empleados,
+            role,
+          )}
+        />
 
         <div className="flex-1 space-y-4 p-4">
           {logoutMutation.isError && (
