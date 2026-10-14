@@ -19,6 +19,7 @@ import AreasPage from "@/pages/areas/AreasPage";
 import CargosPage from "@/pages/cargos/CargosPage";
 import JornadasPage from "@/pages/jornadas/JornadasPage";
 import CrearJornadaPage from "@/pages/jornadas/CrearJornadaPage";
+import EditarJornadaPage from "@/pages/jornadas/EditarJornadaPage";
 import SolicitudesPage from "@/pages/solicitudes/SolicitudesPage";
 import MarcacionesPage from "@/pages/marcaciones/MarcacionesPage";
 import AuditoriaPage from "@/pages/auditoria/AuditoriaPage";
@@ -26,6 +27,11 @@ import PerfilPage from "@/pages/perfil/PerfilPage";
 
 // Estas vistas usan datos locales mientras presentamos la rama
 const modulePages = [
+  {
+    path: ROUTE_PATHS.asistencia.editarJornada,
+    title: "Editar jornada",
+    element: <EditarJornadaPage />,
+  },
   {
     path: ROUTE_PATHS.asistencia.crearJornada,
     title: "Nueva jornada",

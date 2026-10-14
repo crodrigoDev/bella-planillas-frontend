@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { generatePath, Link, useLocation } from "react-router-dom";
 import { ROUTE_PATHS } from "@/app/routes/path";
 import { Plus } from "lucide-react";
 import { createColumnHelper } from "@tanstack/react-table";
@@ -19,16 +19,12 @@ import ConfirmActionDialog from "@/components/modules/ConfirmActionDialog";
 import { enumItems, moduleLabel } from "@/components/modules/module.utils";
 import { AREAS_MOCK } from "@/features/empleados/data/empleados.mock";
 import { JORNADAS_LISTADO_MOCK } from "../data/jornadas.mock";
-import {
-  cambiarEstadoJornadaMock,
-  guardarJornadaMock,
-} from "../utils/jornadas.actions";
+import { cambiarEstadoJornadaMock } from "../utils/jornadas.actions";
 import type { JornadaListado } from "../types/jornadas.types";
-import JornadaFormDialog from "./JornadaFormDialog";
 
 const column = createColumnHelper<DataTableFeatures, JornadaListado>();
 
-/** Lista jornadas y abre su horario en el mismo dialogo de edicion */
+/** Lista jornadas y abre su pagina para editar el horario */
 export default function JornadasView() {
   const [data, setData] = useState(() => [...JORNADAS_LISTADO_MOCK]);
   const [search, setSearch] = useState("");
@@ -39,7 +35,6 @@ export default function JornadasView() {
     duracion: "todos",
     estado: "todos",
   });
-  const [editing, setEditing] = useState<JornadaListado | undefined>();
   const [changing, setChanging] = useState<JornadaListado | null>(null);
   const location = useLocation();
   const [message, setMessage] = useState(
@@ -108,7 +103,13 @@ export default function JornadasView() {
             size="sm"
             variant="ghost"
             disabled={!row.original.activo}
-            onClick={() => setEditing(row.original)}
+            render={
+              <Link
+                to={generatePath(ROUTE_PATHS.asistencia.editarJornada, {
+                  jornadaId: row.original.id,
+                })}
+              />
+            }
           >
             Horario / Editar
           </Button>
@@ -195,17 +196,6 @@ export default function JornadasView() {
         getRowId={(row) => row.id}
         caption="Jornadas laborales"
       />
-      {editing !== undefined && (
-        <JornadaFormDialog
-          jornada={editing}
-          onClose={() => setEditing(undefined)}
-          onSave={(values) => {
-            guardarJornadaMock(values, editing?.id);
-            setData([...JORNADAS_LISTADO_MOCK]);
-            setMessage("Jornada guardada en la vista de prueba");
-          }}
-        />
-      )}
       {changing && (
         <ConfirmActionDialog
           title={changing.activo ? "Desactivar jornada" : "Reactivar jornada"}

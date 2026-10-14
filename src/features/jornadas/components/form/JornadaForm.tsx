@@ -11,22 +11,25 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ROUTE_PATHS } from "@/app/routes/path";
 import { JORNADA_DEFAULT_VALUES } from "../../config/jornada-form.config";
-import type { JornadaFormValues } from "../../types/jornadas.types";
+import type {
+  JornadaFormValues,
+  JornadaListado,
+} from "../../types/jornadas.types";
 import { prepararJornada } from "../../utils/jornada-form.utils";
 import { guardarJornadaMock } from "../../utils/jornadas.actions";
-import JornadaGeneralFields from "../form/JornadaGeneralFields";
-import JornadaScheduleFields from "../form/JornadaScheduleFields";
-import JornadaSummary from "../form/JornadaSummary";
+import JornadaGeneralFields from "./JornadaGeneralFields";
+import JornadaScheduleFields from "./JornadaScheduleFields";
+import JornadaSummary from "./JornadaSummary";
 import JornadaSteps from "./JornadaSteps";
 
-/** Divide el registro en datos, horario y confirmacion */
-export default function CrearJornadaForm() {
+/** Reutiliza los tres pasos para crear o editar una jornada */
+export default function JornadaForm({ jornada }: { jornada?: JornadaListado }) {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [preview, setPreview] = useState<CrearJornadaDto | null>(null);
   const form = useForm<JornadaFormValues, unknown, CrearJornadaDto>({
     resolver: zodResolver(CrearJornadaSchema),
-    defaultValues: JORNADA_DEFAULT_VALUES,
+    defaultValues: jornada ?? JORNADA_DEFAULT_VALUES,
     mode: "onTouched",
   });
   const next = async (): Promise<void> => {
@@ -63,9 +66,10 @@ export default function CrearJornadaForm() {
       return;
     }
     try {
-      guardarJornadaMock(prepararJornada(values));
+      // Con un ID actualiza la jornada y sin ID agrega un registro nuevo
+      guardarJornadaMock(prepararJornada(values), jornada?.id);
       void navigate(ROUTE_PATHS.asistencia.jornadas, {
-        state: { message: "Jornada creada en la vista de prueba" },
+        state: { message: jornada ? "Jornada actualizada" : "Jornada creada" },
       });
     } catch (error) {
       form.setError("root", {
@@ -86,10 +90,10 @@ export default function CrearJornadaForm() {
             void next();
           } else void form.handleSubmit(submit)(event);
         }}
-        className="flex min-h-[calc(100dvh-150px)] flex-col"
+        className="flex flex-col gap-6"
       >
         <JornadaSteps step={step} />
-        <Card className="mb-6 border border-border py-0 shadow-sm ring-0">
+        <Card className="border border-border py-0 shadow-sm ring-0">
           <CardContent className="p-5 sm:p-6">
             {step === 0 && <JornadaGeneralFields />}
             {step === 1 && <JornadaScheduleFields />}
@@ -101,7 +105,7 @@ export default function CrearJornadaForm() {
             )}
           </CardContent>
         </Card>
-        <footer className="sticky bottom-0 z-10 mt-auto flex flex-wrap items-center justify-between gap-3 border-t bg-background py-4">
+        <footer className="flex flex-wrap items-center justify-between gap-4 rounded-xl border bg-background p-4 sm:px-5">
           {step > 0 ? (
             <Button
               type="button"
@@ -124,7 +128,7 @@ export default function CrearJornadaForm() {
               Volver
             </Button>
           )}
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-3">
             <Button
               type="button"
               variant="outline"
@@ -138,7 +142,9 @@ export default function CrearJornadaForm() {
                 <ChevronRight aria-hidden className="size-3.5" />
               </Button>
             ) : (
-              <Button type="submit">Crear jornada</Button>
+              <Button type="submit">
+                {jornada ? "Guardar cambios" : "Crear jornada"}
+              </Button>
             )}
           </div>
         </footer>

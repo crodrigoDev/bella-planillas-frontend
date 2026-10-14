@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { ROUTE_PATHS } from "@/app/routes/path";
-import CrearJornadaForm from "@/features/jornadas/components/crear/CrearJornadaForm";
+import JornadaForm from "@/features/jornadas/components/form/JornadaForm";
 
 /** Presenta el registro de jornada en una pagina completa */
 export default function CrearJornadaPage() {
@@ -24,7 +24,7 @@ export default function CrearJornadaPage() {
             aplicables
           </p>
         </header>
-        <CrearJornadaForm />
+        <JornadaForm />
       </div>
     </section>
   );

@@ -5,6 +5,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ModulePage from "@/components/modules/ModulePage";
 import ModuleSelect from "@/components/modules/ModuleSelect";
 import {
@@ -23,6 +24,7 @@ import {
   fechaMarcacionLima,
 } from "../utils/marcaciones.actions";
 import MarcacionFormDialog from "./MarcacionFormDialog";
+import AsistenciaDiariaView from "./AsistenciaDiariaView";
 
 const column = createColumnHelper<DataTableFeatures, MarcacionEmpleado>();
 
@@ -37,6 +39,7 @@ export default function MarcacionesView() {
     fin: params.get("fecha_fin") ?? "2026-10-14",
   });
   const [creating, setCreating] = useState(false);
+  const [tab, setTab] = useState("asistencia");
   const [message, setMessage] = useState("");
   const filtered = data.filter(
     (item) =>
@@ -91,61 +94,89 @@ export default function MarcacionesView() {
         </Button>
       }
     >
-      <div className="grid items-end gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <ModuleSelect
-          inlineLabel
-          label="Empleado"
-          value={filters.empleado}
-          onChange={(value) => setFilter("empleado", value)}
-          items={[
-            { value: "todos", label: "Todos" },
-            ...EMPLEADOS_MOCK.map((emp) => ({
-              value: emp.id,
-              label: getEmpleadoNombre(emp),
-            })),
-          ]}
-        />
-        <ModuleSelect
-          inlineLabel
-          label="Tipo"
-          value={filters.tipo}
-          onChange={(value) => setFilter("tipo", value)}
-          items={[
-            { value: "todos", label: "Todos" },
-            ...enumItems(["ENTRADA", "SALIDA"]),
-          ]}
-        />
-        <label className="space-y-1.5 text-xs">
-          Desde
-          <Input
-            type="date"
-            className="h-9 bg-background text-xs"
-            value={filters.inicio}
-            onChange={(event) => setFilter("inicio", event.target.value)}
+      <Tabs
+        value={tab}
+        onValueChange={(value) => {
+          if (typeof value === "string") setTab(value);
+        }}
+        className="gap-5"
+      >
+        <TabsList className="h-10 max-w-full border bg-background p-1 shadow-sm">
+          <TabsTrigger
+            value="asistencia"
+            className="px-3 text-xs data-active:bg-primary data-active:text-primary-foreground"
+          >
+            Asistencia diaria
+          </TabsTrigger>
+          <TabsTrigger
+            value="registros"
+            className="px-3 text-xs data-active:bg-primary data-active:text-primary-foreground"
+          >
+            Registro de marcaciones
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="asistencia">
+          <AsistenciaDiariaView marcaciones={data} />
+        </TabsContent>
+        <TabsContent value="registros" className="space-y-5">
+          <div className="grid items-end gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <ModuleSelect
+              inlineLabel
+              label="Empleado"
+              value={filters.empleado}
+              onChange={(value) => setFilter("empleado", value)}
+              items={[
+                { value: "todos", label: "Todos" },
+                ...EMPLEADOS_MOCK.map((emp) => ({
+                  value: emp.id,
+                  label: getEmpleadoNombre(emp),
+                })),
+              ]}
+            />
+            <ModuleSelect
+              inlineLabel
+              label="Tipo"
+              value={filters.tipo}
+              onChange={(value) => setFilter("tipo", value)}
+              items={[
+                { value: "todos", label: "Todos" },
+                ...enumItems(["ENTRADA", "SALIDA"]),
+              ]}
+            />
+            <label className="space-y-1.5 text-xs">
+              Desde
+              <Input
+                type="date"
+                className="h-9 bg-background text-xs"
+                value={filters.inicio}
+                onChange={(event) => setFilter("inicio", event.target.value)}
+              />
+            </label>
+            <label className="space-y-1.5 text-xs">
+              Hasta
+              <Input
+                type="date"
+                className="h-9 bg-background text-xs"
+                value={filters.fin}
+                onChange={(event) => setFilter("fin", event.target.value)}
+              />
+            </label>
+          </div>
+          <DataTable
+            columns={columns}
+            data={filtered}
+            getRowId={(row) => row.id}
+            caption="Registro de marcaciones"
           />
-        </label>
-        <label className="space-y-1.5 text-xs">
-          Hasta
-          <Input
-            type="date"
-            className="h-9 bg-background text-xs"
-            value={filters.fin}
-            onChange={(event) => setFilter("fin", event.target.value)}
-          />
-        </label>
-      </div>
-      <DataTable
-        columns={columns}
-        data={filtered}
-        getRowId={(row) => row.id}
-        caption="Registro de marcaciones"
-      />
+        </TabsContent>
+      </Tabs>
       {creating && (
         <MarcacionFormDialog
           onClose={() => setCreating(false)}
           onSave={(values) => {
             crearMarcacionMock(values);
             setData([...MARCACIONES_MOCK]);
+            setTab("registros");
             setFilters((current) => ({
               ...current,
               inicio: fechaMarcacionLima(values.fecha_hora.toISOString()),
