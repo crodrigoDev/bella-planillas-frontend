@@ -1,5 +1,6 @@
 import type {
   CrearEmpleadoDto,
+  CrearCargoDto,
   ListarEmpleadosQueryDto,
 } from "@jyp/shared-contracts";
 
@@ -10,6 +11,8 @@ export interface EmpleadoCatalogo {
   id: string;
   nombre: string;
 }
+
+export type EmpleadoCargo = EmpleadoCatalogo & Pick<CrearCargoDto, "id_area">;
 
 // Reutiliza los campos comunes del contrato, que en la respuesta ya vienen completos
 type DatosEmpleado = Required<

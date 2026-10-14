@@ -9,6 +9,8 @@ import AuthLayout from "@/app/layouts/AuthLayout";
 import AppLayout from "@/app/layouts/AppLayout";
 import DashboardPage from "@/pages/dashboard/DashboardPage";
 import EmpleadosPage from "@/pages/empleados/EmpleadosPage";
+import CrearEmpleadoPage from "@/pages/empleados/CrearEmpleadoPage";
+import ImportarEmpleadosPage from "@/pages/empleados/ImportarEmpleadosPage";
 import NotFoundPage from "@/pages/not-found/NotFoundPage";
 import EnConstruccionPage from "@/pages/construccion/EnConstruccionPage";
 import LoginPage from "@/pages/auth/LoginPage";
@@ -77,6 +79,32 @@ export const router = createBrowserRouter([
                 element: <EmpleadosPage />,
               },
             ],
+          },
+          {
+            element: APP_PREVIEW_MODE ? (
+              <Outlet />
+            ) : (
+              <RoleRoute path={ROUTE_PATHS.gestionPersonal.crearEmpleado} />
+            ),
+            children: [
+              {
+                path: ROUTE_PATHS.gestionPersonal.crearEmpleado,
+                handle: { title: "Nuevo empleado" },
+                element: <CrearEmpleadoPage />,
+              },
+            ],
+          },
+          {
+            element: APP_PREVIEW_MODE ? (
+              <Outlet />
+            ) : (
+              <RoleRoute path={ROUTE_PATHS.gestionPersonal.importarEmpleados} />
+            ),
+            children: [{
+              path: ROUTE_PATHS.gestionPersonal.importarEmpleados,
+              handle: { title: "Importar empleados" },
+              element: <ImportarEmpleadosPage />,
+            }],
           },
           ...pendingPages.map(({ path, title }) => ({
             element: APP_PREVIEW_MODE ? <Outlet /> : <RoleRoute path={path} />,

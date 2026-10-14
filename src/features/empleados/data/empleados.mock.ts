@@ -1,6 +1,7 @@
-import type { EstadoEmpleado } from "@jyp/shared-contracts";
+import { CrearEmpleadoSchema, type CrearEmpleadoDto, type EstadoEmpleado } from "@jyp/shared-contracts";
 import type {
   EmpleadoCatalogo,
+  EmpleadoCargo,
   EmpleadoListado,
   EmpleadosQuery,
 } from "../types/empleados.types";
@@ -22,21 +23,30 @@ export const AREAS_MOCK: EmpleadoCatalogo[] = [
   },
   { id: "10000000-0000-4000-8000-000000000005", nombre: "Recursos Humanos" },
 ];
-export const CARGOS_MOCK: EmpleadoCatalogo[] = [
+export const CARGOS_MOCK: EmpleadoCargo[] = [
   {
     id: "20000000-0000-4000-8000-000000000001",
+    id_area: AREAS_MOCK[0].id,
     nombre: "Supervisor de almacén",
   },
-  { id: "20000000-0000-4000-8000-000000000002", nombre: "Ejecutivo de ventas" },
+  { id: "20000000-0000-4000-8000-000000000002", id_area: AREAS_MOCK[1].id, nombre: "Ejecutivo de ventas" },
   {
     id: "20000000-0000-4000-8000-000000000003",
+    id_area: AREAS_MOCK[2].id,
     nombre: "Ingeniero de software",
   },
-  { id: "20000000-0000-4000-8000-000000000004", nombre: "Analista contable" },
+  { id: "20000000-0000-4000-8000-000000000004", id_area: AREAS_MOCK[3].id, nombre: "Analista contable" },
   {
     id: "20000000-0000-4000-8000-000000000005",
+    id_area: AREAS_MOCK[4].id,
     nombre: "Especialista de RRHH",
   },
+];
+export const DOCUMENTOS_MOCK: EmpleadoCatalogo[] = [
+  { id: "40000000-0000-4000-8000-000000000001", nombre: "DNI" },
+  { id: "40000000-0000-4000-8000-000000000002", nombre: "Carné de extranjería" },
+  { id: "40000000-0000-4000-8000-000000000003", nombre: "Pasaporte" },
+  { id: "40000000-0000-4000-8000-000000000004", nombre: "PTP" },
 ];
 export const JORNADAS_MOCK = [
   {
@@ -149,4 +159,41 @@ export function getEmpleadosMock(
       ].some((value) => value?.toLocaleLowerCase("es-PE").includes(search))
     );
   });
+}
+
+/** Agrega un empleado a los datos de prueba durante esta visita */
+export function registrarEmpleadoMock(values: CrearEmpleadoDto): EmpleadoListado {
+  const data = CrearEmpleadoSchema.parse(values);
+  if (EMPLEADOS_MOCK.some((empleado) => empleado.nro_documento === data.nro_documento)) {
+    throw new Error("Ya existe un empleado con este número de documento");
+  }
+
+  const area = AREAS_MOCK.find((item) => item.id === data.area_id);
+  const cargo = CARGOS_MOCK.find((item) => item.id === data.cargo_id);
+  const documento = DOCUMENTOS_MOCK.find((item) => item.id === data.documento_id);
+  const jornada = JORNADAS_MOCK.find((item) => item.id === data.jornada_id) ?? null;
+  if (!area || !cargo || !documento || (data.jornada_id && !jornada)) {
+    throw new Error("Selecciona los datos laborales y el documento de los catálogos disponibles");
+  }
+
+  const empleado: EmpleadoListado = {
+    ...data,
+    id: crypto.randomUUID(),
+    nombre: data.nombre ?? null,
+    apellido: data.apellido ?? null,
+    email: data.email ?? null,
+    fecha_inicio: data.fecha_inicio ?? null,
+    jornada_id: data.jornada_id ?? null,
+    area,
+    cargo,
+    jornada,
+    estado_laboral: "ACTIVO",
+    activo: true,
+    dato_financiero: null,
+  };
+
+  // Solo cambia el arreglo local, al recargar se recuperan los datos iniciales
+  EMPLEADOS_MOCK.push(empleado);
+  EMPLEADOS_MOCK.sort((a, b) => (a.apellido ?? "").localeCompare(b.apellido ?? "", "es-PE"));
+  return empleado;
 }

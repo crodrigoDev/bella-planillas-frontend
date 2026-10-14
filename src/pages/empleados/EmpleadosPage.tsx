@@ -1,4 +1,6 @@
 import { FileUp, Plus } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ROUTE_PATHS } from "@/app/routes/path";
 import { Button } from "@/components/ui/button";
 import { APP_PREVIEW_MODE } from "@/app/config/app-preview.config";
 import { useAuth } from "@/features/auth/hooks/useAuth";
@@ -32,13 +34,15 @@ export default function EmpleadosPage() {
             <Button
               variant="outline"
               className="h-9 bg-background text-xs text-slate-700"
-              disabled
-              title="Disponible próximamente"
+              render={<Link to={ROUTE_PATHS.gestionPersonal.importarEmpleados} />}
             >
               <FileUp aria-hidden="true" className="size-3.5" />
               Importar empleados
             </Button>
-            <Button className="h-9 px-4 text-xs" disabled title="Disponible próximamente">
+            <Button
+              className="h-9 px-4 text-xs"
+              render={<Link to={ROUTE_PATHS.gestionPersonal.crearEmpleado} />}
+            >
               <Plus aria-hidden="true" className="size-3.5" />
               Nuevo empleado
             </Button>
