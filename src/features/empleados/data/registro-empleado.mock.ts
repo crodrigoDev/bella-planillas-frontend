@@ -2,14 +2,14 @@ import {
   CrearContratoSchema,
   CrearDatoFinancieroSchema,
   type BancoDto,
-  type CrearContratoDto,
-  type CrearDatoFinancieroDto,
   type TipoAfpDto,
 } from "@jyp/shared-contracts";
 import { RegistroEmpleadoSchema } from "../schemas/registro-empleado.schema";
 import type { RegistroEmpleadoDto } from "../types/crear-empleado.types";
 import type { EmpleadoCatalogo } from "../types/empleados.types";
 import { registrarEmpleadoMock } from "./empleados.mock";
+import type { ContratoMock } from "../types/contrato-empleado.types";
+import type { FinancieroMock } from "../types/financiero-empleado.types";
 
 export const REGIMENES_PENSION_MOCK: EmpleadoCatalogo[] = [
   { id: "50000000-0000-4000-8000-000000000001", nombre: "AFP" },
@@ -31,8 +31,8 @@ export const BANCOS_MOCK: BancoDto[] = [
 ];
 
 // Conserva los registros relacionados durante esta visita a la aplicacion
-export const CONTRATOS_REGISTRADOS_MOCK: (CrearContratoDto & { id: string })[] = [];
-export const FINANCIEROS_REGISTRADOS_MOCK: (CrearDatoFinancieroDto & { id: string })[] = [];
+export const CONTRATOS_REGISTRADOS_MOCK: ContratoMock[] = [];
+export const FINANCIEROS_REGISTRADOS_MOCK: FinancieroMock[] = [];
 
 /** Simula el alta de empleado, contrato y datos financieros en ese orden */
 export function registrarEmpleadoCompletoMock(values: RegistroEmpleadoDto) {

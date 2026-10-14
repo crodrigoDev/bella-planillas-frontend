@@ -21,6 +21,7 @@ interface EmpleadoInputFieldProps {
   inputMode?: ComponentProps<typeof Input>["inputMode"];
   className?: string;
   emptyValue?: null | "";
+  disabled?: boolean;
 }
 
 /** Conecta un campo de texto con el formulario y muestra su error */
@@ -30,6 +31,7 @@ export default function EmpleadoInputField({
   required = false,
   className,
   emptyValue,
+  disabled = false,
   ...inputProps
 }: EmpleadoInputFieldProps) {
   const {
@@ -57,7 +59,7 @@ export default function EmpleadoInputField({
         })}
         {...inputProps}
         id={id}
-        disabled={isSubmitting}
+        disabled={disabled || isSubmitting}
         aria-required={required}
         aria-invalid={Boolean(error)}
         aria-describedby={error ? `${id}-error` : undefined}

@@ -14,8 +14,8 @@ import EmpleadoRegistroSteps from "./EmpleadoRegistroSteps";
 import EmpleadoDatosPersonales from "../form/EmpleadoDatosPersonales";
 import EmpleadoDatosLaborales from "../form/EmpleadoDatosLaborales";
 import EmpleadoRegistroResumen from "./EmpleadoRegistroResumen";
-import EmpleadoContrato from "./EmpleadoContrato";
-import EmpleadoDatosFinancieros from "./EmpleadoDatosFinancieros";
+import EmpleadoContrato from "../form/EmpleadoContrato";
+import EmpleadoDatosFinancieros from "../form/EmpleadoDatosFinancieros";
 
 interface CrearEmpleadoFormProps {
   onSubmit: (values: RegistroEmpleadoDto) => void | Promise<void>;

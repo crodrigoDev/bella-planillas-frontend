@@ -6,9 +6,10 @@ import { FICHA_FECHA_MOCK } from "../config/ficha-empleado.config";
 import { addFichaDays, getFichaSemana } from "../utils/ficha-empleado.utils";
 import { getEmpleadoNombre } from "../utils/empleados.utils";
 import type { ContratoEmpleado, MarcacionEmpleado } from "../types/ficha-empleado.types";
+import type { ContratoMock } from "../types/contrato-empleado.types";
 
 // Los contratos de ejemplo no modifican los registros creados con el formulario
-const CONTRATOS_FICHA_MOCK = EMPLEADOS_MOCK.flatMap((empleado, index) => {
+export const CONTRATOS_FICHA_MOCK: ContratoMock[] = EMPLEADOS_MOCK.flatMap((empleado, index) => {
   if (!empleado.activo || index % 7 === 3) return [];
   const anteriorId = `90000000-0000-4000-8000-${String(index * 2 + 1).padStart(12, "0")}`;
   const actualId = `90000000-0000-4000-8000-${String(index * 2 + 2).padStart(12, "0")}`;
@@ -17,15 +18,20 @@ const CONTRATOS_FICHA_MOCK = EMPLEADOS_MOCK.flatMap((empleado, index) => {
   return [{ ...actual, id: actualId }, { ...anterior, id: anteriorId }];
 });
 
+/** Reune los contratos de ejemplo y los registrados durante esta visita */
+export function getContratosMock(): ContratoMock[] {
+  return [...CONTRATOS_FICHA_MOCK, ...CONTRATOS_REGISTRADOS_MOCK];
+}
+
 /** Entrega el historial con los mismos datos de vencimiento del listado */
-export function getContratosEmpleadoMock(empleadoId: string): ContratoEmpleado[] {
+export function getContratosEmpleadoMock(empleadoId: string, records = getContratosMock()): ContratoEmpleado[] {
   const referencia = new Date(`${FICHA_FECHA_MOCK}T12:00:00-05:00`).getTime();
-  return [...CONTRATOS_FICHA_MOCK, ...CONTRATOS_REGISTRADOS_MOCK]
-    .filter((item) => item.empleado_id === empleadoId)
+  return records
+    .filter((item) => item.empleado_id === empleadoId && !item.deleted_at)
     .sort((a, b) => b.fecha_inicio.localeCompare(a.fecha_inicio))
     .map((item) => {
       const dias = item.fecha_fin ? Math.trunc((new Date(item.fecha_fin).getTime() - referencia) / 86400000) : null;
-      return { ...item, dias_restantes: dias, alerta_vencimiento: dias === null ? null : dias < 0 ? "VENCIDO" : dias <= 15 ? "CRITICO" : dias <= 30 ? "PREVENTIVO" : "REGULAR", es_prorroga: Boolean(item.contrato_origen_id), tiene_archivo: false, url_documento: null };
+      return { ...item, dias_restantes: dias, alerta_vencimiento: dias === null ? null : dias < 0 ? "VENCIDO" : dias <= 15 ? "CRITICO" : dias <= 30 ? "PREVENTIVO" : "REGULAR", es_prorroga: Boolean(item.contrato_origen_id), tiene_archivo: Boolean(item.url), url_documento: item.url ?? null };
     });
 }
 

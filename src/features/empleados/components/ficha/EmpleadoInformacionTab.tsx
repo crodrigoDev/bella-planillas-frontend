@@ -1,14 +1,22 @@
-import { Banknote, BriefcaseBusiness, ContactRound, IdCard } from "lucide-react";
+import { BriefcaseBusiness, ContactRound, IdCard } from "lucide-react";
 import { DOCUMENTOS_MOCK } from "../../data/empleados.mock";
 import { ESTADO_CIVIL_OPTIONS, SEXO_OPTIONS } from "../../config/crear-empleado.config";
-import { REGIMENES_SALUD } from "../../config/empleados.config";
-import { formatEmpleadoFecha, formatEmpleadoSueldo } from "../../utils/empleados.utils";
+import { formatEmpleadoFecha } from "../../utils/empleados.utils";
 import type { EmpleadoMock } from "../../types/empleados.types";
 import FichaInformacionSection from "./FichaInformacionSection";
+import type { FinancieroEmpleado } from "../../types/financiero-empleado.types";
+import EmpleadoFinancierosPanel from "../financieros/EmpleadoFinancierosPanel";
+
+interface EmpleadoInformacionTabProps {
+  empleado: EmpleadoMock;
+  financiero: FinancieroEmpleado | null;
+  canCreateFinanciero: boolean;
+  canEditFinanciero: boolean;
+  onManageFinanciero: () => void;
+}
 
 /** Organiza los datos personales, laborales y financieros disponibles */
-export default function EmpleadoInformacionTab({ empleado }: { empleado: EmpleadoMock }) {
-  const financiero = empleado.dato_financiero;
+export default function EmpleadoInformacionTab({ empleado, financiero, canCreateFinanciero, canEditFinanciero, onManageFinanciero }: EmpleadoInformacionTabProps) {
   return (
     <div className="grid items-start gap-5 xl:grid-cols-2">
       <FichaInformacionSection title="Datos personales" icon={IdCard} items={[
@@ -38,12 +46,9 @@ export default function EmpleadoInformacionTab({ empleado }: { empleado: Emplead
         { label: "Fecha de cese", value: empleado.fecha_cese ? formatEmpleadoFecha(empleado.fecha_cese) : null },
         { label: "Jornada asignada", value: empleado.jornada?.nombre ?? "Sin jornada asignada" },
         { label: "Asignación familiar", value: empleado.asig_familiar === undefined ? null : empleado.asig_familiar ? "Sí" : "No" },
-      ]} />
-      <FichaInformacionSection title="Remuneración y salud" icon={Banknote} items={[
-        { label: "Sueldo básico", value: financiero ? formatEmpleadoSueldo(financiero.sueldo_basico) : null },
-        { label: "Régimen de salud", value: financiero ? (REGIMENES_SALUD[financiero.regimen_salud] ?? financiero.regimen_salud) : null },
         { label: "Fecha de afiliación a AFP", value: empleado.afp_fecha_filiacion ? formatEmpleadoFecha(empleado.afp_fecha_filiacion) : null },
       ]} />
+      <EmpleadoFinancierosPanel financiero={financiero} canCreate={canCreateFinanciero} canEdit={canEditFinanciero} onManage={onManageFinanciero} />
     </div>
   );
 }

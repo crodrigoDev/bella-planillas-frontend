@@ -11,7 +11,9 @@ import EmpleadoSelectField from "./EmpleadoSelectField";
 
 /** Relaciona al empleado con su puesto y permite asignarle una jornada */
 export default function EmpleadoDatosLaborales({ editing = false }: { editing?: boolean }) {
-  const { control, register, setValue, formState: { errors, isSubmitting } } = useFormContext<EmpleadoFormValues>();
+  const { control, register, setValue, formState, getFieldState } = useFormContext<EmpleadoFormValues>();
+  const { isSubmitting } = formState;
+  const asigError = getFieldState("asig_familiar", formState).error;
   const areaId = useWatch({ control, name: "area_id" });
   const cargos = CARGOS_MOCK.filter((cargo) => cargo.id_area === areaId);
 
@@ -41,7 +43,7 @@ export default function EmpleadoDatosLaborales({ editing = false }: { editing?: 
       </EmpleadoFormSection>
       <EmpleadoFormSection title="Otros datos laborales" icon={CalendarDays} description="Opcional">
         <EmpleadoInputField name="afp_fecha_filiacion" label="Fecha de afiliación a AFP" type="date" emptyValue={editing ? null : undefined} />
-        <Field className="sm:col-span-2" data-invalid={Boolean(errors.asig_familiar)}>
+        <Field className="sm:col-span-2" data-invalid={Boolean(asigError)}>
           <FieldLabel htmlFor="empleado-asig_familiar" className="flex items-start gap-3 rounded-lg border p-4">
             <input {...register("asig_familiar")} id="empleado-asig_familiar" type="checkbox" disabled={isSubmitting} className="mt-0.5 size-4 shrink-0 accent-primary" />
             <span className="space-y-1">
@@ -49,7 +51,7 @@ export default function EmpleadoDatosLaborales({ editing = false }: { editing?: 
               <span className="block text-xs font-normal leading-relaxed text-muted-foreground">Indica si el empleado cuenta con asignación familiar</span>
             </span>
           </FieldLabel>
-          <FieldError errors={[errors.asig_familiar]} className="text-xs" />
+          <FieldError errors={[asigError]} className="text-xs" />
         </Field>
       </EmpleadoFormSection>
     </div>
