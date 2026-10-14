@@ -7,6 +7,7 @@ import RoleRoute from "@/features/auth/components/RoleRoute";
 import AuthLayout from "@/app/layouts/AuthLayout";
 import AppLayout from "@/app/layouts/AppLayout";
 import DashboardPage from "@/pages/dashboard/DashboardPage";
+import AreasPage from "@/pages/areas/AreasPage";
 import NotFoundPage from "@/pages/not-found/NotFoundPage";
 import EnConstruccionPage from "@/pages/construccion/EnConstruccionPage";
 import LoginPage from "@/pages/auth/LoginPage";
@@ -56,6 +57,10 @@ export const router = createBrowserRouter([
                 element: <DashboardPage />,
               },
             ],
+          },
+          {
+            path: ROUTE_PATHS.organizacion.areas,
+            element: <AreasPage />,
           },
           ...pendingPages.map(({ path, title }) => ({
             element: <RoleRoute path={path} />,
