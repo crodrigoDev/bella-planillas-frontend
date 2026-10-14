@@ -8,6 +8,7 @@ import RoleRoute from "@/features/auth/components/RoleRoute";
 import AuthLayout from "@/app/layouts/AuthLayout";
 import AppLayout from "@/app/layouts/AppLayout";
 import DashboardPage from "@/pages/dashboard/DashboardPage";
+import EmpleadosPage from "@/pages/empleados/EmpleadosPage";
 import NotFoundPage from "@/pages/not-found/NotFoundPage";
 import EnConstruccionPage from "@/pages/construccion/EnConstruccionPage";
 import LoginPage from "@/pages/auth/LoginPage";
@@ -58,7 +59,22 @@ export const router = createBrowserRouter([
             children: [
               {
                 path: ROUTE_PATHS.dashboard,
+                handle: { title: "Dashboard" },
                 element: <DashboardPage />,
+              },
+            ],
+          },
+          {
+            element: APP_PREVIEW_MODE ? (
+              <Outlet />
+            ) : (
+              <RoleRoute path={ROUTE_PATHS.gestionPersonal.empleados} />
+            ),
+            children: [
+              {
+                path: ROUTE_PATHS.gestionPersonal.empleados,
+                handle: { title: "Empleados" },
+                element: <EmpleadosPage />,
               },
             ],
           },
@@ -67,6 +83,7 @@ export const router = createBrowserRouter([
             children: [
               {
                 path,
+                handle: { title },
                 element: <EnConstruccionPage title={title} />,
               },
             ],

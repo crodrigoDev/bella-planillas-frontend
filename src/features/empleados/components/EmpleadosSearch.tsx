@@ -45,7 +45,7 @@ export default function EmpleadosSearch() {
     else params.delete("search");
     params.set("page", "1");
 
-    // El listado usara este valor cuando conectemos su consulta al backend
+    // El listado comparte este valor para filtrar sus empleados
     void navigate({ pathname: empleadosPath, search: `?${params.toString()}` });
   };
 
