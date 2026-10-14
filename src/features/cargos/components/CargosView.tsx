@@ -11,11 +11,11 @@ import RecordStatus from "@/components/modules/RecordStatus";
 import ConfirmActionDialog from "@/components/modules/ConfirmActionDialog";
 import { AREAS_MOCK } from "@/features/empleados/data/empleados.mock";
 import { formatEmpleadoSueldo } from "@/features/empleados/utils/empleados.utils";
+import { CARGOS_LISTADO_MOCK } from "../data/cargos.mock";
 import {
   cambiarEstadoCargoMock,
-  getCargosMock,
   guardarCargoMock,
-} from "../data/cargos.mock";
+} from "../utils/cargos.actions";
 import type { CargoListado } from "../types/cargos.types";
 import CargoFormDialog from "./CargoFormDialog";
 
@@ -23,7 +23,7 @@ const column = createColumnHelper<DataTableFeatures, CargoListado>();
 
 /** Presenta los cargos con filtros y acciones locales */
 export default function CargosView() {
-  const [data, setData] = useState(getCargosMock);
+  const [data, setData] = useState(() => [...CARGOS_LISTADO_MOCK]);
   const [search, setSearch] = useState("");
   const [area, setArea] = useState("todos");
   const [estado, setEstado] = useState("todos");
@@ -148,7 +148,7 @@ export default function CargosView() {
           onClose={() => setEditing(undefined)}
           onSave={(values) => {
             guardarCargoMock(values, editing?.id);
-            setData(getCargosMock());
+            setData([...CARGOS_LISTADO_MOCK]);
             setMessage("Cargo guardado en la vista de prueba");
           }}
         />
@@ -160,7 +160,7 @@ export default function CargosView() {
           onClose={() => setChanging(null)}
           onConfirm={() => {
             cambiarEstadoCargoMock(changing.id);
-            setData(getCargosMock());
+            setData([...CARGOS_LISTADO_MOCK]);
             setMessage("Estado del cargo actualizado");
           }}
         />

@@ -19,9 +19,9 @@ import {
 import {
   anularSolicitudMock,
   evaluarSolicitudMock,
-  getHistorialSolicitudMock,
   tomarRevisionMock,
-} from "../data/solicitudes.mock";
+} from "../utils/solicitudes.actions";
+import { SOLICITUD_HISTORIAL_MOCK } from "../data/solicitudes.mock";
 import type { SolicitudListado } from "../types/solicitudes.types";
 
 /** Reune el detalle, historial y dictamen en una sola ventana */
@@ -187,7 +187,7 @@ export default function SolicitudDetailDialog({
         )}
         <div className="space-y-3 border-t pt-4">
           <h3 className="text-sm font-medium">Historial</h3>
-          {getHistorialSolicitudMock(solicitud.id).map((item) => (
+          {(SOLICITUD_HISTORIAL_MOCK[solicitud.id] ?? []).map((item) => (
             <div
               key={item.id}
               className="border-l-2 border-primary/20 pl-3 text-xs"

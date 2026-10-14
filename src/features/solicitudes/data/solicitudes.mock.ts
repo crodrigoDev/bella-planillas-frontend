@@ -1,231 +1,154 @@
-import {
-  CrearSolicitudSchema,
-  EvaluarSolicitudSchema,
-  type CrearSolicitudDto,
-  type EvaluarSolicitudDto,
-  type TipoSolicitud,
-} from "@jyp/shared-contracts";
-import { EMPLEADOS_MOCK } from "@/features/empleados/data/empleados.mock";
-import { getEmpleadoNombre } from "@/features/empleados/utils/empleados.utils";
 import type {
-  SolicitudHistorial,
   SolicitudListado,
-  SolicitudEstado,
+  SolicitudHistorial,
 } from "../types/solicitudes.types";
 
-const revisor = "80000000-0000-4000-8000-000000000001";
-const tipos: TipoSolicitud[] = [
-  "VACACIONES",
-  "LICENCIA_MEDICA",
-  "PERMISO",
-  "ADELANTO_SUELDO",
-  "JUSTIFICACION_ASISTENCIA",
-  "ACTUALIZACION_DATOS",
-];
-const empleados = EMPLEADOS_MOCK.filter((item) => item.activo);
-const solicitudes: SolicitudListado[] = tipos.map((tipo, index) => {
-  const emp = empleados[index];
-  return {
-    ...CrearSolicitudSchema.parse({
-      empleado_id: emp.id,
-      tipo,
-      monto: tipo === "ADELANTO_SUELDO" ? 1200 : null,
-      fecha_inicio: "2026-10-19",
-      fecha_fin: "2026-10-23",
-      dias_solicitados: 5,
-      motivo: [
-        "Descanso vacacional del periodo",
-        "Atención médica y recuperación",
-        "Trámite personal programado",
-        "Adelanto por gastos familiares",
-        "Sustento de asistencia",
-        "Actualización de contacto",
-      ][index],
-      origen: "MANUAL_RRHH",
-    }),
-    id: `a0000000-0000-4000-8000-${String(index + 1).padStart(12, "0")}`,
-    codigo: `SOL-2026-${String(index + 1).padStart(3, "0")}`,
-    empleado_id: emp.id,
-    estado:
-      index < 3
-        ? "PENDIENTE"
-        : index === 3
-          ? "EN_REVISION"
-          : index === 4
-            ? "APROBADA"
-            : "RECHAZADA",
-    fecha_solicitud: `2026-10-${String(13 - index).padStart(2, "0")}T14:30:00.000Z`,
-    responsable_id: index >= 3 ? revisor : null,
-    colaborador_resumen: {
-      id: emp.id,
-      nombre_completo: getEmpleadoNombre(emp),
-      documento: emp.nro_documento,
-      area: emp.area.nombre,
-      cargo: emp.cargo.nombre,
-    },
-  };
-});
-const historial = new Map<string, SolicitudHistorial[]>(
-  solicitudes.map((item) => [
-    item.id,
-    [
-      {
-        id: crypto.randomUUID(),
-        fecha: item.fecha_solicitud,
-        accion: "Solicitud registrada",
-        actor: { nombre_completo: "Recursos Humanos" },
-        cambios: {
-          estado: { anterior: null, nuevo: "PENDIENTE" },
-          observacion: { nuevo: null },
-        },
-      },
-      ...(item.estado === "PENDIENTE"
-        ? []
-        : [
-            {
-              id: crypto.randomUUID(),
-              fecha: "2026-10-14T14:00:00.000Z",
-              accion: "Estado actualizado",
-              actor: { nombre_completo: "Recursos Humanos" },
-              cambios: {
-                estado: { anterior: "PENDIENTE" as const, nuevo: item.estado },
-                observacion: { nuevo: item.observacion ?? null },
-              },
-            },
-          ]),
-    ],
-  ]),
-);
-
-export function getSolicitudesMock(): SolicitudListado[] {
-  return [...solicitudes];
-}
-
-export function getHistorialSolicitudMock(id: string): SolicitudHistorial[] {
-  return [...(historial.get(id) ?? [])];
-}
-
-/** Cambia el estado y agrega una entrada al historial de la demostracion */
-function actualizarSolicitud(
-  id: string,
-  estado: SolicitudEstado,
-  accion: string,
-  observacion?: string | null,
-): void {
-  const index = solicitudes.findIndex((item) => item.id === id);
-  const actual = solicitudes[index];
-  if (!actual || !["PENDIENTE", "EN_REVISION"].includes(actual.estado))
-    throw new Error("La solicitud ya está finalizada");
-  solicitudes[index] = {
-    ...actual,
-    estado,
-    observacion: observacion || actual.observacion,
-    responsable_id: estado === "EN_REVISION" ? revisor : actual.responsable_id,
-  };
-  historial.set(id, [
-    ...getHistorialSolicitudMock(id),
-    {
-      id: crypto.randomUUID(),
-      fecha: new Date().toISOString(),
-      accion,
-      actor: { nombre_completo: "Recursos Humanos" },
-      cambios: {
-        estado: { anterior: actual.estado, nuevo: estado },
-        observacion: { nuevo: observacion ?? null },
-      },
-    },
-  ]);
-}
-
-export function tomarRevisionMock(id: string): void {
-  actualizarSolicitud(id, "EN_REVISION", "Asignada a revisión");
-}
-
-export function evaluarSolicitudMock(
-  id: string,
-  values: EvaluarSolicitudDto,
-): void {
-  const data = EvaluarSolicitudSchema.parse(values);
-  const actual = solicitudes.find((item) => item.id === id);
-  if (actual?.estado !== "EN_REVISION" || actual.responsable_id !== revisor)
-    throw new Error("Primero toma la solicitud en revisión");
-  if (data.estado === "RECHAZADA" && (data.observacion?.trim().length ?? 0) < 5)
-    throw new Error("Escribe un motivo de rechazo de al menos 5 caracteres");
-  actualizarSolicitud(
-    id,
-    data.estado,
-    data.estado === "APROBADA" ? "Solicitud aprobada" : "Solicitud rechazada",
-    data.observacion,
-  );
-}
-
-export function anularSolicitudMock(id: string, motivo: string): void {
-  if (motivo.trim().length < 5 || motivo.length > 2000)
-    throw new Error("Escribe un motivo de entre 5 y 2000 caracteres");
-  actualizarSolicitud(id, "ANULADA", "Solicitud anulada", motivo.trim());
-}
-
-/** Valida los requisitos del tipo elegido antes de crear la solicitud */
-export function crearSolicitudMock(values: CrearSolicitudDto): void {
-  const data = CrearSolicitudSchema.parse(values);
-  if (data.motivo.trim().length < 5)
-    throw new Error("El motivo debe tener al menos 5 caracteres");
-  data.motivo = data.motivo.trim();
-  data.observacion = data.observacion?.trim() || null;
-  for (const fecha of [data.fecha_inicio, data.fecha_fin]) {
-    if (
-      fecha &&
-      (Number.isNaN(Date.parse(fecha)) ||
-        new Date(fecha).toISOString().slice(0, 10) !== fecha)
-    )
-      throw new Error("Ingresa una fecha válida");
-  }
-  const emp = EMPLEADOS_MOCK.find(
-    (item) => item.id === data.empleado_id && item.activo && !item.deleted_at,
-  );
-  if (!emp) throw new Error("Selecciona un empleado activo");
-  if (
-    ["VACACIONES", "LICENCIA_MEDICA", "PERMISO"].includes(data.tipo) &&
-    (!data.fecha_inicio || !data.fecha_fin)
-  )
-    throw new Error("Este tipo de solicitud requiere ambas fechas");
-  if (data.fecha_inicio && data.fecha_fin && data.fecha_inicio > data.fecha_fin)
-    throw new Error(
-      "La fecha de inicio no puede ser posterior a la fecha de fin",
-    );
-  if (data.tipo === "VACACIONES" && (data.dias_solicitados ?? 0) > 365)
-    throw new Error("Vacaciones admite hasta 365 días solicitados");
-  if (
-    data.tipo === "ADELANTO_SUELDO" &&
-    (!data.monto ||
-      data.monto <= 0 ||
-      data.monto > 99999999.9999 ||
-      Math.abs(data.monto * 10000 - Math.round(data.monto * 10000)) > 0.001)
-  )
-    throw new Error(
-      "El adelanto requiere un monto positivo, hasta 99999999.9999 y con hasta cuatro decimales",
-    );
-  const next: SolicitudListado = {
-    ...data,
-    id: crypto.randomUUID(),
-    codigo: `SOL-2026-${String(solicitudes.length + 1).padStart(3, "0")}`,
-    empleado_id: emp.id,
+export const SOLICITUDES_MOCK: SolicitudListado[] = [
+  {
+    id: "a0000000-0000-4000-8000-000000000001",
+    codigo: "SOL-2026-001",
+    empleado_id: "00000000-0000-4000-8000-000000000008",
+    tipo: "VACACIONES",
+    monto: null,
+    fecha_inicio: "2026-10-19",
+    fecha_fin: "2026-10-23",
+    dias_solicitados: 5,
+    motivo: "Descanso vacacional del periodo",
+    observacion: null,
+    origen: "MANUAL_RRHH",
     estado: "PENDIENTE",
-    fecha_solicitud: new Date().toISOString(),
+    fecha_solicitud: "2026-10-13T14:30:00.000Z",
     responsable_id: null,
     colaborador_resumen: {
-      id: emp.id,
-      nombre_completo: getEmpleadoNombre(emp),
-      documento: emp.nro_documento,
-      area: emp.area.nombre,
-      cargo: emp.cargo.nombre,
+      id: "00000000-0000-4000-8000-000000000008",
+      nombre_completo: "Luis Alberto Aguilar Ramos",
+      documento: "72849221",
+      area: "Tecnología y Desarrollo",
+      cargo: "Ingeniero de software",
     },
-  };
-  solicitudes.unshift(next);
-  historial.set(next.id, [
+  },
+  {
+    id: "a0000000-0000-4000-8000-000000000002",
+    codigo: "SOL-2026-002",
+    empleado_id: "00000000-0000-4000-8000-000000000009",
+    tipo: "LICENCIA_MEDICA",
+    monto: null,
+    fecha_inicio: "2026-10-19",
+    fecha_fin: "2026-10-23",
+    dias_solicitados: 5,
+    motivo: "Atención médica y recuperación",
+    observacion: null,
+    origen: "MANUAL_RRHH",
+    estado: "PENDIENTE",
+    fecha_solicitud: "2026-10-12T14:30:00.000Z",
+    responsable_id: null,
+    colaborador_resumen: {
+      id: "00000000-0000-4000-8000-000000000009",
+      nombre_completo: "Camila Alvarado Pérez",
+      documento: "72849238",
+      area: "Administración y Finanzas",
+      cargo: "Analista contable",
+    },
+  },
+  {
+    id: "a0000000-0000-4000-8000-000000000003",
+    codigo: "SOL-2026-003",
+    empleado_id: "00000000-0000-4000-8000-000000000005",
+    tipo: "PERMISO",
+    monto: null,
+    fecha_inicio: "2026-10-19",
+    fecha_fin: "2026-10-19",
+    dias_solicitados: 1,
+    motivo: "Trámite personal programado",
+    observacion: null,
+    origen: "MANUAL_RRHH",
+    estado: "PENDIENTE",
+    fecha_solicitud: "2026-10-11T14:30:00.000Z",
+    responsable_id: null,
+    colaborador_resumen: {
+      id: "00000000-0000-4000-8000-000000000005",
+      nombre_completo: "Roberto Carlos Benavides",
+      documento: "72849170",
+      area: "Recursos Humanos",
+      cargo: "Especialista de RRHH",
+    },
+  },
+  {
+    id: "a0000000-0000-4000-8000-000000000004",
+    codigo: "SOL-2026-004",
+    empleado_id: "00000000-0000-4000-8000-000000000010",
+    tipo: "ADELANTO_SUELDO",
+    monto: 1200,
+    fecha_inicio: null,
+    fecha_fin: null,
+    dias_solicitados: null,
+    motivo: "Adelanto por gastos familiares",
+    observacion: null,
+    origen: "MANUAL_RRHH",
+    estado: "EN_REVISION",
+    fecha_solicitud: "2026-10-10T14:30:00.000Z",
+    responsable_id: "80000000-0000-4000-8000-000000000001",
+    colaborador_resumen: {
+      id: "00000000-0000-4000-8000-000000000010",
+      nombre_completo: "Diego Castro Mendoza",
+      documento: "72849255",
+      area: "Recursos Humanos",
+      cargo: "Especialista de RRHH",
+    },
+  },
+  {
+    id: "a0000000-0000-4000-8000-000000000005",
+    codigo: "SOL-2026-005",
+    empleado_id: "00000000-0000-4000-8000-000000000011",
+    tipo: "JUSTIFICACION_ASISTENCIA",
+    monto: null,
+    fecha_inicio: "2026-10-09",
+    fecha_fin: "2026-10-09",
+    dias_solicitados: 1,
+    motivo: "Sustento de asistencia",
+    observacion: "Sustento revisado",
+    origen: "MANUAL_RRHH",
+    estado: "APROBADA",
+    fecha_solicitud: "2026-10-09T14:30:00.000Z",
+    responsable_id: "80000000-0000-4000-8000-000000000001",
+    colaborador_resumen: {
+      id: "00000000-0000-4000-8000-000000000011",
+      nombre_completo: "Andrea Delgado Torres",
+      documento: "72849272",
+      area: "Operaciones y Logística",
+      cargo: "Supervisor de almacén",
+    },
+  },
+  {
+    id: "a0000000-0000-4000-8000-000000000006",
+    codigo: "SOL-2026-006",
+    empleado_id: "00000000-0000-4000-8000-000000000012",
+    tipo: "ACTUALIZACION_DATOS",
+    monto: null,
+    fecha_inicio: null,
+    fecha_fin: null,
+    dias_solicitados: null,
+    motivo: "Actualización de contacto",
+    observacion: "Datos incompletos, adjuntar información",
+    origen: "MANUAL_RRHH",
+    estado: "RECHAZADA",
+    fecha_solicitud: "2026-10-08T14:30:00.000Z",
+    responsable_id: "80000000-0000-4000-8000-000000000001",
+    colaborador_resumen: {
+      id: "00000000-0000-4000-8000-000000000012",
+      nombre_completo: "Mateo Espinoza León",
+      documento: "72849289",
+      area: "Ventas y Comercial",
+      cargo: "Ejecutivo de ventas",
+    },
+  },
+];
+
+export const SOLICITUD_HISTORIAL_MOCK: Record<string, SolicitudHistorial[]> = {
+  "a0000000-0000-4000-8000-000000000001": [
     {
-      id: crypto.randomUUID(),
-      fecha: next.fecha_solicitud,
+      id: "d0000000-0000-4000-8000-000000000001",
+      fecha: "2026-10-13T14:30:00.000Z",
       accion: "Solicitud registrada",
       actor: { nombre_completo: "Recursos Humanos" },
       cambios: {
@@ -233,5 +156,75 @@ export function crearSolicitudMock(values: CrearSolicitudDto): void {
         observacion: { nuevo: null },
       },
     },
-  ]);
-}
+  ],
+  "a0000000-0000-4000-8000-000000000002": [
+    {
+      id: "d0000000-0000-4000-8000-000000000002",
+      fecha: "2026-10-12T14:30:00.000Z",
+      accion: "Solicitud registrada",
+      actor: { nombre_completo: "Recursos Humanos" },
+      cambios: {
+        estado: { anterior: null, nuevo: "PENDIENTE" },
+        observacion: { nuevo: null },
+      },
+    },
+  ],
+  "a0000000-0000-4000-8000-000000000003": [
+    {
+      id: "d0000000-0000-4000-8000-000000000003",
+      fecha: "2026-10-11T14:30:00.000Z",
+      accion: "Solicitud registrada",
+      actor: { nombre_completo: "Recursos Humanos" },
+      cambios: {
+        estado: { anterior: null, nuevo: "PENDIENTE" },
+        observacion: { nuevo: null },
+      },
+    },
+  ],
+  "a0000000-0000-4000-8000-000000000004": [
+    {
+      id: "d0000000-0000-4000-8000-000000000004",
+      fecha: "2026-10-10T14:30:00.000Z",
+      accion: "Solicitud registrada",
+      actor: { nombre_completo: "Recursos Humanos" },
+      cambios: {
+        estado: { anterior: null, nuevo: "PENDIENTE" },
+        observacion: { nuevo: null },
+      },
+    },
+    {
+      id: "d0000000-0000-4000-8000-000000000007",
+      fecha: "2026-10-14T14:00:00.000Z",
+      accion: "Asignada a revisión",
+      actor: { nombre_completo: "Recursos Humanos" },
+      cambios: {
+        estado: { anterior: "PENDIENTE", nuevo: "EN_REVISION" },
+        observacion: { nuevo: null },
+      },
+    },
+  ],
+  "a0000000-0000-4000-8000-000000000005": [
+    {
+      id: "d0000000-0000-4000-8000-000000000005",
+      fecha: "2026-10-14T14:00:00.000Z",
+      accion: "Solicitud aprobada",
+      actor: { nombre_completo: "Recursos Humanos" },
+      cambios: {
+        estado: { anterior: "EN_REVISION", nuevo: "APROBADA" },
+        observacion: { nuevo: "Sustento revisado" },
+      },
+    },
+  ],
+  "a0000000-0000-4000-8000-000000000006": [
+    {
+      id: "d0000000-0000-4000-8000-000000000006",
+      fecha: "2026-10-14T14:00:00.000Z",
+      accion: "Solicitud rechazada",
+      actor: { nombre_completo: "Recursos Humanos" },
+      cambios: {
+        estado: { anterior: "EN_REVISION", nuevo: "RECHAZADA" },
+        observacion: { nuevo: "Datos incompletos, adjuntar información" },
+      },
+    },
+  ],
+};

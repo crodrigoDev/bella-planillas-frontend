@@ -3,7 +3,7 @@ import { ArrowRight, ClipboardClock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { moduleLabel } from "@/components/modules/module.utils";
-import { getSolicitudesMock } from "@/features/solicitudes/data/solicitudes.mock";
+import { SOLICITUDES_MOCK } from "@/features/solicitudes/data/solicitudes.mock";
 import DashboardPanel from "./DashboardPanel";
 
 const colors = [
@@ -15,11 +15,9 @@ const colors = [
 
 /** Enlaza cada pendiente al mismo dialogo que permite revisarlo */
 export default function DashboardRequests() {
-  const items = getSolicitudesMock()
-    .filter(
-      (item) => item.estado === "PENDIENTE" || item.estado === "EN_REVISION",
-    )
-    .sort((a, b) => a.fecha_solicitud.localeCompare(b.fecha_solicitud));
+  const items = SOLICITUDES_MOCK.filter(
+    (item) => item.estado === "PENDIENTE" || item.estado === "EN_REVISION",
+  ).sort((a, b) => a.fecha_solicitud.localeCompare(b.fecha_solicitud));
   return (
     <DashboardPanel
       title={

@@ -1,15 +1,14 @@
 import ModulePage from "@/components/modules/ModulePage";
-import { getDashboardMock } from "@/features/dashboard/data/dashboard.mock";
+import { DASHBOARD_MOCK } from "@/features/dashboard/data/dashboard.mock";
 import DashboardMetrics from "@/features/dashboard/components/DashboardMetrics";
 import DashboardAttendance from "@/features/dashboard/components/DashboardAttendance";
 import DashboardAreas from "@/features/dashboard/components/DashboardAreas";
 import DashboardBirthdays from "@/features/dashboard/components/DashboardBirthdays";
 import DashboardRequests from "@/features/dashboard/components/DashboardRequests";
-import DashboardContractAlerts from "@/features/dashboard/components/DashboardContractAlerts";
 
 /** Compone el resumen de Recursos Humanos con bloques independientes */
 export default function DashboardPage() {
-  const data = getDashboardMock();
+  const data = DASHBOARD_MOCK;
   return (
     <ModulePage
       title="Dashboard de Recursos Humanos"
@@ -27,7 +26,6 @@ export default function DashboardPage() {
         <DashboardBirthdays items={data.diseño.cumpleaños} />
         <DashboardRequests />
       </div>
-      <DashboardContractAlerts alerts={data.resumen.contratos_alertas} />
     </ModulePage>
   );
 }

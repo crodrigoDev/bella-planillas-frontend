@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { ROUTE_PATHS } from "@/app/routes/path";
 import { Plus } from "lucide-react";
 import { createColumnHelper } from "@tanstack/react-table";
 import {
@@ -16,11 +18,11 @@ import RecordStatus from "@/components/modules/RecordStatus";
 import ConfirmActionDialog from "@/components/modules/ConfirmActionDialog";
 import { enumItems, moduleLabel } from "@/components/modules/module.utils";
 import { AREAS_MOCK } from "@/features/empleados/data/empleados.mock";
+import { JORNADAS_LISTADO_MOCK } from "../data/jornadas.mock";
 import {
   cambiarEstadoJornadaMock,
-  getJornadasMock,
   guardarJornadaMock,
-} from "../data/jornadas.mock";
+} from "../utils/jornadas.actions";
 import type { JornadaListado } from "../types/jornadas.types";
 import JornadaFormDialog from "./JornadaFormDialog";
 
@@ -28,7 +30,7 @@ const column = createColumnHelper<DataTableFeatures, JornadaListado>();
 
 /** Lista jornadas y abre su horario en el mismo dialogo de edicion */
 export default function JornadasView() {
-  const [data, setData] = useState(getJornadasMock);
+  const [data, setData] = useState(() => [...JORNADAS_LISTADO_MOCK]);
   const [search, setSearch] = useState("");
   const [filters, setFilters] = useState({
     area: "todos",
@@ -37,9 +39,12 @@ export default function JornadasView() {
     duracion: "todos",
     estado: "todos",
   });
-  const [editing, setEditing] = useState<JornadaListado | null | undefined>();
+  const [editing, setEditing] = useState<JornadaListado | undefined>();
   const [changing, setChanging] = useState<JornadaListado | null>(null);
-  const [message, setMessage] = useState("");
+  const location = useLocation();
+  const [message, setMessage] = useState(
+    typeof location.state?.message === "string" ? location.state.message : "",
+  );
   const filtered = data.filter(
     (item) =>
       `${item.nombre} ${item.descripcion ?? ""}`
@@ -154,7 +159,10 @@ export default function JornadasView() {
       description="Configura horarios, turnos y áreas aplicables"
       message={message}
       action={
-        <Button size="sm" onClick={() => setEditing(null)}>
+        <Button
+          size="sm"
+          render={<Link to={ROUTE_PATHS.asistencia.crearJornada} />}
+        >
           <Plus aria-hidden />
           Nueva jornada
         </Button>
@@ -188,11 +196,11 @@ export default function JornadasView() {
       />
       {editing !== undefined && (
         <JornadaFormDialog
-          jornada={editing ?? undefined}
+          jornada={editing}
           onClose={() => setEditing(undefined)}
           onSave={(values) => {
             guardarJornadaMock(values, editing?.id);
-            setData(getJornadasMock());
+            setData([...JORNADAS_LISTADO_MOCK]);
             setMessage("Jornada guardada en la vista de prueba");
           }}
         />
@@ -204,7 +212,7 @@ export default function JornadasView() {
           onClose={() => setChanging(null)}
           onConfirm={() => {
             cambiarEstadoJornadaMock(changing.id);
-            setData(getJornadasMock());
+            setData([...JORNADAS_LISTADO_MOCK]);
             setMessage("Estado de la jornada actualizado");
           }}
         />

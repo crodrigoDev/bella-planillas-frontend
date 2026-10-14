@@ -17,11 +17,11 @@ import type { DataTableFeatures } from "@/components/data-table/data-table.confi
 import { EMPLEADOS_MOCK } from "@/features/empleados/data/empleados.mock";
 import { getEmpleadoNombre } from "@/features/empleados/utils/empleados.utils";
 import type { MarcacionEmpleado } from "@/features/empleados/types/ficha-empleado.types";
+import { MARCACIONES_MOCK } from "../data/marcaciones.mock";
 import {
   crearMarcacionMock,
   fechaMarcacionLima,
-  getMarcacionesMock,
-} from "../data/marcaciones.mock";
+} from "../utils/marcaciones.actions";
 import MarcacionFormDialog from "./MarcacionFormDialog";
 
 const column = createColumnHelper<DataTableFeatures, MarcacionEmpleado>();
@@ -29,7 +29,7 @@ const column = createColumnHelper<DataTableFeatures, MarcacionEmpleado>();
 /** Lista los registros sin inventar acciones de edicion o borrado */
 export default function MarcacionesView() {
   const [params] = useSearchParams();
-  const [data, setData] = useState(getMarcacionesMock);
+  const [data, setData] = useState(() => [...MARCACIONES_MOCK]);
   const [filters, setFilters] = useState({
     empleado: "todos",
     tipo: "todos",
@@ -141,7 +141,7 @@ export default function MarcacionesView() {
           onClose={() => setCreating(false)}
           onSave={(values) => {
             crearMarcacionMock(values);
-            setData(getMarcacionesMock());
+            setData([...MARCACIONES_MOCK]);
             setFilters((current) => ({
               ...current,
               inicio: fechaMarcacionLima(values.fecha_hora.toISOString()),

@@ -1,25 +1,84 @@
 import type { AuditListado } from "../types/auditoria.types";
-import { EMPLEADOS_MOCK } from "@/features/empleados/data/empleados.mock";
 
-/** Registros de lectura para mostrar los cambios antes y despues */
-export const AUDITORIA_MOCK: AuditListado[] = Array.from(
-  { length: 12 },
-  (_, index) => ({
-    id: `b0000000-0000-4000-8000-${String(index + 1).padStart(12, "0")}`,
-    accion: index % 3 === 0 ? "INSERT" : "UPDATE",
-    tabla_afectada: ["empleados", "contrato", "solicitud"][index % 3],
-    registro_id: EMPLEADOS_MOCK[index % EMPLEADOS_MOCK.length].id,
-    usuario_id: `80000000-0000-4000-8000-${String((index % 2) + 1).padStart(12, "0")}`,
+export const AUDITORIA_MOCK: AuditListado[] = [
+  {
+    id: "b0000000-0000-4000-8000-000000000001",
+    accion: "INSERT",
+    tabla_afectada: "empleados",
+    registro_id: "00000000-0000-4000-8000-000000000008",
+    usuario_id: "80000000-0000-4000-8000-000000000001",
     direccion_ip: "127.0.0.1",
-    created_at: `2026-10-14T${String(16 - index).padStart(2, "0")}:20:00.000Z`,
-    usuarios: {
-      email: index % 2 ? "administracion@example.com" : "rrhh@example.com",
-      rol: index % 2 ? "ADMIN" : "RRHH",
+    created_at: "2026-10-14T16:20:00.000Z",
+    usuarios: { email: "rrhh@example.com", rol: "RRHH" },
+    valores_antes: null,
+    valores_despues: {
+      nombre: "Luis Alberto",
+      apellido: "Aguilar Ramos",
+      activo: true,
     },
-    valores_antes: index % 3 === 0 ? null : { estado: "PENDIENTE" },
-    valores_despues:
-      index % 3 === 0
-        ? { nombre: "Registro de ejemplo", activo: true }
-        : { estado: "EN_REVISION" },
-  }),
-);
+  },
+  {
+    id: "b0000000-0000-4000-8000-000000000002",
+    accion: "UPDATE",
+    tabla_afectada: "contrato",
+    registro_id: "90000000-0000-4000-8000-000000000002",
+    usuario_id: "80000000-0000-4000-8000-000000000002",
+    direccion_ip: "127.0.0.1",
+    created_at: "2026-10-14T15:20:00.000Z",
+    usuarios: { email: "administracion@example.com", rol: "ADMIN" },
+    valores_antes: { estado: "VIGENTE" },
+    valores_despues: { estado: "RENOVADO" },
+  },
+  {
+    id: "b0000000-0000-4000-8000-000000000003",
+    accion: "UPDATE",
+    tabla_afectada: "solicitud",
+    registro_id: "a0000000-0000-4000-8000-000000000004",
+    usuario_id: "80000000-0000-4000-8000-000000000001",
+    direccion_ip: "127.0.0.1",
+    created_at: "2026-10-14T14:20:00.000Z",
+    usuarios: { email: "rrhh@example.com", rol: "RRHH" },
+    valores_antes: { estado: "PENDIENTE" },
+    valores_despues: { estado: "EN_REVISION" },
+  },
+  {
+    id: "b0000000-0000-4000-8000-000000000004",
+    accion: "INSERT",
+    tabla_afectada: "empleados",
+    registro_id: "00000000-0000-4000-8000-000000000009",
+    usuario_id: "80000000-0000-4000-8000-000000000002",
+    direccion_ip: "127.0.0.1",
+    created_at: "2026-10-14T13:20:00.000Z",
+    usuarios: { email: "administracion@example.com", rol: "ADMIN" },
+    valores_antes: null,
+    valores_despues: {
+      nombre: "Camila",
+      apellido: "Alvarado Pérez",
+      activo: true,
+    },
+  },
+  {
+    id: "b0000000-0000-4000-8000-000000000005",
+    accion: "UPDATE",
+    tabla_afectada: "contrato",
+    registro_id: "90000000-0000-4000-8000-000000000004",
+    usuario_id: "80000000-0000-4000-8000-000000000001",
+    direccion_ip: "127.0.0.1",
+    created_at: "2026-10-14T12:20:00.000Z",
+    usuarios: { email: "rrhh@example.com", rol: "RRHH" },
+    valores_antes: { fecha_fin: "2026-10-20" },
+    valores_despues: { fecha_fin: "2026-11-20" },
+  },
+  {
+    id: "b0000000-0000-4000-8000-000000000006",
+    accion: "UPDATE",
+    tabla_afectada: "solicitud",
+    registro_id: "a0000000-0000-4000-8000-000000000005",
+    usuario_id: "80000000-0000-4000-8000-000000000002",
+    direccion_ip: "127.0.0.1",
+    created_at: "2026-10-14T11:20:00.000Z",
+    usuarios: { email: "administracion@example.com", rol: "ADMIN" },
+    valores_antes: { estado: "EN_REVISION" },
+    valores_despues: { estado: "APROBADA" },
+  },
+];

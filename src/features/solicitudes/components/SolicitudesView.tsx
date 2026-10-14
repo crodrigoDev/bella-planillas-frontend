@@ -16,10 +16,8 @@ import {
   moduleLabel,
 } from "@/components/modules/module.utils";
 import { AREAS_MOCK } from "@/features/empleados/data/empleados.mock";
-import {
-  crearSolicitudMock,
-  getSolicitudesMock,
-} from "../data/solicitudes.mock";
+import { SOLICITUDES_MOCK } from "../data/solicitudes.mock";
+import { crearSolicitudMock } from "../utils/solicitudes.actions";
 import type { SolicitudListado } from "../types/solicitudes.types";
 import SolicitudFormDialog from "./SolicitudFormDialog";
 import SolicitudDetailDialog from "./SolicitudDetailDialog";
@@ -29,7 +27,7 @@ const column = createColumnHelper<DataTableFeatures, SolicitudListado>();
 /** Muestra un listado local mientras el backend aun no expone la consulta general */
 export default function SolicitudesView() {
   const [params] = useSearchParams();
-  const [data, setData] = useState(getSolicitudesMock);
+  const [data, setData] = useState(() => [...SOLICITUDES_MOCK]);
   const [filters, setFilters] = useState({
     search: "",
     tipo: "todos",
@@ -209,7 +207,7 @@ export default function SolicitudesView() {
           onClose={() => setCreating(false)}
           onSave={(values) => {
             crearSolicitudMock(values);
-            setData(getSolicitudesMock());
+            setData([...SOLICITUDES_MOCK]);
             setMessage("Solicitud registrada en la vista de prueba");
           }}
         />
@@ -219,7 +217,7 @@ export default function SolicitudesView() {
           solicitud={selected}
           onClose={() => setSelectedId(null)}
           onUpdate={() => {
-            setData(getSolicitudesMock());
+            setData([...SOLICITUDES_MOCK]);
             setMessage("Solicitud actualizada en la vista de prueba");
           }}
         />

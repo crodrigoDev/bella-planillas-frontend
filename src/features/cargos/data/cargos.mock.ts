@@ -1,69 +1,60 @@
-import { CrearCargoSchema, type CrearCargoDto } from "@jyp/shared-contracts";
-import {
-  AREAS_MOCK,
-  CARGOS_MOCK,
-  EMPLEADOS_MOCK,
-} from "@/features/empleados/data/empleados.mock";
+import { AREAS_MOCK } from "@/features/empleados/data/empleados.mock";
 import type { CargoListado } from "../types/cargos.types";
 
-const cargos: CargoListado[] = CARGOS_MOCK.map((cargo, index) => ({
-  ...cargo,
-  descripcion: "Funciones y responsabilidades del puesto",
-  sueldo_minimo: 1500 + index * 350,
-  sueldo_maximo: 3000 + index * 650,
-  area: AREAS_MOCK.find((area) => area.id === cargo.id_area)!,
-  activo: true,
-  total_empleados: 0,
-}));
-
-export function getCargosMock(): CargoListado[] {
-  return cargos.map((cargo) => ({
-    ...cargo,
-    total_empleados: EMPLEADOS_MOCK.filter(
-      (emp) => emp.activo && !emp.deleted_at && emp.cargo_id === cargo.id,
-    ).length,
-  }));
-}
-
-/** Valida el formulario y actualiza tambien las opciones del registro de empleados */
-export function guardarCargoMock(values: CrearCargoDto, id?: string): void {
-  const data = CrearCargoSchema.parse(values);
-  const area = AREAS_MOCK.find((item) => item.id === data.id_area);
-  if (!area) throw new Error("Selecciona un área disponible");
-  if (
-    cargos.some(
-      (cargo) =>
-        cargo.id !== id &&
-        cargo.activo &&
-        cargo.id_area === data.id_area &&
-        cargo.nombre.toLowerCase() === data.nombre.toLowerCase(),
-    )
-  )
-    throw new Error("Ya existe ese cargo en el área");
-  const next = {
-    ...data,
-    id: id ?? crypto.randomUUID(),
-    area,
+export const CARGOS_LISTADO_MOCK: CargoListado[] = [
+  {
+    id: "20000000-0000-4000-8000-000000000001",
+    id_area: "10000000-0000-4000-8000-000000000001",
+    nombre: "Supervisor de almacén",
+    descripcion: "Supervisión de operaciones de almacén",
+    sueldo_minimo: 1500,
+    sueldo_maximo: 3000,
+    area: AREAS_MOCK[0],
     activo: true,
-    total_empleados: 0,
-  };
-  const index = cargos.findIndex((cargo) => cargo.id === id);
-  if (index < 0) cargos.push(next);
-  else cargos[index] = { ...next, activo: cargos[index].activo };
-  const catalogIndex = CARGOS_MOCK.findIndex((cargo) => cargo.id === next.id);
-  const catalog = { id: next.id, id_area: next.id_area, nombre: next.nombre };
-  if (catalogIndex < 0) CARGOS_MOCK.push(catalog);
-  else CARGOS_MOCK[catalogIndex] = catalog;
-}
-
-/** Bloquea la baja cuando el cargo tiene empleados activos */
-export function cambiarEstadoCargoMock(id: string): void {
-  const index = cargos.findIndex((cargo) => cargo.id === id);
-  if (index < 0) throw new Error("El cargo no existe");
-  const actual = getCargosMock()[index];
-  if (actual.activo && actual.total_empleados > 0)
-    throw new Error(
-      "Reasigna a los empleados activos antes de desactivar el cargo",
-    );
-  cargos[index] = { ...actual, activo: !actual.activo };
-}
+    total_empleados: 5,
+  },
+  {
+    id: "20000000-0000-4000-8000-000000000002",
+    id_area: "10000000-0000-4000-8000-000000000002",
+    nombre: "Ejecutivo de ventas",
+    descripcion: "Gestión comercial y atención de clientes",
+    sueldo_minimo: 1850,
+    sueldo_maximo: 3650,
+    area: AREAS_MOCK[1],
+    activo: true,
+    total_empleados: 4,
+  },
+  {
+    id: "20000000-0000-4000-8000-000000000003",
+    id_area: "10000000-0000-4000-8000-000000000003",
+    nombre: "Ingeniero de software",
+    descripcion: "Desarrollo y mantenimiento de sistemas",
+    sueldo_minimo: 2200,
+    sueldo_maximo: 4300,
+    area: AREAS_MOCK[2],
+    activo: true,
+    total_empleados: 5,
+  },
+  {
+    id: "20000000-0000-4000-8000-000000000004",
+    id_area: "10000000-0000-4000-8000-000000000004",
+    nombre: "Analista contable",
+    descripcion: "Análisis y seguimiento contable",
+    sueldo_minimo: 2550,
+    sueldo_maximo: 4950,
+    area: AREAS_MOCK[3],
+    activo: true,
+    total_empleados: 4,
+  },
+  {
+    id: "20000000-0000-4000-8000-000000000005",
+    id_area: "10000000-0000-4000-8000-000000000005",
+    nombre: "Especialista de RRHH",
+    descripcion: "Gestión administrativa del personal",
+    sueldo_minimo: 2900,
+    sueldo_maximo: 5600,
+    area: AREAS_MOCK[4],
+    activo: true,
+    total_empleados: 3,
+  },
+];

@@ -4,11 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import ModulePage from "@/components/modules/ModulePage";
 import { moduleDate } from "@/components/modules/module.utils";
-import { getPerfilMock } from "../data/perfil.mock";
+import { PERFIL_MOCK } from "../data/perfil.mock";
 
 /** Muestra los campos de la consulta de perfil sin inventar una edicion */
 export default function PerfilView() {
-  const perfil = getPerfilMock();
+  const perfil = PERFIL_MOCK;
   const fields = [
     { label: "Correo electrónico", value: perfil.email },
     { label: "Rol", value: "Recursos Humanos" },

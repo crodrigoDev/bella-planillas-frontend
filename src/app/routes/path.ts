@@ -28,6 +28,7 @@ export const ROUTE_PATHS = {
 
   asistencia: {
     jornadas: "/jornadas",
+    crearJornada: "/jornadas/crear",
     marcaciones: "/marcaciones",
   },
 

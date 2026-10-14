@@ -1,0 +1,96 @@
+import type { CrearJornadaDto, PatronRotacionDto } from "@jyp/shared-contracts";
+
+export const JORNADA_STEPS = ["Datos generales", "Configuración", "Resumen"];
+
+export const JORNADA_ROTACION_DEFAULT: PatronRotacionDto = {
+  tipo_ciclo: "5x2",
+  dias_trabajo: 5,
+  dias_descanso: 2,
+  frecuencia_cambio: "SEMANAL",
+  turnos_base: ["MANANA", "TARDE"],
+};
+
+// Valores iniciales del formulario, separados de los registros de ejemplo
+export const JORNADA_DEFAULT_VALUES: CrearJornadaDto = {
+  nombre: "",
+  descripcion: "",
+  duracion: "TIEMPO_COMPLETO",
+  turno: "MANANA",
+  modalidad: "PRESENCIAL",
+  tolerancia_minutos: 5,
+  areas_ids: [],
+  activo: true,
+  patron_rotacion: null,
+  horario_semanal: [
+    {
+      dia: "LUNES",
+      laborable: true,
+      modalidad: "PRESENCIAL",
+      entrada: "08:00",
+      inicio_descanso: "13:00",
+      fin_descanso: "14:00",
+      salida: "17:00",
+      total_horas: 8,
+    },
+    {
+      dia: "MARTES",
+      laborable: true,
+      modalidad: "PRESENCIAL",
+      entrada: "08:00",
+      inicio_descanso: "13:00",
+      fin_descanso: "14:00",
+      salida: "17:00",
+      total_horas: 8,
+    },
+    {
+      dia: "MIERCOLES",
+      laborable: true,
+      modalidad: "PRESENCIAL",
+      entrada: "08:00",
+      inicio_descanso: "13:00",
+      fin_descanso: "14:00",
+      salida: "17:00",
+      total_horas: 8,
+    },
+    {
+      dia: "JUEVES",
+      laborable: true,
+      modalidad: "PRESENCIAL",
+      entrada: "08:00",
+      inicio_descanso: "13:00",
+      fin_descanso: "14:00",
+      salida: "17:00",
+      total_horas: 8,
+    },
+    {
+      dia: "VIERNES",
+      laborable: true,
+      modalidad: "PRESENCIAL",
+      entrada: "08:00",
+      inicio_descanso: "13:00",
+      fin_descanso: "14:00",
+      salida: "17:00",
+      total_horas: 8,
+    },
+    {
+      dia: "SABADO",
+      laborable: false,
+      modalidad: "PRESENCIAL",
+      entrada: null,
+      inicio_descanso: null,
+      fin_descanso: null,
+      salida: null,
+      total_horas: 0,
+    },
+    {
+      dia: "DOMINGO",
+      laborable: false,
+      modalidad: "PRESENCIAL",
+      entrada: null,
+      inicio_descanso: null,
+      fin_descanso: null,
+      salida: null,
+      total_horas: 0,
+    },
+  ],
+};

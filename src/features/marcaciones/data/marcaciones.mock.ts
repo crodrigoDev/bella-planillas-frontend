@@ -1,53 +1,113 @@
-import {
-  marcarAsistenciaSchema,
-  type MarcarAsistenciaDto,
-} from "@jyp/shared-contracts";
-import { MARCACIONES_EMPLEADO_MOCK } from "@/features/empleados/data/ficha-empleado.mock";
-import { EMPLEADOS_MOCK } from "@/features/empleados/data/empleados.mock";
-import { getEmpleadoNombre } from "@/features/empleados/utils/empleados.utils";
+import { TipoMarcacion } from "@jyp/shared-contracts";
 import type { MarcacionEmpleado } from "@/features/empleados/types/ficha-empleado.types";
 
-export function getMarcacionesMock(): MarcacionEmpleado[] {
-  return [...MARCACIONES_EMPLEADO_MOCK].sort((a, b) =>
-    b.fecha_hora.localeCompare(a.fecha_hora),
-  );
-}
-
-/** Agrega una marca manual sin duplicar empleado, hora y tipo */
-export function crearMarcacionMock(values: MarcarAsistenciaDto): void {
-  const data = marcarAsistenciaSchema.parse(values);
-  const emp = EMPLEADOS_MOCK.find(
-    (item) =>
-      item.nro_documento === data.nro_documento &&
-      item.activo &&
-      !item.deleted_at,
-  );
-  if (!emp) throw new Error("El empleado no existe o está inactivo");
-  const fecha = data.fecha_hora.toISOString();
-  if (
-    MARCACIONES_EMPLEADO_MOCK.some(
-      (item) =>
-        item.empleado_id === emp.id &&
-        item.fecha_hora === fecha &&
-        item.tipo_marcacion === data.tipo_marcacion,
-    )
-  )
-    throw new Error("Ya existe esa marcación para el empleado");
-  MARCACIONES_EMPLEADO_MOCK.push({
-    ...data,
-    fecha_hora: fecha,
-    id: crypto.randomUUID(),
-    empleado_id: emp.id,
-    colaborador: getEmpleadoNombre(emp),
+export const MARCACIONES_MOCK: MarcacionEmpleado[] = [
+  {
+    id: "e0000000-0000-4000-8000-000000000012",
+    empleado_id: "00000000-0000-4000-8000-000000000008",
+    colaborador: "Luis Alberto Aguilar Ramos",
+    nro_documento: "72849221",
+    fecha_hora: "2026-10-14T22:00:00.000Z",
+    tipo_marcacion: TipoMarcacion.SALIDA,
     metodo: "MANUAL",
-  });
-}
-
-export function fechaMarcacionLima(value: string): string {
-  return new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/Lima",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(new Date(value));
-}
+  },
+  {
+    id: "e0000000-0000-4000-8000-000000000011",
+    empleado_id: "00000000-0000-4000-8000-000000000008",
+    colaborador: "Luis Alberto Aguilar Ramos",
+    nro_documento: "72849221",
+    fecha_hora: "2026-10-14T19:00:00.000Z",
+    tipo_marcacion: TipoMarcacion.ENTRADA_ALMUERZO,
+    metodo: "MANUAL",
+  },
+  {
+    id: "e0000000-0000-4000-8000-000000000010",
+    empleado_id: "00000000-0000-4000-8000-000000000008",
+    colaborador: "Luis Alberto Aguilar Ramos",
+    nro_documento: "72849221",
+    fecha_hora: "2026-10-14T18:00:00.000Z",
+    tipo_marcacion: TipoMarcacion.SALIDA_ALMUERZO,
+    metodo: "MANUAL",
+  },
+  {
+    id: "e0000000-0000-4000-8000-000000000009",
+    empleado_id: "00000000-0000-4000-8000-000000000008",
+    colaborador: "Luis Alberto Aguilar Ramos",
+    nro_documento: "72849221",
+    fecha_hora: "2026-10-14T13:00:00.000Z",
+    tipo_marcacion: TipoMarcacion.ENTRADA,
+    metodo: "MANUAL",
+  },
+  {
+    id: "e0000000-0000-4000-8000-000000000008",
+    empleado_id: "00000000-0000-4000-8000-000000000009",
+    colaborador: "Camila Alvarado Pérez",
+    nro_documento: "72849238",
+    fecha_hora: "2026-10-13T22:00:00.000Z",
+    tipo_marcacion: TipoMarcacion.SALIDA,
+    metodo: "MANUAL",
+  },
+  {
+    id: "e0000000-0000-4000-8000-000000000007",
+    empleado_id: "00000000-0000-4000-8000-000000000009",
+    colaborador: "Camila Alvarado Pérez",
+    nro_documento: "72849238",
+    fecha_hora: "2026-10-13T19:00:00.000Z",
+    tipo_marcacion: TipoMarcacion.ENTRADA_ALMUERZO,
+    metodo: "MANUAL",
+  },
+  {
+    id: "e0000000-0000-4000-8000-000000000006",
+    empleado_id: "00000000-0000-4000-8000-000000000009",
+    colaborador: "Camila Alvarado Pérez",
+    nro_documento: "72849238",
+    fecha_hora: "2026-10-13T18:00:00.000Z",
+    tipo_marcacion: TipoMarcacion.SALIDA_ALMUERZO,
+    metodo: "MANUAL",
+  },
+  {
+    id: "e0000000-0000-4000-8000-000000000005",
+    empleado_id: "00000000-0000-4000-8000-000000000009",
+    colaborador: "Camila Alvarado Pérez",
+    nro_documento: "72849238",
+    fecha_hora: "2026-10-13T13:12:00.000Z",
+    tipo_marcacion: TipoMarcacion.ENTRADA,
+    metodo: "MANUAL",
+  },
+  {
+    id: "e0000000-0000-4000-8000-000000000004",
+    empleado_id: "00000000-0000-4000-8000-000000000008",
+    colaborador: "Luis Alberto Aguilar Ramos",
+    nro_documento: "72849221",
+    fecha_hora: "2026-10-12T22:00:00.000Z",
+    tipo_marcacion: TipoMarcacion.SALIDA,
+    metodo: "MANUAL",
+  },
+  {
+    id: "e0000000-0000-4000-8000-000000000003",
+    empleado_id: "00000000-0000-4000-8000-000000000008",
+    colaborador: "Luis Alberto Aguilar Ramos",
+    nro_documento: "72849221",
+    fecha_hora: "2026-10-12T19:00:00.000Z",
+    tipo_marcacion: TipoMarcacion.ENTRADA_ALMUERZO,
+    metodo: "MANUAL",
+  },
+  {
+    id: "e0000000-0000-4000-8000-000000000002",
+    empleado_id: "00000000-0000-4000-8000-000000000008",
+    colaborador: "Luis Alberto Aguilar Ramos",
+    nro_documento: "72849221",
+    fecha_hora: "2026-10-12T18:00:00.000Z",
+    tipo_marcacion: TipoMarcacion.SALIDA_ALMUERZO,
+    metodo: "MANUAL",
+  },
+  {
+    id: "e0000000-0000-4000-8000-000000000001",
+    empleado_id: "00000000-0000-4000-8000-000000000008",
+    colaborador: "Luis Alberto Aguilar Ramos",
+    nro_documento: "72849221",
+    fecha_hora: "2026-10-12T13:00:00.000Z",
+    tipo_marcacion: TipoMarcacion.ENTRADA,
+    metodo: "MANUAL",
+  },
+];

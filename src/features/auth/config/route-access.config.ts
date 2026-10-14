@@ -20,6 +20,7 @@ const ROUTE_ROLES: Readonly<Record<string, readonly AuthRol[] | null>> = {
   [ROUTE_PATHS.organizacion.areas]: ["ADMIN", "RRHH"],
   [ROUTE_PATHS.organizacion.cargos]: ["ADMIN", "RRHH"],
   [ROUTE_PATHS.asistencia.jornadas]: ["ADMIN", "RRHH", "CONTADOR"],
+  [ROUTE_PATHS.asistencia.crearJornada]: ["ADMIN", "RRHH"],
   // Estas dos pantallas quedan solo para RRHH por ahora
   [ROUTE_PATHS.asistencia.marcaciones]: ["RRHH"],
   [ROUTE_PATHS.auditoria]: ["RRHH"],

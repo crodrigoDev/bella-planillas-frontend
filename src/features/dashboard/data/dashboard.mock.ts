@@ -1,57 +1,50 @@
-import type { DashboardRrhhResponseDto } from "@jyp/shared-contracts";
-import {
-  AREAS_MOCK,
-  EMPLEADOS_MOCK,
-} from "@/features/empleados/data/empleados.mock";
-import { getSolicitudesMock } from "@/features/solicitudes/data/solicitudes.mock";
-import { getEmpleadoNombre } from "@/features/empleados/utils/empleados.utils";
 import type { DashboardData } from "../types/dashboard.types";
 
-/** Combina el contrato disponible con ejemplos de los bloques de la referencia */
-export function getDashboardMock(): DashboardData {
-  const pendientes = getSolicitudesMock().filter(
-    (item) => item.estado === "PENDIENTE" || item.estado === "EN_REVISION",
-  );
-  const distribucion = [42, 26, 34, 16, 10];
-  const emp = EMPLEADOS_MOCK.filter((item) => item.activo);
-  const resumen: DashboardRrhhResponseDto = {
+// Datos fijos para presentar el diseño sin depender del backend
+export const DASHBOARD_MOCK: DashboardData = {
+  resumen: {
     dotacion: {
       total_activos: 128,
       altas_mes: 7,
-      distribucion_areas: AREAS_MOCK.map((area, index) => ({
-        area_id: area.id,
-        nombre: area.nombre,
-        total_empleados: distribucion[index],
-      })),
+      distribucion_areas: [
+        {
+          area_id: "10000000-0000-4000-8000-000000000001",
+          nombre: "Operaciones y Logística",
+          total_empleados: 42,
+        },
+        {
+          area_id: "10000000-0000-4000-8000-000000000003",
+          nombre: "Tecnología y Desarrollo",
+          total_empleados: 34,
+        },
+        {
+          area_id: "10000000-0000-4000-8000-000000000002",
+          nombre: "Ventas y Comercial",
+          total_empleados: 26,
+        },
+        {
+          area_id: "10000000-0000-4000-8000-000000000004",
+          nombre: "Administración y Finanzas",
+          total_empleados: 16,
+        },
+        {
+          area_id: "10000000-0000-4000-8000-000000000005",
+          nombre: "Recursos Humanos",
+          total_empleados: 10,
+        },
+      ],
     },
     contratos_alertas: {
-      total_por_vencer_30d: 3,
-      criticos_15d: 2,
-      preventivos_30d: 1,
-      proximos_a_vencer: emp
-        .slice(0, 3)
-        .map((item, index) => ({
-          id: `c0000000-0000-4000-8000-${String(index + 1).padStart(12, "0")}`,
-          empleado_id: item.id,
-          colaborador: getEmpleadoNombre(item),
-          nro_documento: item.nro_documento,
-          area: item.area.nombre,
-          cargo: item.cargo.nombre,
-          fecha_fin: ["2026-10-20", "2026-10-26", "2026-11-05"][index],
-          dias_restantes: [6, 12, 22][index],
-          nivel_alerta: index < 2 ? "CRITICO" : "PREVENTIVO",
-        })),
+      total_por_vencer_30d: 0,
+      criticos_15d: 0,
+      preventivos_30d: 0,
+      proximos_a_vencer: [],
     },
     solicitudes_tramite: {
-      total_pendientes: pendientes.length,
-      vacaciones_pendientes: pendientes.filter(
-        (item) => item.tipo === "VACACIONES",
-      ).length,
-      licencias_medicas_pendientes: pendientes.filter(
-        (item) => item.tipo === "LICENCIA_MEDICA",
-      ).length,
-      permisos_pendientes: pendientes.filter((item) => item.tipo === "PERMISO")
-        .length,
+      total_pendientes: 4,
+      vacaciones_pendientes: 1,
+      licencias_medicas_pendientes: 1,
+      permisos_pendientes: 1,
     },
     incidencias_mes: {
       periodo: "2026-10",
@@ -65,29 +58,58 @@ export function getDashboardMock(): DashboardData {
       fecha_corte: "2026-10-14",
       desde_cache: false,
     },
-  };
-  return {
-    resumen,
-    diseño: {
-      ceses_mes: 3,
-      rotacion_porcentaje: 2.4,
-      asistencia: [124, 122, 120, 123, 125].map((puntual, index) => ({
-        dia: ["Lun", "Mar", "Mié", "Jue", "Vie"][index],
-        fecha: `2026-10-0${index + 5}`,
-        puntual,
-        tardanza: [3, 4, 5, 3, 2][index],
-        falta: [1, 2, 3, 2, 1][index],
-      })),
-      cumpleaños: emp
-        .slice(0, 5)
-        .map((item, index) => ({
-          empleado_id: item.id,
-          nombre: getEmpleadoNombre(item),
-          cargo: item.cargo.nombre,
-          area: item.area.nombre,
-          fecha: `2026-10-${[16, 19, 22, 26, 30][index]}`,
-          dias: [2, 5, 8, 12, 16][index],
-        })),
-    },
-  };
-}
+  },
+  diseño: {
+    ceses_mes: 3,
+    rotacion_porcentaje: 2.4,
+    asistencia: [
+      { dia: "Lun", fecha: "2026-10-05", puntual: 124, tardanza: 3, falta: 1 },
+      { dia: "Mar", fecha: "2026-10-06", puntual: 122, tardanza: 4, falta: 2 },
+      { dia: "Mié", fecha: "2026-10-07", puntual: 120, tardanza: 5, falta: 3 },
+      { dia: "Jue", fecha: "2026-10-08", puntual: 123, tardanza: 3, falta: 2 },
+      { dia: "Vie", fecha: "2026-10-09", puntual: 125, tardanza: 2, falta: 1 },
+    ],
+    cumpleaños: [
+      {
+        empleado_id: "00000000-0000-4000-8000-000000000008",
+        nombre: "Luis Alberto Aguilar Ramos",
+        cargo: "Ingeniero de software",
+        area: "Tecnología y Desarrollo",
+        fecha: "2026-10-16",
+        dias: 2,
+      },
+      {
+        empleado_id: "00000000-0000-4000-8000-000000000009",
+        nombre: "Camila Alvarado Pérez",
+        cargo: "Analista contable",
+        area: "Administración y Finanzas",
+        fecha: "2026-10-19",
+        dias: 5,
+      },
+      {
+        empleado_id: "00000000-0000-4000-8000-000000000005",
+        nombre: "Roberto Carlos Benavides",
+        cargo: "Especialista de RRHH",
+        area: "Recursos Humanos",
+        fecha: "2026-10-22",
+        dias: 8,
+      },
+      {
+        empleado_id: "00000000-0000-4000-8000-000000000010",
+        nombre: "Diego Castro Mendoza",
+        cargo: "Especialista de RRHH",
+        area: "Recursos Humanos",
+        fecha: "2026-10-26",
+        dias: 12,
+      },
+      {
+        empleado_id: "00000000-0000-4000-8000-000000000011",
+        nombre: "Andrea Delgado Torres",
+        cargo: "Supervisor de almacén",
+        area: "Operaciones y Logística",
+        fecha: "2026-10-30",
+        dias: 16,
+      },
+    ],
+  },
+};
