@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import type { DataTableFeatures } from "@/components/data-table/data-table.config";
 import { ESTADOS_LABORALES, REGIMENES_SALUD, TURNOS } from "./empleados.config";
-import type { EmpleadoListado } from "../types/empleados.types";
+import type { EmpleadoActions, EmpleadoListado } from "../types/empleados.types";
 import {
   formatEmpleadoFecha,
   formatEmpleadoSueldo,
@@ -22,7 +22,7 @@ const avatarColors = [
 ];
 
 /** Define como se presenta cada dato del empleado dentro del DataTable */
-export function getEmpleadosColumns(canManage: boolean) {
+export function getEmpleadosColumns(canManage: boolean, actions: EmpleadoActions) {
   return columnHelper.columns([
     columnHelper.accessor("nombre", {
       header: "Colaborador",
@@ -168,7 +168,7 @@ export function getEmpleadosColumns(canManage: boolean) {
             header: () => <span className="block text-center">Acciones</span>,
             cell: ({ row }) => (
               <div className="text-center">
-                <EmpleadoRowActions empleado={row.original} />
+                <EmpleadoRowActions empleado={row.original} {...actions} />
               </div>
             ),
           }),

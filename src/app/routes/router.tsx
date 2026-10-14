@@ -10,6 +10,7 @@ import AppLayout from "@/app/layouts/AppLayout";
 import DashboardPage from "@/pages/dashboard/DashboardPage";
 import EmpleadosPage from "@/pages/empleados/EmpleadosPage";
 import CrearEmpleadoPage from "@/pages/empleados/CrearEmpleadoPage";
+import EditarEmpleadoPage from "@/pages/empleados/EditarEmpleadoPage";
 import ImportarEmpleadosPage from "@/pages/empleados/ImportarEmpleadosPage";
 import NotFoundPage from "@/pages/not-found/NotFoundPage";
 import EnConstruccionPage from "@/pages/construccion/EnConstruccionPage";
@@ -104,6 +105,14 @@ export const router = createBrowserRouter([
               path: ROUTE_PATHS.gestionPersonal.importarEmpleados,
               handle: { title: "Importar empleados" },
               element: <ImportarEmpleadosPage />,
+            }],
+          },
+          {
+            element: APP_PREVIEW_MODE ? <Outlet /> : <RoleRoute path={ROUTE_PATHS.gestionPersonal.editarEmpleado} />,
+            children: [{
+              path: ROUTE_PATHS.gestionPersonal.editarEmpleado,
+              handle: { title: "Editar empleado" },
+              element: <EditarEmpleadoPage />,
             }],
           },
           ...pendingPages.map(({ path, title }) => ({

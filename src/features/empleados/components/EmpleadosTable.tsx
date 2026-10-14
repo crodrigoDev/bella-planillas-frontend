@@ -1,10 +1,10 @@
 import { SearchX } from "lucide-react";
 import DataTable from "@/components/data-table/DataTable";
 import { Button } from "@/components/ui/button";
-import type { EmpleadoListado } from "../types/empleados.types";
+import type { EmpleadoActions, EmpleadoListado } from "../types/empleados.types";
 import { getEmpleadosColumns } from "../config/empleados.columns";
 
-interface EmpleadosTableProps {
+interface EmpleadosTableProps extends EmpleadoActions {
   empleados: EmpleadoListado[];
   canManage: boolean;
   onReset: () => void;
@@ -15,8 +15,10 @@ export default function EmpleadosTable({
   empleados,
   canManage,
   onReset,
+  onChangeState,
+  onDeactivate,
 }: EmpleadosTableProps) {
-  const columns = getEmpleadosColumns(canManage);
+  const columns = getEmpleadosColumns(canManage, { onChangeState, onDeactivate });
 
   return (
     <DataTable

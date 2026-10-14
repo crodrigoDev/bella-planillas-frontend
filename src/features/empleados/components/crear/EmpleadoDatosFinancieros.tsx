@@ -3,9 +3,9 @@ import { useFormContext, useWatch } from "react-hook-form";
 import { AFPS_MOCK, BANCOS_MOCK, REGIMENES_PENSION_MOCK } from "../../data/registro-empleado.mock";
 import { COMISION_AFP_OPTIONS, SALUD_OPTIONS, TIPO_CUENTA_OPTIONS } from "../../config/crear-empleado.config";
 import type { CrearEmpleadoFormValues } from "../../types/crear-empleado.types";
-import EmpleadoFormSection from "./EmpleadoFormSection";
-import EmpleadoInputField from "./EmpleadoInputField";
-import EmpleadoSelectField from "./EmpleadoSelectField";
+import EmpleadoFormSection from "../form/EmpleadoFormSection";
+import EmpleadoInputField from "../form/EmpleadoInputField";
+import EmpleadoSelectField from "../form/EmpleadoSelectField";
 
 /** Captura pension, sueldo, cuentas bancarias y cobertura de salud */
 export default function EmpleadoDatosFinancieros() {

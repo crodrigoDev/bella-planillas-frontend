@@ -6,6 +6,8 @@ import {
   UserRoundMinus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { generatePath, Link } from "react-router-dom";
+import { ROUTE_PATHS } from "@/app/routes/path";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,16 +15,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { EmpleadoListado } from "../types/empleados.types";
+import type { EmpleadoActions, EmpleadoListado } from "../types/empleados.types";
 import { getEmpleadoNombre } from "../utils/empleados.utils";
 
-interface EmpleadoRowActionsProps {
+interface EmpleadoRowActionsProps extends EmpleadoActions {
   empleado: EmpleadoListado;
 }
 
 /** Muestra las acciones disponibles para un registro activo o inactivo */
 export default function EmpleadoRowActions({
   empleado,
+  onChangeState,
+  onDeactivate,
 }: EmpleadoRowActionsProps) {
   return (
     <DropdownMenu>
@@ -42,14 +46,14 @@ export default function EmpleadoRowActions({
       <DropdownMenuContent align="end" className="w-52">
         {empleado.activo ? (
           <>
-            <DropdownMenuItem disabled>
+            <DropdownMenuItem render={<Link to={generatePath(ROUTE_PATHS.gestionPersonal.editarEmpleado, { empleadoId: empleado.id })} />}>
               <Pencil aria-hidden="true" /> Editar empleado
             </DropdownMenuItem>
-            <DropdownMenuItem disabled>
+            <DropdownMenuItem onClick={() => onChangeState(empleado)}>
               <RefreshCw aria-hidden="true" /> Cambiar estado laboral
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive" disabled>
+            <DropdownMenuItem variant="destructive" onClick={() => onDeactivate(empleado)}>
               <UserRoundMinus aria-hidden="true" /> Dar de baja
             </DropdownMenuItem>
           </>

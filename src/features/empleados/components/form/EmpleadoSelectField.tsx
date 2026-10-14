@@ -8,12 +8,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type {
-  CrearEmpleadoFormValues,
-  EmpleadoTextFieldName,
-} from "../../types/crear-empleado.types";
+  EmpleadoFormValues,
+  EmpleadoSelectName,
+} from "../../types/empleado-form.types";
 
 interface EmpleadoSelectFieldProps {
-  name: EmpleadoTextFieldName;
+  name: EmpleadoSelectName;
   label: string;
   options: { value: string; label: string }[];
   required?: boolean;
@@ -37,7 +37,7 @@ export default function EmpleadoSelectField({
   const {
     control,
     formState: { isSubmitting },
-  } = useFormContext<CrearEmpleadoFormValues>();
+  } = useFormContext<EmpleadoFormValues>();
   const id = `empleado-${name}`;
   const items = emptyLabel
     ? [{ value: "sin_seleccionar", label: emptyLabel }, ...options]

@@ -42,3 +42,14 @@ export interface EmpleadoListado extends DatosEmpleado {
     regimen_salud: string;
   } | null;
 }
+
+// Añade los datos personales necesarios para editar los registros de prueba
+export type EmpleadoMock = EmpleadoListado & Partial<CrearEmpleadoDto> & {
+  fecha_cese?: string | null;
+  deleted_at?: string | null;
+};
+
+export interface EmpleadoActions {
+  onChangeState: (empleado: EmpleadoListado) => void;
+  onDeactivate: (empleado: EmpleadoListado) => void;
+}

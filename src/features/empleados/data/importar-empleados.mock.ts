@@ -1,7 +1,7 @@
 import { CargaMasivaFilaSchema, type CargaMasivaFilaDTO, type CrearDatoFinancieroDto } from "@jyp/shared-contracts";
 import type { EscenarioImportacion, ReporteImportacion, TrabajoImportacion, ConfirmarImportacionDto } from "../types/importar-empleados.types";
-import type { EmpleadoListado } from "../types/empleados.types";
-import { AREAS_MOCK, CARGOS_MOCK, EMPLEADOS_MOCK, JORNADAS_MOCK } from "./empleados.mock";
+import type { EmpleadoMock } from "../types/empleados.types";
+import { AREAS_MOCK, CARGOS_MOCK, DOCUMENTOS_MOCK, EMPLEADOS_MOCK, JORNADAS_MOCK } from "./empleados.mock";
 import { AFPS_MOCK, BANCOS_MOCK, FINANCIEROS_REGISTRADOS_MOCK, REGIMENES_PENSION_MOCK } from "./registro-empleado.mock";
 
 const BASE_FILA = {
@@ -86,13 +86,15 @@ function guardarFilaImportacionMock(fila: CargaMasivaFilaDTO): void {
   }
   const jornada = JORNADAS_MOCK.find((item) => fila.jornada && equals(item.nombre, fila.jornada)) ?? null;
   const actual = EMPLEADOS_MOCK.find((item) => item.nro_documento === fila.nro_documento);
-  const empleado: EmpleadoListado = {
+  const documentoIndex = ["DNI", "CE", "PASAPORTE", "PTP"].indexOf(fila.tipo_documento);
+  const empleado: EmpleadoMock = {
     ...actual,
     ...fila,
     id: actual?.id ?? crypto.randomUUID(),
     nombre: fila.nombre || "NO_REGISTRADO",
     apellido: fila.apellido || "NO_REGISTRADO",
     email: fila.email ?? null,
+    documento_id: DOCUMENTOS_MOCK[documentoIndex].id,
     area_id: area.id,
     cargo_id: cargo.id,
     jornada_id: jornada?.id ?? null,

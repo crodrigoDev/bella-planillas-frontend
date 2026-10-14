@@ -8,6 +8,7 @@ const ROUTE_ROLES: Readonly<Record<string, readonly AuthRol[] | null>> = {
   [ROUTE_PATHS.perfil]: null,
   [ROUTE_PATHS.gestionPersonal.empleados]: ["ADMIN", "RRHH", "CONTADOR"],
   [ROUTE_PATHS.gestionPersonal.crearEmpleado]: ["ADMIN", "RRHH"],
+  [ROUTE_PATHS.gestionPersonal.editarEmpleado]: ["ADMIN", "RRHH"],
   [ROUTE_PATHS.gestionPersonal.importarEmpleados]: ["ADMIN", "RRHH"],
   [ROUTE_PATHS.gestionPersonal.solicitudes]: [
     "ADMIN",

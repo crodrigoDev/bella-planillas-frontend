@@ -3,6 +3,7 @@ import type {
   EmpleadoCatalogo,
   EmpleadoCargo,
   EmpleadoListado,
+  EmpleadoMock,
   EmpleadosQuery,
 } from "../types/empleados.types";
 
@@ -102,8 +103,8 @@ const estados: EstadoEmpleado[] = [
 ];
 
 /** Datos locales para revisar filas, filtros y variantes del diseño */
-export const EMPLEADOS_MOCK: EmpleadoListado[] = personas
-  .map<EmpleadoListado>(([nombre, apellido], index) => {
+export const EMPLEADOS_MOCK: EmpleadoMock[] = personas
+  .map<EmpleadoMock>(([nombre, apellido], index) => {
     const area = AREAS_MOCK[index % AREAS_MOCK.length];
     const cargo = CARGOS_MOCK[index % CARGOS_MOCK.length];
     const jornada =
@@ -116,6 +117,22 @@ export const EMPLEADOS_MOCK: EmpleadoListado[] = personas
       apellido,
       nro_documento: String(72849102 + index * 17),
       email: index === 12 ? null : `empleado${index + 1}@example.com`,
+      documento_id: DOCUMENTOS_MOCK[0].id,
+      telefono: index % 4 === 0 ? null : `987654${String(index).padStart(3, "0")}`,
+      sexo: [1, 3, 5, 6, 8, 10, 12, 14, 16, 18, 20, 22].includes(index) ? "FEMENINO" : "MASCULINO",
+      estado_civil: "SOLTERO",
+      nacionalidad: "PERUANA",
+      direccion: "Av. Ejemplo 120",
+      referencia_direccion: null,
+      departamento: "Lima",
+      provincia: "Lima",
+      distrito: "Lima",
+      ubigeo: "150101",
+      fecha_nacimiento: "1992-04-15",
+      afp_fecha_filiacion: null,
+      asig_familiar: false,
+      fecha_cese: activo ? null : "2025-12-31T00:00:00.000Z",
+      deleted_at: activo ? null : "2025-12-31T00:00:00.000Z",
       area_id: area.id,
       cargo_id: cargo.id,
       jornada_id: jornada?.id ?? null,
@@ -140,9 +157,10 @@ export const EMPLEADOS_MOCK: EmpleadoListado[] = personas
 /** Filtra el arreglo local y deja que TanStack divida las paginas */
 export function getEmpleadosMock(
   query: EmpleadosQuery,
+  data: EmpleadoListado[] = EMPLEADOS_MOCK,
 ): EmpleadoListado[] {
   const search = query.search?.trim().toLocaleLowerCase("es-PE");
-  return EMPLEADOS_MOCK.filter((empleado) => {
+  return data.filter((empleado) => {
     if (query.area_id && empleado.area_id !== query.area_id) return false;
     if (query.cargo_id && empleado.cargo_id !== query.cargo_id) return false;
     if (query.jornada_id && empleado.jornada_id !== query.jornada_id)

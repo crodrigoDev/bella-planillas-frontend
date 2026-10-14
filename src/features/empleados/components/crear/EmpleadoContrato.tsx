@@ -1,7 +1,7 @@
 import { FileText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import EmpleadoFormSection from "./EmpleadoFormSection";
-import EmpleadoInputField from "./EmpleadoInputField";
+import EmpleadoFormSection from "../form/EmpleadoFormSection";
+import EmpleadoInputField from "../form/EmpleadoInputField";
 
 /** Captura los datos del primer contrato del empleado */
 export default function EmpleadoContrato() {

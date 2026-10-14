@@ -6,7 +6,7 @@ import { REGIMENES_SALUD } from "../../config/empleados.config";
 import { AFPS_MOCK, BANCOS_MOCK, REGIMENES_PENSION_MOCK } from "../../data/registro-empleado.mock";
 import { formatEmpleadoFecha, formatEmpleadoSueldo } from "../../utils/empleados.utils";
 import type { CrearEmpleadoFormValues } from "../../types/crear-empleado.types";
-import EmpleadoFormSection from "./EmpleadoFormSection";
+import EmpleadoFormSection from "../form/EmpleadoFormSection";
 
 /** Presenta un dato de la revision y señala cuando se dejo vacio */
 function ResumenDato({ label, value }: { label: string; value?: string | null }) {

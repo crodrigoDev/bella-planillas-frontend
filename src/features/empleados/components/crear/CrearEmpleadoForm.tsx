@@ -11,8 +11,8 @@ import { CREAR_EMPLEADO_DEFAULTS, CREAR_EMPLEADO_STEPS } from "../../config/crea
 import type { CrearEmpleadoFormValues, RegistroEmpleadoDto } from "../../types/crear-empleado.types";
 import { RegistroEmpleadoSchema } from "../../schemas/registro-empleado.schema";
 import EmpleadoRegistroSteps from "./EmpleadoRegistroSteps";
-import EmpleadoDatosPersonales from "./EmpleadoDatosPersonales";
-import EmpleadoDatosLaborales from "./EmpleadoDatosLaborales";
+import EmpleadoDatosPersonales from "../form/EmpleadoDatosPersonales";
+import EmpleadoDatosLaborales from "../form/EmpleadoDatosLaborales";
 import EmpleadoRegistroResumen from "./EmpleadoRegistroResumen";
 import EmpleadoContrato from "./EmpleadoContrato";
 import EmpleadoDatosFinancieros from "./EmpleadoDatosFinancieros";

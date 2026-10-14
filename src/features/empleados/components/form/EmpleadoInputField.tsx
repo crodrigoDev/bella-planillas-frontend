@@ -3,12 +3,12 @@ import { useFormContext } from "react-hook-form";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import type {
-  CrearEmpleadoFormValues,
-  EmpleadoInputFieldName,
-} from "../../types/crear-empleado.types";
+  EmpleadoFormValues,
+  EmpleadoInputName,
+} from "../../types/empleado-form.types";
 
 interface EmpleadoInputFieldProps {
-  name: EmpleadoInputFieldName;
+  name: EmpleadoInputName;
   label: string;
   required?: boolean;
   type?: ComponentProps<typeof Input>["type"];
@@ -20,6 +20,7 @@ interface EmpleadoInputFieldProps {
   step?: number | string;
   inputMode?: ComponentProps<typeof Input>["inputMode"];
   className?: string;
+  emptyValue?: null | "";
 }
 
 /** Conecta un campo de texto con el formulario y muestra su error */
@@ -28,13 +29,14 @@ export default function EmpleadoInputField({
   label,
   required = false,
   className,
+  emptyValue,
   ...inputProps
 }: EmpleadoInputFieldProps) {
   const {
     register,
     getFieldState,
     formState,
-  } = useFormContext<CrearEmpleadoFormValues>();
+  } = useFormContext<EmpleadoFormValues>();
   const id = `empleado-${name}`;
   const { error } = getFieldState(name, formState);
   const { isSubmitting } = formState;
@@ -49,9 +51,9 @@ export default function EmpleadoInputField({
       </FieldLabel>
       <Input
         {...register(name, {
-          // Los campos opcionales vacios no se envian como cadenas vacias
+          // Al editar, null borra el dato y undefined lo deja sin enviar
           setValueAs: (value: unknown) =>
-            typeof value === "string" ? value.trim() || undefined : value,
+            typeof value === "string" ? value.trim() || emptyValue : value,
         })}
         {...inputProps}
         id={id}
