@@ -1,10 +1,22 @@
 import { useState } from "react";
-import { Plus, Search } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  Search,
+} from "lucide-react";
 import type { CrearAreaDto } from "@jyp/shared-contracts";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -21,8 +33,8 @@ import { useAreas } from "@/features/areas/hooks/useAreas";
 import type { AreaViewModel } from "@/features/areas/types/areas.types";
 
 /**
- * Permite buscar, registrar, editar y desactivar áreas de ejemplo.
- * Los cambios permanecen en memoria hasta recargar la página.
+ * Compone la gestión de áreas con datos mockeados.
+ * Permite buscar, paginar, registrar, editar y desactivar registros.
  */
 export function AreasView() {
   const {
@@ -30,8 +42,16 @@ export function AreasView() {
     setAreas,
     search,
     setSearch,
-    filteredAreas,
     activeAreasCount,
+    paginatedAreas,
+    pageSize,
+    setPageSize,
+    currentPage,
+    totalPages,
+    totalResults,
+    firstResult,
+    lastResult,
+    goToPage,
   } = useAreas();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -70,9 +90,10 @@ export function AreasView() {
       setSuccessMessage(
         `El área "${values.nombre}" se actualizó correctamente.`,
       );
+
+      setSearch("");
     } else {
       setAreas((currentAreas) => [
-        ...currentAreas,
         {
           id: crypto.randomUUID(),
           nombre: values.nombre,
@@ -82,14 +103,14 @@ export function AreasView() {
           associatedSchedules: 0,
           isActive: true,
         },
+        ...currentAreas,
       ]);
 
+      setSearch("");
       setSuccessMessage(
         `El área "${values.nombre}" se registró correctamente.`,
       );
     }
-
-    setSearch("");
   }
 
   function handleRequestDeactivate(area: AreaViewModel) {
@@ -136,6 +157,7 @@ export function AreasView() {
           <h1 className="text-3xl font-bold tracking-tight">
             Áreas
           </h1>
+
           <p className="mt-2 text-sm text-muted-foreground">
             Administra las áreas de la empresa
           </p>
@@ -165,6 +187,7 @@ export function AreasView() {
             aria-hidden="true"
             className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
           />
+
           <Input
             aria-label="Buscar áreas por nombre o descripción"
             placeholder="Buscar por nombre o descripción…"
@@ -208,19 +231,24 @@ export function AreasView() {
           </TableHeader>
 
           <TableBody>
-            {filteredAreas.length === 0 ? (
+            {paginatedAreas.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="h-40 text-center">
                   <p className="font-medium">
-                    No se encontraron áreas
+                    {search.trim()
+                      ? "No se encontraron áreas"
+                      : "Todavía no hay áreas registradas"}
                   </p>
+
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Prueba con otro nombre o descripción.
+                    {search.trim()
+                      ? "Prueba con otro nombre o descripción."
+                      : "Registra un área para comenzar."}
                   </p>
                 </TableCell>
               </TableRow>
             ) : (
-              filteredAreas.map((area) => (
+              paginatedAreas.map((area) => (
                 <TableRow key={area.id}>
                   <TableCell className="min-w-64 whitespace-normal px-5 py-6 font-medium">
                     {area.nombre}
@@ -280,12 +308,79 @@ export function AreasView() {
           </TableBody>
         </Table>
 
-        <div
-          role="status"
-          className="border-t px-5 py-4 text-sm text-muted-foreground"
-        >
-          Mostrando {filteredAreas.length} de {areas.length} áreas
-        </div>
+        <footer className="flex flex-col gap-4 border-t px-5 py-4 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+          <p role="status" className="text-muted-foreground">
+            Mostrando {firstResult}-{lastResult} de {totalResults} áreas
+          </p>
+
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2">
+              <span className="text-muted-foreground">
+                Registros por página:
+              </span>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  aria-label={`Registros por página: ${pageSize}`}
+                  className="inline-flex h-9 items-center gap-2 rounded-md border px-3 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  {pageSize}
+                  <ChevronDown
+                    aria-hidden="true"
+                    className="size-4"
+                  />
+                </DropdownMenuTrigger>
+
+                <DropdownMenuContent align="end">
+                  {[5, 10, 20].map((size) => (
+                    <DropdownMenuItem
+                      key={size}
+                      onClick={() => setPageSize(size)}
+                    >
+                      {size} registros
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
+            <nav
+              aria-label="Paginación de áreas"
+              className="flex items-center gap-2"
+            >
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage === 1}
+                onClick={() => goToPage(currentPage - 1)}
+              >
+                <ChevronLeft aria-hidden="true" className="size-4" />
+                Anterior
+              </Button>
+
+              <span
+                aria-current="page"
+                className="inline-flex h-9 min-w-9 items-center justify-center rounded-md bg-indigo-600 px-2 font-medium text-white"
+              >
+                {currentPage}
+              </span>
+
+              <span className="text-muted-foreground">
+                de {totalPages}
+              </span>
+
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage === totalPages}
+                onClick={() => goToPage(currentPage + 1)}
+              >
+                Siguiente
+                <ChevronRight aria-hidden="true" className="size-4" />
+              </Button>
+            </nav>
+          </div>
+        </footer>
       </div>
 
       {isFormOpen && (
