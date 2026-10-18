@@ -67,12 +67,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   logout: async () => {
-    const session = get().session;
-
-    if (!session) return;
+    if (!get().session) return;
 
     // Conserva la sesión si falla la petición para poder volver a intentar
-    await authService.logout(session.accessToken);
+    await authService.logout();
 
     set({ session: null });
   },

@@ -7,6 +7,7 @@ import type {
   RefreshResponse,
   PasswordRecoveryResponse,
 } from "@/features/auth/types/auth.types";
+import { protectedHttpClient } from "@/lib/api/protected-http-client";
 
 /**
  * Agrupa las operaciones de autenticación que se comunican con el backend
@@ -47,16 +48,11 @@ export const authService = {
   /**
    * Solicita el cierre de sesión y deja que el servidor borre la cookie
    *
-   * @param accessToken - Acceso del usuario que quiere salir
    * @throws Si no se puede completar el cierre de sesión
    */
-  logout: async (accessToken: string): Promise<void> => {
+  logout: async (): Promise<void> => {
     // Envia el acceso en los encabezados y la cookie viaja con la petición
-    await publicHttpClient.post("/auth/logout", undefined, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    await protectedHttpClient.post("/auth/logout");
   },
 
   /**
