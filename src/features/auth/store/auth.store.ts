@@ -1,11 +1,15 @@
 import { create } from "zustand";
 import type { LoginDTO } from "@jyp/shared-contracts";
 import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
+import { configureAuth } from "@/lib/api/protected-http-client";
 import type {
   AuthInitializationState,
   LoginResponse,
 } from "@/features/auth/types/auth.types";
-import { restoreSession } from "@/features/auth/services/session.service";
+import {
+  refreshAccessToken,
+  restoreSession,
+} from "@/features/auth/services/session.service";
 import { authService } from "@/features/auth/services/auth.service";
 
 interface AuthState {
@@ -15,6 +19,7 @@ interface AuthState {
   retryInitialization: () => void;
   login: (credentials: LoginDTO) => Promise<void>;
   logout: () => Promise<void>;
+  clearSession: () => void;
 }
 
 /**
@@ -71,4 +76,26 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     set({ session: null });
   },
+
+  clearSession: () => set({ session: null }),
 }));
+
+/**
+ * Renueva el token y lo guarda, conservando los datos del usuario
+ */
+const renovarAccessToken = async (): Promise<string> => {
+  const accessToken = await refreshAccessToken();
+  const { session } = useAuthStore.getState();
+
+  // No revive una sesión cerrada mientras esperabamos
+  if (session && session.accessToken !== accessToken)
+    useAuthStore.setState({ session: { ...session, accessToken } });
+
+  return accessToken;
+};
+
+configureAuth({
+  getToken: () => useAuthStore.getState().session?.accessToken ?? null,
+  refreshToken: renovarAccessToken,
+  onSessionExpired: () => useAuthStore.getState().clearSession(),
+});

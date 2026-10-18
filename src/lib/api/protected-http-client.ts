@@ -1,34 +1,31 @@
 import axios, { isAxiosError, type InternalAxiosRequestConfig } from "axios";
-import { publicHttpClient } from "./public-http-client";
-import { refreshAccessToken } from "@/features/auth/services/session.service";
-import type { LoginResponse } from "@/features/auth/types/auth.types";
-
-interface AuthConnection {
-  getSession: () => LoginResponse | null;
-  saveSession: (session: LoginResponse | null) => void;
+import { publicHttpClient } from "@/lib/api/public-http-client";
+/**
+ * Funciones que el cliente necesita de la capa de autenticación
+ */
+interface AuthHandlers {
+  getToken: () => string | null;
+  // Renueva el token, lo guarda y lo devuelve. Debe compartir la petición en curso
+  refreshToken: () => Promise<string>;
+  onSessionExpired: () => void;
 }
 
 interface RetryConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }
 
-// Permite leer y actualizar la sesión del provider
-let auth: AuthConnection | null = null;
+let handlers: AuthHandlers | null = null;
 
-/** Conecta el cliente con la sesión y devuelve una función para desconectarlo */
-export function connectAuthClient(connection: AuthConnection) {
-  auth = connection;
-
-  return () => {
-    if (auth === connection) auth = null;
-  };
-}
+// Conecta el cliente con la sesión. Se llama solo una vez al iniciar
+export const configureAuth = (nextHandlers: AuthHandlers): void => {
+  handlers = nextHandlers;
+};
 
 // Reutiliza la URL, timeout y configuración de cookies
 export const protectedHttpClient = axios.create(publicHttpClient.defaults);
 
 protectedHttpClient.interceptors.request.use((config) => {
-  const token = auth?.getSession()?.accessToken;
+  const token = handlers?.getToken();
 
   if (token) config.headers.set("Authorization", `Bearer ${token}`);
   else config.headers.delete("Authorization");
@@ -39,41 +36,26 @@ protectedHttpClient.interceptors.request.use((config) => {
 protectedHttpClient.interceptors.response.use(
   (response) => response,
   async (error: unknown) => {
-    if (
-      !isAxiosError(error) ||
-      error.response?.status !== 401 ||
-      !error.config
-    ) {
+    if (!isAxiosError(error) || error.response?.status !== 401 || !error.config)
       return Promise.reject(error);
-    }
 
     const request = error.config as RetryConfig;
-    const connection = auth;
-    const session = connection?.getSession();
+    const currentToken = handlers?.getToken();
 
-    // Sin sesión o con un segundo intento fallido, no renueva la sesión
-    if (!connection || !session || request._retry) return Promise.reject(error);
+    // Sin sesión o con un segundo intento fallido, no se vuelve a renovar
+    if (!handlers || !currentToken || request._retry)
+      return Promise.reject(error);
 
     request._retry = true;
 
-    // Si otra petición ya renovó el token, usamos ese acceso
-    if (
-      request.headers.get("Authorization") === `Bearer ${session.accessToken}`
-    ) {
+    // Si otra petición ya renovo el token, solo reintentamos
+    if (request.headers.get("Authorization") === `Bearer ${currentToken}`) {
       try {
-        const accessToken = await refreshAccessToken();
-        const current = connection.getSession();
-
-        // No revive una sesión ya cerrada mientras esperamos
-        if (!current) return Promise.reject(error);
-
-        // Conserva el usuario y solo cambia el token
-        if (current.accessToken == accessToken)
-          connection.saveSession({ ...current, accessToken });
+        await handlers.refreshToken();
       } catch (refreshError) {
-        // 401 al renovar el token significa que la sesión ya no es válida
+        // 401 al renovar significa que la sesion ya no es valida
         if (isAxiosError(refreshError) && refreshError.response?.status === 401)
-          connection.saveSession(null);
+          handlers.onSessionExpired();
 
         return Promise.reject(refreshError);
       }
