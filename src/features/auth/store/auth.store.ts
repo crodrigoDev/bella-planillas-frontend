@@ -24,7 +24,7 @@ interface AuthState {
  * El token nunca se persiste: se pierde al cerrar la pestaña
  * y se recupera con la cookie refresh
  */
-export const AuthStore = create<AuthState>((set, get) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
   session: null,
   initialization: { status: "loading" },
 

@@ -1,4 +1,16 @@
-import type { MiPerfilResponseDto } from "@jyp/shared-contracts";
+import type { LoginDTO, MiPerfilResponseDto } from "@jyp/shared-contracts";
+
+/**
+ * Datos y operaciones disponibles en el contexto de autenticación
+ */
+export interface AuthContextValue {
+  session: LoginResponse | null;
+  isAuthenticated: boolean;
+  initialization: AuthInitializationState;
+  retryInitialization: () => void;
+  login: (credentials: LoginDTO) => Promise<void>;
+  logout: () => Promise<void>;
+}
 
 /**
  * Roles que puede devolver el backend para un usuario
