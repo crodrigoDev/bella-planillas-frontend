@@ -1,6 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, type ReactNode } from "react";
-import { connectAuthClient } from "@/lib/api/protected-http-client";
 import { useAuthStore } from "@/features/auth/store/auth.store";
 
 interface AuthProviderProps {
@@ -19,13 +18,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const hasSession = useAuthStore((state) => state.session !== null);
 
   useEffect(() => void bootstrap(), [bootstrap]);
-
-  useEffect(() => {
-    return connectAuthClient({
-      getSession: () => useAuthStore.getState().session,
-      saveSession: (session) => useAuthStore.setState({ session }),
-    });
-  }, []);
 
   useEffect(() => {
     if (hasSession) return;
