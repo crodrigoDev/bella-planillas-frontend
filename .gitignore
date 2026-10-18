@@ -26,3 +26,7 @@ dist-ssr
 # Variables de Entorno
 .env
 .env.local
+
+# Agente
+.claudeignore
+CLAUDE.md

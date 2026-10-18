@@ -6,11 +6,14 @@ import {
   type ReactNode,
 } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import type { AuthInitializationState, LoginResponse } from "../types/auth.types";
+import type {
+  AuthInitializationState,
+  LoginResponse,
+} from "../types/auth.types";
 import type { LoginDTO } from "@jyp/shared-contracts";
 import { authService } from "../services/auth.service";
 import { AuthContext } from "../context/auth.context";
-import { restoreSession } from "../services/recuperar-sesion";
+import { restoreSession } from "../services/session.service";
 import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
 import { connectAuthClient } from "@/lib/api/protected-http-client";
 
@@ -61,8 +64,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [queryClient, saveSession]);
 
   // Comparte el estado de la comprobación con las rutas protegidas
-  const [initialization, setInitialization] =
-    useState<AuthInitializationState>({ status: "loading" });
+  const [initialization, setInitialization] = useState<AuthInitializationState>(
+    { status: "loading" },
+  );
 
   // Al cambiar este numero, se vuelve a comprobar la sesión
   const [attempt, setAttempt] = useState(0);

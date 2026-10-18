@@ -1,9 +1,6 @@
-import axios, {
-  isAxiosError,
-  type InternalAxiosRequestConfig,
-} from "axios";
+import axios, { isAxiosError, type InternalAxiosRequestConfig } from "axios";
 import { publicHttpClient } from "./public-http-client";
-import { restoreSession } from "@/features/auth/services/recuperar-sesion";
+import { refreshAccessToken } from "@/features/auth/services/session.service";
 import type { LoginResponse } from "@/features/auth/types/auth.types";
 
 interface AuthConnection {
@@ -42,7 +39,11 @@ protectedHttpClient.interceptors.request.use((config) => {
 protectedHttpClient.interceptors.response.use(
   (response) => response,
   async (error: unknown) => {
-    if (!isAxiosError(error) || error.response?.status !== 401 || !error.config) {
+    if (
+      !isAxiosError(error) ||
+      error.response?.status !== 401 ||
+      !error.config
+    ) {
       return Promise.reject(error);
     }
 
@@ -50,33 +51,33 @@ protectedHttpClient.interceptors.response.use(
     const connection = auth;
     const session = connection?.getSession();
 
-    if (!connection || !session) return Promise.reject(error);
-
-    const usedToken = request.headers.get("Authorization");
-    const currentToken = `Bearer ${session.accessToken}`;
-
-    // Si el segundo intento falla, termina sin volver a renovar
-    if (request._retry) {
-      if (usedToken === currentToken) connection.saveSession(null);
-
-      return Promise.reject(error);
-    }
+    // Sin sesión o con un segundo intento fallido, no renueva la sesión
+    if (!connection || !session || request._retry) return Promise.reject(error);
 
     request._retry = true;
 
     // Si otra petición ya renovó el token, usamos ese acceso
-    if (usedToken === currentToken) {
-      const restoredSession = await restoreSession();
+    if (
+      request.headers.get("Authorization") === `Bearer ${session.accessToken}`
+    ) {
+      try {
+        const accessToken = await refreshAccessToken();
+        const current = connection.getSession();
 
-      if (auth !== connection) return Promise.reject(error);
+        // No revive una sesión ya cerrada mientras esperamos
+        if (!current) return Promise.reject(error);
 
-      // Evita reemplazar una sesión que cambió mientras esperabamos
-      if (connection.getSession() === session) {
-        connection.saveSession(restoredSession);
+        // Conserva el usuario y solo cambia el token
+        if (current.accessToken == accessToken)
+          connection.saveSession({ ...current, accessToken });
+      } catch (refreshError) {
+        // 401 al renovar el token significa que la sesión ya no es válida
+        if (isAxiosError(refreshError) && refreshError.response?.status === 401)
+          connection.saveSession(null);
+
+        return Promise.reject(refreshError);
       }
     }
-
-    if (!connection.getSession()) return Promise.reject(error);
 
     // El interceptor de salida agrega el token actualizado
     return protectedHttpClient.request(request);
