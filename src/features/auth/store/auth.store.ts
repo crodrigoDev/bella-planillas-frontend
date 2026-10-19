@@ -11,6 +11,7 @@ import {
   restoreSession,
 } from "@/features/auth/services/session.service";
 import { authService } from "@/features/auth/services/auth.service";
+import { isAxiosError } from "axios";
 
 interface AuthState {
   session: LoginResponse | null;
@@ -69,9 +70,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   logout: async () => {
     if (!get().session) return;
 
-    // Conserva la sesión si falla la petición para poder volver a intentar
-    await authService.logout();
-
+    try {
+      // Conserva la sesión si falla la petición para poder volver a intentar
+      await authService.logout();
+    } catch (error) {
+      if (!(isAxiosError(error) && error.response?.status === 401)) throw error;
+    }
     set({ session: null });
   },
 

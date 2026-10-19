@@ -3,7 +3,7 @@ import type { LoginDTO, MiPerfilResponseDto } from "@jyp/shared-contracts";
 /**
  * Datos y operaciones disponibles en el contexto de autenticación
  */
-export interface AuthContextValue {
+export interface UseAuthResult {
   session: LoginResponse | null;
   isAuthenticated: boolean;
   initialization: AuthInitializationState;

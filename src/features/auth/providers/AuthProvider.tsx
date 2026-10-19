@@ -17,7 +17,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const bootstrap = useAuthStore((state) => state.bootstrap);
   const hasSession = useAuthStore((state) => state.session !== null);
 
-  useEffect(() => void bootstrap(), [bootstrap]);
+  useEffect(() => {
+    void bootstrap();
+  }, [bootstrap]);
 
   useEffect(() => {
     if (hasSession) return;

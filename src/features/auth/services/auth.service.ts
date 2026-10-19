@@ -80,7 +80,7 @@ export const authService = {
   profile: async (accessToken: string): Promise<AuthProfileResponse> => {
     const response = await publicHttpClient.get<
       ApiResponse<AuthProfileResponse>
-    >("/usuarios/me", {
+    >("/v1/usuarios/me", {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },

@@ -16,7 +16,9 @@ export const refreshAccessToken = (): Promise<string> => {
     pendingRefresh = authService
       .refresh()
       .then(({ accessToken }) => accessToken)
-      .finally(() => (pendingRefresh = null)); // Libera la petición terminada para permitir otro intento
+      .finally(() => {
+        pendingRefresh = null; // Libera la petición terminada para permitir otro intento
+      });
   }
 
   return pendingRefresh;

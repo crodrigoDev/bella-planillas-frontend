@@ -1,12 +1,12 @@
 import { useAuthStore } from "@/features/auth/store/auth.store";
-import type { AuthContextValue } from "@/features/auth/types/auth.types";
+import type { UseAuthResult } from "@/features/auth/types/auth.types";
 
 /**
  * Obtiene la sesión y las operaciones de autenticación
  *
- * @returns Las acciones
+ * @returns La sesión actual y las acciones para iniciarla o cerrarla
  */
-export function useAuth(): AuthContextValue {
+export function useAuth(): UseAuthResult {
   const session = useAuthStore((state) => state.session);
   const initialization = useAuthStore((state) => state.initialization);
   const retryInitialization = useAuthStore(
