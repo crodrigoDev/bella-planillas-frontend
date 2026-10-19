@@ -1,4 +1,8 @@
-import type { LoginDTO, SolicitudRecuperacionDTO } from "@jyp/shared-contracts";
+import type {
+  LoginDTO,
+  RestablecerPasswordDTO,
+  SolicitudRecuperacionDTO,
+} from "@jyp/shared-contracts";
 import { publicHttpClient } from "@/lib/api/public-http-client";
 import type { ApiResponse } from "@/lib/api/types/api.types";
 import type {
@@ -6,6 +10,7 @@ import type {
   AuthProfileResponse,
   RefreshResponse,
   PasswordRecoveryResponse,
+  PasswordResetResponse,
 } from "@/features/auth/types/auth.types";
 import { protectedHttpClient } from "@/lib/api/protected-http-client";
 
@@ -17,17 +22,6 @@ import { protectedHttpClient } from "@/lib/api/protected-http-client";
  * El estado de la sesión se administra fuera de este servicio
  */
 export const authService = {
-  /** Solicita instrucciones de recuperación usando el documento del usuario */
-  requestPasswordRecovery: async (
-    values: SolicitudRecuperacionDTO,
-  ): Promise<PasswordRecoveryResponse> => {
-    const response = await publicHttpClient.post<
-      ApiResponse<PasswordRecoveryResponse>
-    >("/auth/recuperar-password", values);
-
-    return response.data.data;
-  },
-
   /**
    * Envía las credenciales al backend para iniciar sesión
    *
@@ -85,6 +79,38 @@ export const authService = {
         Authorization: `Bearer ${accessToken}`,
       },
     });
+
+    return response.data.data;
+  },
+
+  /**
+   * Solicita instrucciones de recuperación usando el documento del usuario
+   *
+   * @param values - Número de documento del usuario
+   * @return Mensaje
+   */
+  requestPasswordRecovery: async (
+    values: SolicitudRecuperacionDTO,
+  ): Promise<PasswordRecoveryResponse> => {
+    const response = await publicHttpClient.post<
+      ApiResponse<PasswordRecoveryResponse>
+    >("/auth/recuperar-password", values);
+
+    return response.data.data;
+  },
+
+  /**
+   * Cambia la contraseña usando el token que llego al correo
+   *
+   * @param values - Nueva contraseña y el token compuesto
+   * @returns Mensaje
+   */
+  resetPassword: async (
+    values: RestablecerPasswordDTO,
+  ): Promise<PasswordResetResponse> => {
+    const response = await publicHttpClient.post<
+      ApiResponse<PasswordResetResponse>
+    >("/auth/restablecer-password", values);
 
     return response.data.data;
   },

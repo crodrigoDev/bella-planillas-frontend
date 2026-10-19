@@ -65,3 +65,10 @@ export type AuthInitializationState =
 export type AuthProfileResponse = Omit<MiPerfilResponseDto, "ultimo_acceso"> & {
   ultimo_acceso?: string | null;
 };
+
+/**
+ * Mensaje que devuelve el backend al restablecer la contraseña
+ */
+export interface PasswordResetResponse {
+  message: string;
+}

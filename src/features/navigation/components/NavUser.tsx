@@ -30,7 +30,11 @@ interface NavUserProps {
 /**
  * Muestra al usuario actual y sus opciones personales en el sidebar
  */
-export default function NavUser({ user, onLogout, isLoggingOut }: NavUserProps) {
+export default function NavUser({
+  user,
+  onLogout,
+  isLoggingOut,
+}: NavUserProps) {
   const { isMobile } = useSidebar();
 
   // Usa las primeras letras del nombre cuando no hay una foto disponible
@@ -58,7 +62,7 @@ export default function NavUser({ user, onLogout, isLoggingOut }: NavUserProps) 
             <span className="grid flex-1 text-left leading-tight">
               <span className="truncate font-medium">{user.name}</span>
               <span className="truncate text-xs text-muted-foreground">
-                {user.email}
+                {user.rol === "RRHH" && "Recursos Humanos"}
               </span>
             </span>
 

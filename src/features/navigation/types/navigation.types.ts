@@ -32,6 +32,6 @@ export type SidebarItem = ({ type: "link" } & SidebarLink) | SidebarGroup;
  */
 export interface NavigationUser {
   name: string;
-  email: string;
+  rol: string;
   avatarUrl?: string;
 }
