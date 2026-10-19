@@ -23,6 +23,8 @@ interface AuthState {
   clearSession: () => void;
 }
 
+const ENTERING_DELAY_MS = 600;
+
 /**
  * Guarda la sesión en memoria y las operaciones para cambiarla
  *
@@ -64,7 +66,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   login: async (credentials) => {
     const session = await authService.login(credentials);
 
-    set({ session, initialization: { status: "ready" } });
+    set({ session, initialization: { status: "entering" } });
+
+    setTimeout(() => {
+      // Solo avanza si no cambio el estado mientras tanto
+      if (get().initialization.status === "entering")
+        set({ initialization: { status: "ready" } });
+    }, ENTERING_DELAY_MS);
   },
 
   logout: async () => {

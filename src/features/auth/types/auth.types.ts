@@ -53,6 +53,7 @@ export interface PasswordRecoveryResponse {
 export type AuthInitializationState =
   | { status: "loading" }
   | { status: "ready" }
+  | { status: "entering" }
   | { status: "error"; message: string };
 
 /**
