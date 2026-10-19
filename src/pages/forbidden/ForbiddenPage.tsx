@@ -1,41 +1,58 @@
+import { ArrowLeft, ShieldAlert } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ROUTE_PATHS } from "@/app/routes/path";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { buttonVariants } from "@/components/ui/button";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 
 /** Explica la falta de permisos sin cerrar la sesión del usuario */
 export default function ForbiddenPage() {
+  const { session } = useAuth();
+  const rol = session?.usuario.rol;
+
   return (
     <section
       aria-labelledby="forbidden-title"
-      className="mx-auto w-full max-w-lg py-12"
+      className="flex min-h-[60dvh] flex-col items-center justify-center gap-6 px-6 py-12 text-center"
     >
-      <Card>
-        <CardHeader>
-          <p className="text-sm font-medium text-muted-foreground">403</p>
-          <CardTitle>
-            <h1 id="forbidden-title" className="text-2xl font-semibold">
-              Acceso denegado
-            </h1>
-          </CardTitle>
-          <CardDescription>
-            Tu usuario no tiene permisos para abrir esta página.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Link
-            to={ROUTE_PATHS.dashboard}
-            className="rounded-sm text-sm text-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-          >
-            Volver al dashboard
-          </Link>
-        </CardContent>
-      </Card>
+      <div
+        aria-hidden="true"
+        className="flex size-16 items-center justify-center rounded-full bg-destructive/10 text-destructive"
+      >
+        <ShieldAlert className="size-8" />
+      </div>
+
+      <div className="space-y-2">
+        <p className="text-sm font-medium tracking-widest text-muted-foreground">
+          ERROR 403
+        </p>
+
+        <h1
+          id="forbidden-title"
+          className="text-3xl font-semibold tracking-tight text-foreground"
+        >
+          Acceso denegado
+        </h1>
+
+        <p className="mx-auto max-w-md text-balance text-muted-foreground">
+          {rol ? (
+            <>
+              Tu rol <span className="font-medium text-foreground">{rol}</span>{" "}
+              no tiene permisos para abrir esta página.
+            </>
+          ) : (
+            "Tu usuario no tiene permisos para abrir esta página."
+          )}{" "}
+          Si crees que se trata de un error, comunícate con el administrador.
+        </p>
+      </div>
+
+      <Link
+        to={ROUTE_PATHS.dashboard}
+        className={buttonVariants({ className: "h-10 gap-2 px-5" })}
+      >
+        <ArrowLeft className="size-4" aria-hidden="true" />
+        Volver al dashboard
+      </Link>
     </section>
   );
 }

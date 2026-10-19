@@ -1,4 +1,8 @@
-import type { LoginDTO, SolicitudRecuperacionDTO } from "@jyp/shared-contracts";
+import type {
+  LoginDTO,
+  RestablecerPasswordDTO,
+  SolicitudRecuperacionDTO,
+} from "@jyp/shared-contracts";
 import { publicHttpClient } from "@/lib/api/public-http-client";
 import type { ApiResponse } from "@/lib/api/types/api.types";
 import type {
@@ -6,7 +10,9 @@ import type {
   AuthProfileResponse,
   RefreshResponse,
   PasswordRecoveryResponse,
+  PasswordResetResponse,
 } from "@/features/auth/types/auth.types";
+import { protectedHttpClient } from "@/lib/api/protected-http-client";
 
 /**
  * Agrupa las operaciones de autenticación que se comunican con el backend
@@ -16,17 +22,6 @@ import type {
  * El estado de la sesión se administra fuera de este servicio
  */
 export const authService = {
-  /** Solicita instrucciones de recuperación usando el documento del usuario */
-  requestPasswordRecovery: async (
-    values: SolicitudRecuperacionDTO,
-  ): Promise<PasswordRecoveryResponse> => {
-    const response = await publicHttpClient.post<
-      ApiResponse<PasswordRecoveryResponse>
-    >("/auth/recuperar-password", values);
-
-    return response.data.data;
-  },
-
   /**
    * Envía las credenciales al backend para iniciar sesión
    *
@@ -47,16 +42,11 @@ export const authService = {
   /**
    * Solicita el cierre de sesión y deja que el servidor borre la cookie
    *
-   * @param accessToken - Acceso del usuario que quiere salir
    * @throws Si no se puede completar el cierre de sesión
    */
-  logout: async (accessToken: string): Promise<void> => {
+  logout: async (): Promise<void> => {
     // Envia el acceso en los encabezados y la cookie viaja con la petición
-    await publicHttpClient.post("/auth/logout", undefined, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    await protectedHttpClient.post("/auth/logout");
   },
 
   /**
@@ -84,11 +74,43 @@ export const authService = {
   profile: async (accessToken: string): Promise<AuthProfileResponse> => {
     const response = await publicHttpClient.get<
       ApiResponse<AuthProfileResponse>
-    >("/usuarios/me", {
+    >("/v1/usuarios/me", {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
+
+    return response.data.data;
+  },
+
+  /**
+   * Solicita instrucciones de recuperación usando el documento del usuario
+   *
+   * @param values - Número de documento del usuario
+   * @return Mensaje
+   */
+  requestPasswordRecovery: async (
+    values: SolicitudRecuperacionDTO,
+  ): Promise<PasswordRecoveryResponse> => {
+    const response = await publicHttpClient.post<
+      ApiResponse<PasswordRecoveryResponse>
+    >("/auth/recuperar-password", values);
+
+    return response.data.data;
+  },
+
+  /**
+   * Cambia la contraseña usando el token que llego al correo
+   *
+   * @param values - Nueva contraseña y el token compuesto
+   * @returns Mensaje
+   */
+  resetPassword: async (
+    values: RestablecerPasswordDTO,
+  ): Promise<PasswordResetResponse> => {
+    const response = await publicHttpClient.post<
+      ApiResponse<PasswordResetResponse>
+    >("/auth/restablecer-password", values);
 
     return response.data.data;
   },

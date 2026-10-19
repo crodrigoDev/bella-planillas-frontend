@@ -1,17 +1,26 @@
-import { useContext } from "react";
-import { AuthContext, type AuthContextValue } from "../context/auth.context";
+import { useAuthStore } from "@/features/auth/store/auth.store";
+import type { UseAuthResult } from "@/features/auth/types/auth.types";
 
 /**
  * Obtiene la sesión y las operaciones de autenticación
  *
- * @returns El valor proporcionado por AuthProvider
- * @throws Si se utiliza fuera de AuthProvider
+ * @returns La sesión actual y las acciones para iniciarla o cerrarla
  */
-export function useAuth(): AuthContextValue {
-  const context = useContext(AuthContext);
+export function useAuth(): UseAuthResult {
+  const session = useAuthStore((state) => state.session);
+  const initialization = useAuthStore((state) => state.initialization);
+  const retryInitialization = useAuthStore(
+    (state) => state.retryInitialization,
+  );
+  const login = useAuthStore((state) => state.login);
+  const logout = useAuthStore((state) => state.logout);
 
-  if (context === null)
-    throw new Error("useAuth debe usarse dentro de AuthProvider");
-
-  return context;
+  return {
+    session,
+    isAuthenticated: session !== null,
+    initialization,
+    retryInitialization,
+    login,
+    logout,
+  };
 }

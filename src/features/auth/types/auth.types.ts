@@ -1,4 +1,16 @@
-import type { MiPerfilResponseDto } from "@jyp/shared-contracts";
+import type { LoginDTO, MiPerfilResponseDto } from "@jyp/shared-contracts";
+
+/**
+ * Datos y operaciones disponibles en el contexto de autenticación
+ */
+export interface UseAuthResult {
+  session: LoginResponse | null;
+  isAuthenticated: boolean;
+  initialization: AuthInitializationState;
+  retryInitialization: () => void;
+  login: (credentials: LoginDTO) => Promise<void>;
+  logout: () => Promise<void>;
+}
 
 /**
  * Roles que puede devolver el backend para un usuario
@@ -41,6 +53,7 @@ export interface PasswordRecoveryResponse {
 export type AuthInitializationState =
   | { status: "loading" }
   | { status: "ready" }
+  | { status: "entering" }
   | { status: "error"; message: string };
 
 /**
@@ -52,3 +65,10 @@ export type AuthInitializationState =
 export type AuthProfileResponse = Omit<MiPerfilResponseDto, "ultimo_acceso"> & {
   ultimo_acceso?: string | null;
 };
+
+/**
+ * Mensaje que devuelve el backend al restablecer la contraseña
+ */
+export interface PasswordResetResponse {
+  message: string;
+}

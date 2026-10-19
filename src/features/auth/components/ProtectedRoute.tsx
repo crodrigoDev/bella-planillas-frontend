@@ -2,7 +2,7 @@ import { Link, Navigate, Outlet } from "react-router-dom";
 import { ROUTE_PATHS } from "@/app/routes/path";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
+import SessionLoadingScreen from "@/features/auth/components/SessionLoadingScreen";
 
 /**
  * Permite acceder a las rutas hijas cuando existe una sesión
@@ -14,13 +14,11 @@ import { Spinner } from "@/components/ui/spinner";
 export default function ProtectedRoute() {
   const { isAuthenticated, initialization, retryInitialization } = useAuth();
 
-  if (initialization.status === "loading") {
-    return (
-      <main className="flex min-h-dvh items-center justify-center gap-3">
-        <Spinner aria-label="Comprobando sesión" />
-        <p>Comprobando sesión...</p>
-      </main>
-    );
+  if (
+    initialization.status === "loading" ||
+    initialization.status === "entering"
+  ) {
+    return <SessionLoadingScreen />;
   }
 
   // Un error de conexión bloquea solo el acceso a las páginas protegidas

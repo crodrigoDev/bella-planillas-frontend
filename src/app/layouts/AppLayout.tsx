@@ -30,12 +30,15 @@ export default function AppLayout() {
   if (!session) return null;
 
   // Usa los mismos permisos que las rutas para mostrar las opciones del usuario
-  const sidebarItems = filterSidebarItems(RRHH_SIDEBAR_ITEMS, session.usuario.rol);
+  const sidebarItems = filterSidebarItems(
+    RRHH_SIDEBAR_ITEMS,
+    session.usuario.rol,
+  );
 
   // Adapta los datos reales al formato que necesita el sidebar
   const user: NavigationUser = {
     name: session.usuario.nombre,
-    email: session.usuario.email,
+    rol: session.usuario.rol,
   };
 
   /**
