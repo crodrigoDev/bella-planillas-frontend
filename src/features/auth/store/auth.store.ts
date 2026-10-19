@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { devtools } from "zustand/middleware";
 import type { LoginDTO } from "@jyp/shared-contracts";
 import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
 import { configureAuth } from "@/lib/api/protected-http-client";
@@ -32,63 +33,72 @@ const ENTERING_DELAY_MS = 600;
  * El token nunca se persiste: se pierde al cerrar la pestaña
  * y se recupera con la cookie refresh
  */
-export const useAuthStore = create<AuthState>((set, get) => ({
-  session: null,
-  initialization: { status: "loading" },
+export const useAuthStore = create<AuthState>()(
+  devtools(
+    (set, get) => ({
+      session: null,
+      initialization: { status: "loading" },
 
-  /**
-   * Busca una sesión guardada al abrir la aplicación
-   */
-  bootstrap: async () => {
-    try {
-      const restored = await restoreSession();
+      /**
+       * Busca una sesión guardada al abrir la aplicación
+       */
+      bootstrap: async () => {
+        try {
+          const restored = await restoreSession();
 
-      if (get().initialization.status !== "loading") return;
+          if (get().initialization.status !== "loading") return;
 
-      set({ session: restored, initialization: { status: "ready" } });
-    } catch (error) {
-      if (get().initialization.status !== "loading") return;
+          set({ session: restored, initialization: { status: "ready" } });
+        } catch (error) {
+          if (get().initialization.status !== "loading") return;
 
-      set({
-        initialization: { status: "error", message: getApiErrorMessage(error) },
-      });
-    }
-  },
+          set({
+            initialization: {
+              status: "error",
+              message: getApiErrorMessage(error),
+            },
+          });
+        }
+      },
 
-  /**
-   * Vuelve a comprobar la sesión cuando el usuario presiona Reintentar
-   */
-  retryInitialization: () => {
-    set({ initialization: { status: "loading" } });
-    void get().bootstrap();
-  },
+      /**
+       * Vuelve a comprobar la sesión cuando el usuario presiona Reintentar
+       */
+      retryInitialization: () => {
+        set({ initialization: { status: "loading" } });
+        void get().bootstrap();
+      },
 
-  login: async (credentials) => {
-    const session = await authService.login(credentials);
+      login: async (credentials) => {
+        const session = await authService.login(credentials);
 
-    set({ session, initialization: { status: "entering" } });
+        set({ session, initialization: { status: "entering" } });
 
-    setTimeout(() => {
-      // Solo avanza si no cambio el estado mientras tanto
-      if (get().initialization.status === "entering")
-        set({ initialization: { status: "ready" } });
-    }, ENTERING_DELAY_MS);
-  },
+        setTimeout(() => {
+          // Solo avanza si no cambio el estado mientras tanto
+          if (get().initialization.status === "entering")
+            set({ initialization: { status: "ready" } });
+        }, ENTERING_DELAY_MS);
+      },
 
-  logout: async () => {
-    if (!get().session) return;
+      logout: async () => {
+        if (!get().session) return;
 
-    try {
-      // Conserva la sesión si falla la petición para poder volver a intentar
-      await authService.logout();
-    } catch (error) {
-      if (!(isAxiosError(error) && error.response?.status === 401)) throw error;
-    }
-    set({ session: null });
-  },
+        try {
+          // Conserva la sesión si falla la petición para poder volver a intentar
+          await authService.logout();
+        } catch (error) {
+          if (!(isAxiosError(error) && error.response?.status === 401))
+            throw error;
+        }
+        set({ session: null });
+      },
 
-  clearSession: () => set({ session: null }),
-}));
+      clearSession: () => set({ session: null }),
+    }),
+    { name: "auth", enabled: import.meta.env.DEV },
+  ),
+);
 
 /**
  * Renueva el token y lo guarda, conservando los datos del usuario
