@@ -16,7 +16,7 @@ export type EstadoLaboralEditable = Exclude<EstadoEmpleado, "CESADO">;
  */
 export interface EmpleadoRelacion {
   id: string;
-  name: string;
+  nombre: string;
 }
 
 /**
