@@ -1,26 +1,28 @@
 import type { DataTableFeatures } from "@/components/data-table/dataTable.config";
 import { createColumnHelper } from "@tanstack/react-table";
 import type { Empleado } from "../types/empleados.types";
-import { formatCurrency, formatDate } from "@/lib/format.utils";
+import { formatDate } from "@/lib/format.utils";
 import { EmpleadoEstadoBadge } from "../components/EmpleadoEstadoBadge";
+import { formatTurno } from "../utils/empleados.utils";
 
 const columnHelper = createColumnHelper<DataTableFeatures, Empleado>();
 
 /**
- * Columna de la tabla de empleados
+ * Columnas de la tabla de empleados
  */
 export const empleadosColumns = columnHelper.columns([
   columnHelper.display({
-    id: "empleado",
-    header: "Empleado",
+    id: "colaborador",
+    header: "Colaborador",
     cell: ({ row }) => {
-      const { apellido, nombre, email } = row.original;
+      const { nombre, apellido, nro_documento, email } = row.original;
 
       return (
         <div className="flex flex-col">
           <span className="font-medium">
-            {apellido}, {nombre}
+            {nombre} {apellido}
           </span>
+          <span className="text-xs text-muted-foreground">{nro_documento}</span>
           {email && (
             <span className="text-xs text-muted-foreground">{email}</span>
           )}
@@ -29,14 +31,8 @@ export const empleadosColumns = columnHelper.columns([
     },
   }),
   columnHelper.display({
-    id: "documento",
-    header: "Documento",
-    cell: ({ row }) => row.original.nro_documento,
-  }),
-
-  columnHelper.display({
     id: "areaCargo",
-    header: "Área / Cargo",
+    header: "Área y cargo",
     cell: ({ row }) => {
       const { area, cargo } = row.original;
 
@@ -48,10 +44,9 @@ export const empleadosColumns = columnHelper.columns([
       );
     },
   }),
-
   columnHelper.display({
-    id: "jornada",
-    header: "Jornada",
+    id: "jornadaTurno",
+    header: "Jornada y turno",
     cell: ({ row }) => {
       const { jornada } = row.original;
 
@@ -61,21 +56,12 @@ export const empleadosColumns = columnHelper.columns([
       return (
         <div className="flex flex-col">
           <span>{jornada.nombre}</span>
-          <span className="text-xs text-muted-foreground">{jornada.turno}</span>
+          <span className="text-xs text-muted-foreground">
+            {formatTurno(jornada.turno)}
+          </span>
         </div>
       );
     },
-  }),
-  columnHelper.display({
-    id: "fechaInicio",
-    header: "Inicio",
-    cell: ({ row }) => formatDate(row.original.fecha_inicio),
-  }),
-  columnHelper.display({
-    id: "sueldo",
-    header: "Sueldo básico",
-    cell: ({ row }) =>
-      formatCurrency(row.original.dato_financiero?.sueldo_basico),
   }),
   columnHelper.display({
     id: "estado",
@@ -86,5 +72,20 @@ export const empleadosColumns = columnHelper.columns([
         estadoLaboral={row.original.estado_laboral}
       />
     ),
+  }),
+  columnHelper.display({
+    id: "fechaInicio",
+    header: "Fecha inicio",
+    cell: ({ row }) => formatDate(row.original.fecha_inicio),
+  }),
+  columnHelper.display({
+    id: "fechaCese",
+    header: "Fecha cese",
+    cell: ({ row }) =>
+      row.original.fecha_cese ? (
+        formatDate(row.original.fecha_cese)
+      ) : (
+        <span className="text-muted-foreground">Sin fecha</span>
+      ),
   }),
 ]);

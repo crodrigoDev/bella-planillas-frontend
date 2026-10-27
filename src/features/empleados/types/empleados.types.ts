@@ -47,6 +47,7 @@ export interface Empleado {
   email: string | null;
   telefono: string | null;
   fecha_inicio: string | null;
+  fecha_cese: string | null;
   activo: boolean;
   created_at: string;
   updated_at: string;
@@ -68,6 +69,15 @@ export interface EmpleadoFilters {
   jornada_id?: string;
   activo?: boolean;
 }
+
+/**
+ * Filtros del listado que se eligen desde un selector
+ */
+export type EmpleadoFilterKey =
+  | "area_id"
+  | "cargo_id"
+  | "jornada_id"
+  | "activo";
 
 /**
  * Página de empleados con sus datos de paginación

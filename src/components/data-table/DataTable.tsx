@@ -17,9 +17,18 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   dataTableFeatures,
+  PAGE_SIZE_OPTIONS,
   type DataTableFeatures,
 } from "@/components/data-table/dataTable.config";
+import { getPageItems } from "@/lib/pagination.utils";
 
 interface DataTableProps<TData extends RowData> {
   columns: ColumnDef<DataTableFeatures, TData, any>[]; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -30,6 +39,8 @@ interface DataTableProps<TData extends RowData> {
   isLoading?: boolean; // Primera carga: muestra filas de carga en lugar de datos
   isFetching?: boolean; // Cargando otra página: atenua la tabla pero conserva los datos
   emptyMessage: string;
+  itemLabel?: string; // Nombre de las filas en plural: "colaboradores", "áreas"...
+  pageSizeOptions?: readonly number[]; // Cantidades de filas por página que se pueden elegir
 }
 
 const SKELETON_ROWS = 6;
@@ -46,6 +57,8 @@ export function DataTable<TData extends RowData>({
   isLoading = false,
   isFetching = false,
   emptyMessage = "No se encontraron resultados.",
+  itemLabel = "registros",
+  pageSizeOptions = PAGE_SIZE_OPTIONS,
 }: DataTableProps<TData>) {
   const table = useTable({
     features: dataTableFeatures,
@@ -120,33 +133,85 @@ export function DataTable<TData extends RowData>({
         </Table>
       </div>
 
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <p className="text-sm text-muted-foreground">
           {rowCount > 0
-            ? `Mostrando ${firstRow}-${lastRow} de ${rowCount}`
+            ? `Mostrando ${firstRow}-${lastRow} de ${rowCount} ${itemLabel}`
             : "Sin registros"}
         </p>
 
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">
-            Página {pageCount === 0 ? 0 : pageIndex + 1} de {pageCount}
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">
+              Registros por página:
+            </span>
+            <Select
+              items={pageSizeOptions.map((size) => ({
+                value: String(size),
+                label: String(size),
+              }))}
+              value={String(pageSize)}
+              onValueChange={(next) => {
+                if (next !== null) table.setPageSize(Number(next));
+              }}
+            >
+              <SelectTrigger size="sm" aria-label="Registros por página">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent alignItemWithTrigger={false}>
+                {pageSizeOptions.map((size) => (
+                  <SelectItem key={size} value={String(size)}>
+                    {size}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <nav
+            aria-label="Paginación"
+            className="flex flex-wrap items-center gap-1"
           >
-            Anterior
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Siguiente
-          </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              Anterior
+            </Button>
+
+            {getPageItems(pageIndex + 1, pageCount).map((item, index) =>
+              item === "ellipsis" ? (
+                <span
+                  key={`ellipsis-${index}`}
+                  className="px-1 text-sm text-muted-foreground"
+                >
+                  ...
+                </span>
+              ) : (
+                <Button
+                  key={item}
+                  variant={item === pageIndex + 1 ? "default" : "outline"}
+                  size="sm"
+                  aria-label={`Página ${item}`}
+                  aria-current={item === pageIndex + 1 ? "page" : undefined}
+                  onClick={() => table.setPageIndex(item - 1)}
+                >
+                  {item}
+                </Button>
+              ),
+            )}
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              Siguiente
+            </Button>
+          </nav>
         </div>
       </div>
     </div>
