@@ -101,7 +101,7 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
                   status === "pending" && "text-muted-foreground",
                 )}
               >
-                {index + 1}. {step.label}
+                {step.label}
               </span>
               <span
                 className={cn(

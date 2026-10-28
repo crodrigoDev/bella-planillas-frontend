@@ -4,7 +4,7 @@ import type { FilterOption } from "@/lib/types/filters.types";
 import type { EmpleadoRelacion } from "@/features/empleados/types/empleados.types";
 
 // Máximo que permite el backend por página
-const CATALOGO_LIMIT = 10;
+const CATALOGO_LIMIT = 100;
 
 /**
  * Convierte los registros del backend en opciones para un Select
@@ -58,5 +58,24 @@ export const empleadosCatalogosService = {
     });
 
     return toOptions(response.data.data);
+  },
+
+  /**
+   * Consulta los tipos de documento (DNI, CE, pasaporte...)
+   *
+   * @remarks
+   * El backend todavía no expone este catálogo. Se asume `GET /rrhh/tipo-documento`
+   * con registros `{ id, tipo_documento }`, que es como los guarda la base de datos.
+   * Si la ruta final es otra, solo hay que cambiarla aquí.
+   */
+  listTiposDocumento: async (): Promise<FilterOption[]> => {
+    const response = await protectedHttpClient.get<
+      PaginationApiResponse<{ id: string; tipo_documento: string }>
+    >("/rrhh/tipo-documento", { params: { limit: CATALOGO_LIMIT } });
+
+    return response.data.data.map(({ id, tipo_documento }) => ({
+      value: id,
+      label: tipo_documento,
+    }));
   },
 };

@@ -1,17 +1,25 @@
+import { useEffect } from "react";
 import { ArrowLeftIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { ROUTE_PATHS } from "@/app/routes/path";
 import { Stepper } from "@/components/stepper/Stepper";
+import { Button } from "@/components/ui/button";
+import { DatosEmpleadoForm } from "@/features/empleados/components/DatosEmpleadoForm";
 import { NUEVO_EMPLEADO_STEPS } from "@/features/empleados/config/nuevoEmpleado.config";
-
-// Paso del registro que se muestra; los formularios de cada paso se agregan después
-const CURRENT_STEP = 0;
+import { useNuevoEmpleadoStore } from "@/features/empleados/store/nuevoEmpleado.store";
 
 /**
  * Registro de un nuevo empleado en cinco pasos
  */
 export default function NuevoEmpleadoPage() {
+  const step = useNuevoEmpleadoStore((state) => state.step);
+  const goToStep = useNuevoEmpleadoStore((state) => state.goToStep);
+  const reset = useNuevoEmpleadoStore((state) => state.reset);
+
+  // Al salir del registro se descarta el borrador: son datos personales
+  useEffect(() => reset, [reset]);
+
   return (
     <section aria-labelledby="nuevo-empleado-title" className="space-y-6">
       <Link
@@ -32,11 +40,19 @@ export default function NuevoEmpleadoPage() {
         </p>
       </header>
 
-      <Stepper steps={NUEVO_EMPLEADO_STEPS} currentStep={CURRENT_STEP} />
+      <Stepper steps={NUEVO_EMPLEADO_STEPS} currentStep={step} />
 
-      <div className="rounded-xl border bg-card p-6 text-sm text-muted-foreground">
-        Formulario en construcción
-      </div>
+      {step === 0 ? (
+        <DatosEmpleadoForm />
+      ) : (
+        // Los formularios de los pasos 2 a 5 se agregan después
+        <div className="space-y-4 rounded-xl border bg-card p-6 text-sm text-muted-foreground">
+          <p>Formulario en construcción</p>
+          <Button variant="outline" onClick={() => goToStep(step - 1)}>
+            Volver al paso anterior
+          </Button>
+        </div>
+      )}
     </section>
   );
 }

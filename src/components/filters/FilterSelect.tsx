@@ -6,6 +6,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { FilterOption } from "@/lib/types/filters.types";
+import { cn } from "@/lib/utils";
 
 interface FilterSelectProps {
   ariaLabel: string;
@@ -14,6 +15,9 @@ interface FilterSelectProps {
   value: string | undefined;
   onChange: (value: string | undefined) => void;
   isLoading?: boolean;
+  /** Para enlazar una etiqueta (`htmlFor`) con el selector */
+  id?: string;
+  className?: string;
 }
 
 // Valor interno de la opción "todos"; el filtro real queda en undefined
@@ -29,6 +33,8 @@ export function FilterSelect({
   value,
   onChange,
   isLoading = false,
+  id,
+  className,
 }: FilterSelectProps) {
   const items: FilterOption[] = [
     { value: ALL_VALUE, label: allLabel },
@@ -53,7 +59,11 @@ export function FilterSelect({
         onChange(next === ALL_VALUE ? undefined : next);
       }}
     >
-      <SelectTrigger aria-label={ariaLabel} className="w-full sm:w-48">
+      <SelectTrigger
+        id={id}
+        aria-label={ariaLabel}
+        className={cn("w-full sm:w-48", className)}
+      >
         <SelectValue />
       </SelectTrigger>
 

@@ -1,5 +1,8 @@
 import { useEffect } from "react";
+import { PlusIcon } from "lucide-react";
+import { Link } from "react-router-dom";
 import type { OnChangeFn, PaginationState } from "@tanstack/react-table";
+import { ROUTE_PATHS } from "@/app/routes/path";
 import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
 import { DataTable } from "@/components/data-table/DataTable";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -61,13 +64,23 @@ export default function EmpleadosPage() {
 
   return (
     <section className="space-y-4" aria-labelledby="empleados-title">
-      <header>
-        <h1 id="empleados-title" className="text-2xl font-semibold">
-          Empleados
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Colaboradores de la empresa
-        </p>
+      <header className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 id="empleados-title" className="text-2xl font-semibold">
+            Empleados
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Colaboradores de la empresa
+          </p>
+        </div>
+
+        <Button
+          nativeButton={false}
+          render={<Link to={ROUTE_PATHS.gestionPersonal.nuevoEmpleado} />}
+        >
+          <PlusIcon data-icon="inline-start" />
+          Nuevo empleado
+        </Button>
       </header>
 
       <EmpleadosToolbar
