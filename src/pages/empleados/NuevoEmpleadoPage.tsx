@@ -3,13 +3,16 @@ import { ArrowLeftIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { ROUTE_PATHS } from "@/app/routes/path";
+import { PageHeader } from "@/components/page/PageHeader";
 import { Stepper } from "@/components/stepper/Stepper";
+import { SalirRegistroModal } from "@/features/empleados/components/modals/SalirRegistroModal";
 import { DatosContratoForm } from "@/features/empleados/components/registro/DatosContratoForm";
 import { DatosDerechohabientesForm } from "@/features/empleados/components/registro/DatosDerechohabientesForm";
 import { DatosEmpleadoForm } from "@/features/empleados/components/registro/DatosEmpleadoForm";
 import { DatosFinancierosForm } from "@/features/empleados/components/registro/DatosFinancierosForm";
 import { ResumenRegistro } from "@/features/empleados/components/registro/ResumenRegistro";
 import { NUEVO_EMPLEADO_STEPS } from "@/features/empleados/config/nuevoEmpleado.config";
+import { useAvisoSalidaRegistro } from "@/features/empleados/hooks/useAvisoSalidaRegistro";
 import { useNuevoEmpleadoStore } from "@/features/empleados/store/nuevoEmpleado.store";
 
 /**
@@ -18,6 +21,7 @@ import { useNuevoEmpleadoStore } from "@/features/empleados/store/nuevoEmpleado.
 export default function NuevoEmpleadoPage() {
   const step = useNuevoEmpleadoStore((state) => state.step);
   const reset = useNuevoEmpleadoStore((state) => state.reset);
+  const { isBlocked, stay, leave } = useAvisoSalidaRegistro();
 
   // Al salir del registro se descarta el borrador: son datos personales
   useEffect(() => reset, [reset]);
@@ -32,15 +36,11 @@ export default function NuevoEmpleadoPage() {
         Volver a Empleados
       </Link>
 
-      <header>
-        <h1 id="nuevo-empleado-title" className="text-2xl font-semibold">
-          Nuevo empleado
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Registra la información del colaborador en el sistema para dar de
-          alta su legajo.
-        </p>
-      </header>
+      <PageHeader
+        id="nuevo-empleado-title"
+        title="Nuevo empleado"
+        description="Registra la información del colaborador en el sistema para dar de alta su legajo."
+      />
 
       <Stepper steps={NUEVO_EMPLEADO_STEPS} currentStep={step} />
 
@@ -55,6 +55,12 @@ export default function NuevoEmpleadoPage() {
       ) : (
         <ResumenRegistro />
       )}
+
+      <SalirRegistroModal
+        open={isBlocked}
+        onStay={stay}
+        onLeave={leave}
+      />
     </section>
   );
 }
