@@ -18,7 +18,29 @@ export const formatDate = (isoDate: string | null | undefined): string => {
   return `${day}/${month}/${year}`;
 };
 
-const currencyFormatter = new Intl.NumberFormat("es-PE", {
+// Palabras que van en minúscula dentro de un nombre ("Juan de la Cruz")
+const NAME_PARTICLES = new Set(["de", "del", "la", "las", "los", "y"]);
+
+/**
+ * Pasa un nombre en mayúsculas a "Nombre Propio" para mostrarlo
+ *
+ * @example toTitleCase("MARÍA DE LOS ÁNGELES") // "María de los Ángeles"
+ *
+ * @remarks
+ * Solo cambia cómo se ve: el dato que se guarda y se envía no se modifica.
+ */
+export const toTitleCase = (name: string): string =>
+  name
+    .toLocaleLowerCase("es-PE")
+    .split(" ")
+    .map((word, index) =>
+      index > 0 && NAME_PARTICLES.has(word)
+        ? word
+        : word.charAt(0).toLocaleUpperCase("es-PE") + word.slice(1),
+    )
+    .join(" ");
+
+const currencyFormatter =new Intl.NumberFormat("es-PE", {
   style: "currency",
   currency: "PEN",
 });

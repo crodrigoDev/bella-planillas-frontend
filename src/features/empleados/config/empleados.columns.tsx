@@ -4,7 +4,12 @@ import type { Empleado } from "../types/empleados.types";
 import { formatDate } from "@/lib/format.utils";
 import { EmpleadoEstadoBadge } from "../components/listado/EmpleadoEstadoBadge";
 import { EmpleadoActions } from "../components/listado/EmpleadoActions";
-import { formatTurno } from "../utils/empleados.utils";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  formatTurno,
+  getIniciales,
+  getNombreCompleto,
+} from "../utils/empleados.utils";
 
 const columnHelper = createColumnHelper<DataTableFeatures, Empleado>();
 
@@ -16,17 +21,24 @@ export const empleadosColumns = columnHelper.columns([
     id: "colaborador",
     header: "Colaborador",
     cell: ({ row }) => {
-      const { nombre, apellido, nro_documento, email } = row.original;
+      const { nro_documento, email } = row.original;
 
       return (
-        <div className="flex flex-col">
-          <span className="font-medium">
-            {nombre} {apellido}
-          </span>
-          <span className="text-xs text-muted-foreground">{nro_documento}</span>
-          {email && (
-            <span className="text-xs text-muted-foreground">{email}</span>
-          )}
+        <div className="flex items-center gap-3">
+          <Avatar>
+            <AvatarFallback className="bg-primary/10 text-xs font-medium text-primary">
+              {getIniciales(row.original)}
+            </AvatarFallback>
+          </Avatar>
+
+          <div className="flex min-w-0 flex-col">
+            <span className="font-medium">
+              {getNombreCompleto(row.original)}
+            </span>
+            <span className="truncate text-xs text-muted-foreground">
+              {email ? `${nro_documento} · ${email}` : nro_documento}
+            </span>
+          </div>
         </div>
       );
     },

@@ -1,3 +1,4 @@
+import { toTitleCase } from "@/lib/format.utils";
 import type { Empleado } from "../types/empleados.types";
 
 const TURNO_LABELS: Record<string, string> = {
@@ -18,11 +19,28 @@ export const formatTurno = (turno: string): string =>
   TURNO_LABELS[turno] ?? turno;
 
 /**
- * Arma el nombre completo de un empleado, como lo muestra el diseño
+ * Arma el nombre completo de un empleado para mostrarlo
  *
  * @example "Carlos Andrés Méndez Ruiz"
+ *
+ * @remarks
+ * El backend guarda los nombres en mayúsculas; aquí se muestran como nombre propio.
  */
 export const getNombreCompleto = ({
   nombre,
   apellido,
-}: Pick<Empleado, "nombre" | "apellido">): string => `${nombre} ${apellido}`;
+}: Pick<Empleado, "nombre" | "apellido">): string =>
+  toTitleCase(`${nombre} ${apellido}`);
+
+/**
+ * Obtiene las iniciales de un empleado: la del primer nombre y la del primer apellido
+ *
+ * @example "CM" para "Carlos Andrés" y "Méndez Ruiz"
+ */
+export const getIniciales = ({
+  nombre,
+  apellido,
+}: Pick<Empleado, "nombre" | "apellido">): string =>
+  `${nombre.trim().charAt(0)}${apellido.trim().charAt(0)}`.toLocaleUpperCase(
+    "es-PE",
+  );
