@@ -67,7 +67,7 @@ export default function AppLayout() {
           <SidebarTrigger />
         </header>
 
-        <div className="flex-1 space-y-4 p-4 sm:p-6 lg:p-8">
+        <div className="flex-1 space-y-4 p-4 sm:p-6 lg:p-10">
           {logoutMutation.isError && (
             <Alert variant="destructive">
               <AlertTitle>No se pudo cerrar sesión</AlertTitle>

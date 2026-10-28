@@ -3,7 +3,10 @@ import type { PaginationApiResponse } from "@/lib/api/types/api.types";
 import { CATALOGO_LIMIT, toOptions } from "@/lib/catalogos.utils";
 import type { FilterOption } from "@/lib/types/filters.types";
 import type { EmpleadoRelacion } from "@/features/empleados/types/empleados.types";
-import { TIPOS_DOCUMENTO_MOCK } from "../data/catalogos.mock";
+import {
+  MODALIDADES_CONTRATO_MOCK,
+  TIPOS_DOCUMENTO_MOCK,
+} from "../data/catalogos.mock";
 
 /**
  * Obtiene las listas que alimentan los filtros del listado de empleados
@@ -62,4 +65,14 @@ export const empleadosCatalogosService = {
    * hay que reemplazar el cuerpo por la llamada HTTP.
    */
   listTiposDocumento: async (): Promise<FilterOption[]> => TIPOS_DOCUMENTO_MOCK,
+
+  /**
+   * Consulta las modalidades de contrato (plazo fijo, indeterminado)
+   *
+   * @remarks
+   * TEMPORAL: el backend no define una lista, solo guarda el texto. Devuelve
+   * datos fijos (ver `catalogos.mock.ts`).
+   */
+  listModalidadesContrato: async (): Promise<FilterOption[]> =>
+    MODALIDADES_CONTRATO_MOCK,
 };

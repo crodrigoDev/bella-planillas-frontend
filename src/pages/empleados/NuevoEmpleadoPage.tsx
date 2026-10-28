@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { ROUTE_PATHS } from "@/app/routes/path";
 import { Stepper } from "@/components/stepper/Stepper";
 import { Button } from "@/components/ui/button";
+import { DatosContratoForm } from "@/features/empleados/components/registro/DatosContratoForm";
 import { DatosEmpleadoForm } from "@/features/empleados/components/registro/DatosEmpleadoForm";
 import { DatosFinancierosForm } from "@/features/empleados/components/registro/DatosFinancierosForm";
 import { NUEVO_EMPLEADO_STEPS } from "@/features/empleados/config/nuevoEmpleado.config";
@@ -47,8 +48,10 @@ export default function NuevoEmpleadoPage() {
         <DatosEmpleadoForm />
       ) : step === 1 ? (
         <DatosFinancierosForm />
+      ) : step === 2 ? (
+        <DatosContratoForm />
       ) : (
-        // Los formularios de los pasos 3 a 5 se agregan después
+        // Los formularios de los pasos 4 y 5 se agregan después
         <div className="space-y-4 rounded-xl border bg-card p-6 text-sm text-muted-foreground">
           <p>Formulario en construcción</p>
           <Button variant="outline" onClick={() => goToStep(step - 1)}>

@@ -11,6 +11,8 @@ import type { FilterOption } from "@/lib/types/filters.types";
  * Se eliminan cuando existan estos endpoints en el backend:
  * - tipos de documento (`tipo_documento`)
  * - regímenes de pensión (`regimen_pension`)
+ * - modalidades de contrato (el backend solo guarda el texto en
+ *   `contrato.tipo_modalidad`, sin una lista definida)
  */
 
 /** Tipos de documento, tal como están en la tabla `tipo_documento` */
@@ -24,4 +26,10 @@ export const TIPOS_DOCUMENTO_MOCK: FilterOption[] = [
 export const REGIMENES_PENSION_MOCK: { id: string; nombre: string }[] = [
   { id: "01a17fb7-a2e1-757b-98a7-2fdbe37cc9c7", nombre: "ONP" },
   { id: "01a17fb7-a2e4-7113-910a-9284f4a0f1f6", nombre: "SPP" },
+];
+
+/** Modalidades de contrato; el valor es el texto que guarda el backend */
+export const MODALIDADES_CONTRATO_MOCK: FilterOption[] = [
+  { value: "PLAZO_FIJO", label: "Plazo fijo" },
+  { value: "INDETERMINADO", label: "Indeterminado" },
 ];
