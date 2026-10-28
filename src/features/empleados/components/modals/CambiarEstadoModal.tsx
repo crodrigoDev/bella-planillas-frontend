@@ -22,32 +22,32 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
-import { ESTADO_LABORAL_OPTIONS } from "../config/empleados.config";
-import { useCambiarEstadoLaboral } from "../hooks/useEmpleadoActions";
+import { ESTADO_LABORAL_OPTIONS } from "../../config/empleados.config";
+import { useCambiarEstadoLaboral } from "../../hooks/useEmpleadoActions";
 import type {
   Empleado,
   EstadoLaboralEditable,
-} from "../types/empleados.types";
-import { getNombreCompleto } from "../utils/empleados.utils";
+} from "../../types/empleados.types";
+import { getNombreCompleto } from "../../utils/empleados.utils";
 
-interface CambiarEstadoDialogProps {
+interface CambiarEstadoModalProps {
   empleado: Empleado;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 /**
- * Diálogo para cambiar el estado laboral de un empleado activo
+ * Modal para cambiar el estado laboral de un empleado activo
  *
  * @remarks
- * El formulario está dentro del contenido del diálogo: al cerrarse se
+ * El formulario está dentro del contenido del modal: al cerrarse se
  * desmonta y la próxima vez que se abra empieza vacío.
  */
-export function CambiarEstadoDialog({
+export function CambiarEstadoModal({
   empleado,
   open,
   onOpenChange,
-}: CambiarEstadoDialogProps) {
+}: CambiarEstadoModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent showCloseButton={false}>

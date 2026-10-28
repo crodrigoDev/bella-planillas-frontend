@@ -28,11 +28,14 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { zodResolverOptions } from "@/lib/zodMessages.utils";
-import { ESTADO_CIVIL_OPTIONS, SEXO_OPTIONS } from "../config/empleados.config";
-import { NUEVO_EMPLEADO_STEPS } from "../config/nuevoEmpleado.config";
-import { useEmpleadosCatalogos } from "../hooks/useEmpleadosCatalogos";
-import { useTiposDocumento } from "../hooks/useTiposDocumento";
-import { useNuevoEmpleadoStore } from "../store/nuevoEmpleado.store";
+import {
+  ESTADO_CIVIL_OPTIONS,
+  SEXO_OPTIONS,
+} from "../../config/empleados.config";
+import { NUEVO_EMPLEADO_STEPS } from "../../config/nuevoEmpleado.config";
+import { useEmpleadosCatalogos } from "../../hooks/useEmpleadosCatalogos";
+import { useTiposDocumento } from "../../hooks/useTiposDocumento";
+import { useNuevoEmpleadoStore } from "../../store/nuevoEmpleado.store";
 
 // Valores con los que empieza un empleado nuevo, como en el diseño
 const INITIAL_VALUES = {
@@ -138,7 +141,9 @@ export function DatosEmpleadoForm() {
           />
 
           <Field>
-            <FieldTitle id="sexo-label">Sexo <RequiredMark /></FieldTitle>
+            <FieldTitle id="sexo-label">
+              Sexo <RequiredMark />
+            </FieldTitle>
             <div
               role="radiogroup"
               aria-labelledby="sexo-label"
@@ -229,14 +234,6 @@ export function DatosEmpleadoForm() {
           description="Posición dentro de la estructura organizacional y fecha de inicio de labores."
         >
           <SelectField
-            name="cargo_id"
-            label="Cargo"
-            required
-            options={cargos.data}
-            placeholder="Selecciona un cargo..."
-            isLoading={cargos.isLoading}
-          />
-          <SelectField
             name="area_id"
             label="Área"
             required
@@ -245,6 +242,14 @@ export function DatosEmpleadoForm() {
             isLoading={areas.isLoading}
             // Un cargo pertenece a un área: al cambiarla hay que elegir otro
             onValueChange={() => setValue("cargo_id", undefined as never)}
+          />
+          <SelectField
+            name="cargo_id"
+            label="Cargo"
+            required
+            options={cargos.data}
+            placeholder="Selecciona un cargo..."
+            isLoading={cargos.isLoading}
           />
           <SelectField
             name="jornada_id"

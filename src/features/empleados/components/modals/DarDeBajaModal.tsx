@@ -23,29 +23,29 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
 import { getTodayIsoDate } from "@/lib/date.utils";
-import { MOTIVO_BAJA_OPTIONS } from "../config/empleados.config";
-import { useDesactivarEmpleado } from "../hooks/useEmpleadoActions";
-import type { Empleado } from "../types/empleados.types";
-import { getNombreCompleto } from "../utils/empleados.utils";
+import { MOTIVO_BAJA_OPTIONS } from "../../config/empleados.config";
+import { useDesactivarEmpleado } from "../../hooks/useEmpleadoActions";
+import type { Empleado } from "../../types/empleados.types";
+import { getNombreCompleto } from "../../utils/empleados.utils";
 
-interface DarDeBajaDialogProps {
+interface DarDeBajaModalProps {
   empleado: Empleado;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 /**
- * Diálogo para dar de baja a un empleado indicando fecha y motivo de cese
+ * Modal para dar de baja a un empleado indicando fecha y motivo de cese
  *
  * @remarks
- * El formulario está dentro del contenido del diálogo: al cerrarse se
+ * El formulario está dentro del contenido del modal: al cerrarse se
  * desmonta y la próxima vez que se abra empieza vacío.
  */
-export function DarDeBajaDialog({
+export function DarDeBajaModal({
   empleado,
   open,
   onOpenChange,
-}: DarDeBajaDialogProps) {
+}: DarDeBajaModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent showCloseButton={false}>

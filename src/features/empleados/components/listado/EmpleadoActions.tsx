@@ -16,20 +16,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { Empleado } from "../types/empleados.types";
-import { getNombreCompleto } from "../utils/empleados.utils";
-import { CambiarEstadoDialog } from "./CambiarEstadoDialog";
-import { DarDeBajaDialog } from "./DarDeBajaDialog";
-import { ReactivarDialog } from "./ReactivarDialog";
+import type { Empleado } from "../../types/empleados.types";
+import { getNombreCompleto } from "../../utils/empleados.utils";
+import { CambiarEstadoModal } from "../modals/CambiarEstadoModal";
+import { DarDeBajaModal } from "../modals/DarDeBajaModal";
+import { ReactivarModal } from "../modals/ReactivarModal";
 
-type EmpleadoDialog = "estado" | "baja" | "reactivar";
+type EmpleadoModal = "estado" | "baja" | "reactivar";
 
 interface EmpleadoActionsProps {
   empleado: Empleado;
 }
 
 /**
- * Menú de acciones de una fila de empleados y los diálogos que abre
+ * Menú de acciones de una fila de empleados y los modales que abre
  *
  * @remarks
  * Un empleado activo puede cambiar de estado o darse de baja; uno inactivo
@@ -38,10 +38,10 @@ interface EmpleadoActionsProps {
  * deshabilitadas hasta que exista la rama de detalle y edición.
  */
 export function EmpleadoActions({ empleado }: EmpleadoActionsProps) {
-  const [openDialog, setOpenDialog] = useState<EmpleadoDialog | null>(null);
+  const [openModal, setOpenModal] = useState<EmpleadoModal | null>(null);
 
-  const closeDialog = (open: boolean) => {
-    if (!open) setOpenDialog(null);
+  const closeModal = (open: boolean) => {
+    if (!open) setOpenModal(null);
   };
 
   return (
@@ -73,20 +73,20 @@ export function EmpleadoActions({ empleado }: EmpleadoActionsProps) {
 
           {empleado.activo ? (
             <>
-              <DropdownMenuItem onClick={() => setOpenDialog("estado")}>
+              <DropdownMenuItem onClick={() => setOpenModal("estado")}>
                 <RefreshCwIcon />
                 Cambiar estado
               </DropdownMenuItem>
               <DropdownMenuItem
                 variant="destructive"
-                onClick={() => setOpenDialog("baja")}
+                onClick={() => setOpenModal("baja")}
               >
                 <UserXIcon />
                 Dar de baja
               </DropdownMenuItem>
             </>
           ) : (
-            <DropdownMenuItem onClick={() => setOpenDialog("reactivar")}>
+            <DropdownMenuItem onClick={() => setOpenModal("reactivar")}>
               <UserCheckIcon />
               Reactivar
             </DropdownMenuItem>
@@ -94,20 +94,20 @@ export function EmpleadoActions({ empleado }: EmpleadoActionsProps) {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <CambiarEstadoDialog
+      <CambiarEstadoModal
         empleado={empleado}
-        open={openDialog === "estado"}
-        onOpenChange={closeDialog}
+        open={openModal === "estado"}
+        onOpenChange={closeModal}
       />
-      <DarDeBajaDialog
+      <DarDeBajaModal
         empleado={empleado}
-        open={openDialog === "baja"}
-        onOpenChange={closeDialog}
+        open={openModal === "baja"}
+        onOpenChange={closeModal}
       />
-      <ReactivarDialog
+      <ReactivarModal
         empleado={empleado}
-        open={openDialog === "reactivar"}
-        onOpenChange={closeDialog}
+        open={openModal === "reactivar"}
+        onOpenChange={closeModal}
       />
     </>
   );

@@ -26,15 +26,15 @@ import {
   REGIMENES_SALUD_CON_EPS,
   TIPO_COMISION_OPTIONS,
   esRegimenAfp,
-} from "../config/empleados.config";
-import { NUEVO_EMPLEADO_STEPS } from "../config/nuevoEmpleado.config";
-import { useDatosFinancierosCatalogos } from "../hooks/useDatosFinancierosCatalogos";
+} from "../../config/empleados.config";
+import { NUEVO_EMPLEADO_STEPS } from "../../config/nuevoEmpleado.config";
+import { useDatosFinancierosCatalogos } from "../../hooks/useDatosFinancierosCatalogos";
 import {
   createDatosFinancierosSchema,
   type DatosFinancierosDraft,
-} from "../schemas/datosFinancieros.schema";
-import type { RegimenPension } from "../types/nuevoEmpleado.types";
-import { useNuevoEmpleadoStore } from "../store/nuevoEmpleado.store";
+} from "../../schemas/datosFinancieros.schema";
+import type { RegimenPension } from "../../types/nuevoEmpleado.types";
+import { useNuevoEmpleadoStore } from "../../store/nuevoEmpleado.store";
 import { CuentaBancariaFields } from "./CuentaBancariaFields";
 
 // Valores con los que empiezan los datos financieros de un empleado nuevo

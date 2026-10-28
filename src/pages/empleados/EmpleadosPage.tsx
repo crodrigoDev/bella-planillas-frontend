@@ -7,7 +7,7 @@ import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
 import { DataTable } from "@/components/data-table/DataTable";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { EmpleadosToolbar } from "@/features/empleados/components/EmpleadosToolbar";
+import { EmpleadosToolbar } from "@/features/empleados/components/listado/EmpleadosToolbar";
 import { empleadosColumns } from "@/features/empleados/config/empleados.columns";
 import { useEmpleados } from "@/features/empleados/hooks/useEmpleados";
 import { useEmpleadosFilters } from "@/features/empleados/hooks/useEmpleadosFilters";

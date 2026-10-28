@@ -1,7 +1,7 @@
 import { SelectField } from "@/components/form/SelectField";
 import { TextField } from "@/components/form/TextField";
 import type { FilterOption } from "@/lib/types/filters.types";
-import { TIPO_CUENTA_OPTIONS } from "../config/empleados.config";
+import { TIPO_CUENTA_OPTIONS } from "../../config/empleados.config";
 
 interface CuentaBancariaFieldsProps {
   /** Sufijo de los campos: `id_banco_sueldo`, `cci_cts`... */

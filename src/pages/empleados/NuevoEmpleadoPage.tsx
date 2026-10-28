@@ -5,8 +5,8 @@ import { Link } from "react-router-dom";
 import { ROUTE_PATHS } from "@/app/routes/path";
 import { Stepper } from "@/components/stepper/Stepper";
 import { Button } from "@/components/ui/button";
-import { DatosEmpleadoForm } from "@/features/empleados/components/DatosEmpleadoForm";
-import { DatosFinancierosForm } from "@/features/empleados/components/DatosFinancierosForm";
+import { DatosEmpleadoForm } from "@/features/empleados/components/registro/DatosEmpleadoForm";
+import { DatosFinancierosForm } from "@/features/empleados/components/registro/DatosFinancierosForm";
 import { NUEVO_EMPLEADO_STEPS } from "@/features/empleados/config/nuevoEmpleado.config";
 import { useNuevoEmpleadoStore } from "@/features/empleados/store/nuevoEmpleado.store";
 

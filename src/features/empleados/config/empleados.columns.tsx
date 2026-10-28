@@ -2,8 +2,8 @@ import type { DataTableFeatures } from "@/components/data-table/dataTable.config
 import { createColumnHelper } from "@tanstack/react-table";
 import type { Empleado } from "../types/empleados.types";
 import { formatDate } from "@/lib/format.utils";
-import { EmpleadoEstadoBadge } from "../components/EmpleadoEstadoBadge";
-import { EmpleadoActions } from "../components/EmpleadoActions";
+import { EmpleadoEstadoBadge } from "../components/listado/EmpleadoEstadoBadge";
+import { EmpleadoActions } from "../components/listado/EmpleadoActions";
 import { formatTurno } from "../utils/empleados.utils";
 
 const columnHelper = createColumnHelper<DataTableFeatures, Empleado>();

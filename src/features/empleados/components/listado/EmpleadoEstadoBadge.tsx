@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import type { EstadoLaboral } from "../types/empleados.types";
+import type { EstadoLaboral } from "../../types/empleados.types";
 
 interface EmpleadoEstadoBadgeProps {
   activo: boolean;
