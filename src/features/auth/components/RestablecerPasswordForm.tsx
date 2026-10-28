@@ -1,3 +1,4 @@
+import { LoadingButton } from "@/components/form/LoadingButton";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -11,8 +12,6 @@ import {
   type RestablecerFormValues,
 } from "@/features/auth/schemas/auth.schema";
 import PasswordInput from "@/features/auth/components/PasswordInput";
-import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
 import { KeyRound } from "lucide-react";
 
 interface RestablecerPasswordFormProps {
@@ -81,19 +80,15 @@ export default function RestablecerPasswordForm({
           />
         </Field>
 
-        <Button type="submit" disabled={isSubmitting} className="h-10 w-full">
-          {isSubmitting ? (
-            <>
-              <Spinner />
-              Guardando…
-            </>
-          ) : (
-            <>
-              Cambiar contraseña
-              <KeyRound aria-hidden="true" />
-            </>
-          )}
-        </Button>
+        <LoadingButton
+          type="submit"
+          isLoading={isSubmitting}
+          loadingText="Guardando…"
+          icon={KeyRound}
+          className="h-10 w-full"
+        >
+          Cambiar contraseña
+        </LoadingButton>
       </FieldGroup>
     </form>
   );

@@ -1,4 +1,4 @@
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,7 +10,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Spinner } from "@/components/ui/spinner";
-import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
 import { useReactivarEmpleado } from "../../hooks/useEmpleadoActions";
 import type { Empleado } from "../../types/empleados.types";
 import { getNombreCompleto } from "../../utils/empleados.utils";
@@ -68,11 +67,7 @@ function ReactivarContent({ empleado, onClose }: ReactivarContentProps) {
         </AlertDialogDescription>
       </AlertDialogHeader>
 
-      {mutation.isError && (
-        <Alert variant="destructive">
-          <AlertDescription>{getApiErrorMessage(mutation.error)}</AlertDescription>
-        </Alert>
-      )}
+      <ErrorAlert error={mutation.error} />
 
       <AlertDialogFooter>
         <AlertDialogCancel disabled={mutation.isPending}>

@@ -1,8 +1,8 @@
+import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { Link, useSearchParams } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { RestablecerPasswordSchema } from "@jyp/shared-contracts";
 import { ROUTE_PATHS } from "@/app/routes/path";
-import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
 import { ArrowLeft, CircleCheck } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
@@ -88,14 +88,7 @@ export default function RestablecerPasswordPage() {
           </Alert>
         ) : (
           <>
-            {resetMutation.isError && (
-              <Alert variant="destructive">
-                <AlertTitle>No se pudo cambiar la contraseña</AlertTitle>
-                <AlertDescription>
-                  {getApiErrorMessage(resetMutation.error)}
-                </AlertDescription>
-              </Alert>
-            )}
+            <ErrorAlert error={resetMutation.error} title="No se pudo cambiar la contraseña" />
 
             <RestablecerPasswordForm onSubmit={handleReset} />
 

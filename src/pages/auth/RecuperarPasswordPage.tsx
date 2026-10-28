@@ -1,3 +1,4 @@
+import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { useMutation } from "@tanstack/react-query";
 import type { SolicitudRecuperacionDTO } from "@jyp/shared-contracts";
 import { ArrowLeft, MailCheck } from "lucide-react";
@@ -13,7 +14,6 @@ import {
 } from "@/components/ui/card";
 import RecuperarPasswordForm from "@/features/auth/components/RecuperarPasswordForm";
 import { authService } from "@/features/auth/services/auth.service";
-import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
 
 /** Solicita la recuperación y muestra la confirmación o el error del servidor */
 export default function RecuperarPasswordPage() {
@@ -61,14 +61,7 @@ export default function RecuperarPasswordPage() {
           </Alert>
         ) : (
           <>
-            {recoveryMutation.isError && (
-              <Alert variant="destructive">
-                <AlertTitle>No se pudo procesar la solicitud</AlertTitle>
-                <AlertDescription>
-                  {getApiErrorMessage(recoveryMutation.error)}
-                </AlertDescription>
-              </Alert>
-            )}
+            <ErrorAlert error={recoveryMutation.error} title="No se pudo procesar la solicitud" />
 
             <RecuperarPasswordForm onSubmit={handleRecovery} />
           </>

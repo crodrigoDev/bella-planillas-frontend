@@ -2,9 +2,9 @@ import { ArrowLeftIcon, ArrowRightIcon, type LucideIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { ROUTE_PATHS } from "@/app/routes/path";
+import { LoadingButton } from "@/components/form/LoadingButton";
 import { StepperFooter } from "@/components/stepper/StepperFooter";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
 import { NUEVO_EMPLEADO_STEPS } from "../../config/nuevoEmpleado.config";
 import { useNuevoEmpleadoStore } from "../../store/nuevoEmpleado.store";
 
@@ -70,15 +70,14 @@ export function RegistroFooter({
           Atrás
         </Button>
       )}
-      <Button
+      <LoadingButton
         type={onNext ? "button" : "submit"}
         onClick={onNext}
-        disabled={isSubmitting}
+        isLoading={isSubmitting}
+        icon={NextIcon}
       >
-        {isSubmitting && <Spinner data-icon="inline-start" />}
         {nextLabel}
-        {!isSubmitting && <NextIcon data-icon="inline-end" />}
-      </Button>
+      </LoadingButton>
     </StepperFooter>
   );
 }

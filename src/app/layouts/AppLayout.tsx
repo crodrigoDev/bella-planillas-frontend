@@ -1,3 +1,4 @@
+import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { Outlet } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 
@@ -10,9 +11,7 @@ import AppSidebar from "@/features/navigation/components/AppSidebar";
 import { RRHH_SIDEBAR_ITEMS } from "@/features/navigation/config/navigation.config";
 import type { NavigationUser } from "@/features/navigation/types/navigation.types";
 import type { CSSProperties } from "react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
 import { filterSidebarItems } from "@/features/navigation/utils/filter-sidebar-items";
 
 /**
@@ -68,14 +67,7 @@ export default function AppLayout() {
         </header>
 
         <div className="flex-1 space-y-4 p-4 sm:p-6 lg:p-10">
-          {logoutMutation.isError && (
-            <Alert variant="destructive">
-              <AlertTitle>No se pudo cerrar sesión</AlertTitle>
-              <AlertDescription>
-                {getApiErrorMessage(logoutMutation.error)}
-              </AlertDescription>
-            </Alert>
-          )}
+          <ErrorAlert error={logoutMutation.error} title="No se pudo cerrar sesión" />
 
           <Outlet />
         </div>

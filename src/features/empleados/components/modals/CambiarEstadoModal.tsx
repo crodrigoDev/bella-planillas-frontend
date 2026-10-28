@@ -1,6 +1,7 @@
+import { ErrorAlert } from "@/components/feedback/ErrorAlert";
+import { LoadingButton } from "@/components/form/LoadingButton";
 import { useState, type FormEvent } from "react";
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -19,9 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
-import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
 import { ESTADO_LABORAL_OPTIONS } from "../../config/empleados.config";
 import { useCambiarEstadoLaboral } from "../../hooks/useEmpleadoActions";
 import type {
@@ -131,11 +130,7 @@ function CambiarEstadoForm({ empleado, onClose }: CambiarEstadoFormProps) {
         />
       </Field>
 
-      {mutation.isError && (
-        <Alert variant="destructive">
-          <AlertDescription>{getApiErrorMessage(mutation.error)}</AlertDescription>
-        </Alert>
-      )}
+      <ErrorAlert error={mutation.error} />
 
       <DialogFooter>
         <DialogClose
@@ -144,10 +139,13 @@ function CambiarEstadoForm({ empleado, onClose }: CambiarEstadoFormProps) {
         >
           Cancelar
         </DialogClose>
-        <Button type="submit" disabled={!estado || mutation.isPending}>
-          {mutation.isPending && <Spinner data-icon="inline-start" />}
+        <LoadingButton
+          type="submit"
+          isLoading={mutation.isPending}
+          disabled={!estado}
+        >
           Guardar cambio
-        </Button>
+        </LoadingButton>
       </DialogFooter>
     </form>
   );

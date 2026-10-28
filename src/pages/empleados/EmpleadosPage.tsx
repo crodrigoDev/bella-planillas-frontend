@@ -3,9 +3,8 @@ import { PlusIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { OnChangeFn, PaginationState } from "@tanstack/react-table";
 import { ROUTE_PATHS } from "@/app/routes/path";
-import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
 import { DataTable } from "@/components/data-table/DataTable";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { Button } from "@/components/ui/button";
 import { EmpleadosToolbar } from "@/features/empleados/components/listado/EmpleadosToolbar";
 import { empleadosColumns } from "@/features/empleados/config/empleados.columns";
@@ -92,15 +91,15 @@ export default function EmpleadosPage() {
       />
 
       {isError && (
-        <Alert variant="destructive">
-          <AlertTitle>No se pudo cargar la lista de empleados</AlertTitle>
-          <AlertDescription className="flex items-center justify-between gap-2">
-            {getApiErrorMessage(error)}
+        <ErrorAlert
+          error={error}
+          title="No se pudo cargar la lista de empleados"
+          action={
             <Button variant="outline" size="sm" onClick={() => refetch()}>
               Reintentar
             </Button>
-          </AlertDescription>
-        </Alert>
+          }
+        />
       )}
 
       <DataTable

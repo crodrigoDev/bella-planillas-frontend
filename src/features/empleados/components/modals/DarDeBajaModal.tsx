@@ -1,6 +1,7 @@
+import { ErrorAlert } from "@/components/feedback/ErrorAlert";
+import { LoadingButton } from "@/components/form/LoadingButton";
 import { useState, type FormEvent } from "react";
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,8 +21,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Spinner } from "@/components/ui/spinner";
-import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
 import { getTodayIsoDate } from "@/lib/date.utils";
 import { MOTIVO_BAJA_OPTIONS } from "../../config/empleados.config";
 import { useDesactivarEmpleado } from "../../hooks/useEmpleadoActions";
@@ -137,11 +136,7 @@ function DarDeBajaForm({ empleado, onClose }: DarDeBajaFormProps) {
         </FieldDescription>
       </Field>
 
-      {mutation.isError && (
-        <Alert variant="destructive">
-          <AlertDescription>{getApiErrorMessage(mutation.error)}</AlertDescription>
-        </Alert>
-      )}
+      <ErrorAlert error={mutation.error} />
 
       <DialogFooter>
         <DialogClose
@@ -150,14 +145,14 @@ function DarDeBajaForm({ empleado, onClose }: DarDeBajaFormProps) {
         >
           Cancelar
         </DialogClose>
-        <Button
+        <LoadingButton
           type="submit"
           variant="destructive"
-          disabled={!fechaCese || !motivo || mutation.isPending}
+          isLoading={mutation.isPending}
+          disabled={!fechaCese || !motivo}
         >
-          {mutation.isPending && <Spinner data-icon="inline-start" />}
           Dar de baja
-        </Button>
+        </LoadingButton>
       </DialogFooter>
     </form>
   );

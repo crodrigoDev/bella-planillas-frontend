@@ -1,7 +1,7 @@
 import { CheckIcon } from "lucide-react";
 
+import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
 import { useCrearEmpleado } from "../../hooks/useCrearEmpleado";
 import { useNuevoEmpleadoStore } from "../../store/nuevoEmpleado.store";
 import { RegistroFooter } from "./RegistroFooter";
@@ -55,15 +55,10 @@ export function ResumenRegistro() {
 
   return (
     <div className="space-y-6">
-      {mutation.isError && (
-        <Alert variant="destructive">
-          <AlertDescription>
-            {getApiErrorMessage(mutation.error)}
-            {empleadoCreado &&
-              " El empleado ya se creó: al reintentar se completará solo lo que falta."}
-          </AlertDescription>
-        </Alert>
-      )}
+      <ErrorAlert error={mutation.error}>
+        {empleadoCreado &&
+          " El empleado ya se creó: al reintentar se completará solo lo que falta."}
+      </ErrorAlert>
 
       <ResumenEmpleado datos={datos} />
       <ResumenFinancieros datos={datosFinancieros} />
