@@ -1,17 +1,9 @@
 import { protectedHttpClient } from "@/lib/api/protected-http-client";
 import type { PaginationApiResponse } from "@/lib/api/types/api.types";
+import { CATALOGO_LIMIT, toOptions } from "@/lib/catalogos.utils";
 import type { FilterOption } from "@/lib/types/filters.types";
 import type { EmpleadoRelacion } from "@/features/empleados/types/empleados.types";
 import { TIPOS_DOCUMENTO_MOCK } from "../data/catalogos.mock";
-
-// Máximo que permite el backend por página
-const CATALOGO_LIMIT = 100;
-
-/**
- * Convierte los registros del backend en opciones para un Select
- */
-const toOptions = (items: EmpleadoRelacion[]): FilterOption[] =>
-  items.map(({ id, nombre }) => ({ value: id, label: nombre }));
 
 /**
  * Obtiene las listas que alimentan los filtros del listado de empleados

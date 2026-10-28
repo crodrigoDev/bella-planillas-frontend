@@ -3,6 +3,7 @@ import type {
   ApiResponse,
   PaginationApiResponse,
 } from "@/lib/api/types/api.types";
+import { CATALOGO_LIMIT, toOptions } from "@/lib/catalogos.utils";
 import type { FilterOption } from "@/lib/types/filters.types";
 import { REGIMENES_PENSION_MOCK } from "../data/catalogos.mock";
 import type { RegimenPension } from "../types/nuevoEmpleado.types";
@@ -17,9 +18,6 @@ interface TipoAfp {
   nombre: string;
   id_regimen: string;
 }
-
-// Máximo que permite el backend por página
-const CATALOGO_LIMIT = 100;
 
 /**
  * Obtiene las listas que alimentan el formulario de datos financieros
@@ -41,10 +39,7 @@ export const datosFinancierosCatalogosService = {
       PaginationApiResponse<TipoAfp>
     >("/payroll/afp/tipos", { params: { limit: CATALOGO_LIMIT } });
 
-    return response.data.data.map(({ id, nombre }) => ({
-      value: id,
-      label: nombre,
-    }));
+    return toOptions(response.data.data);
   },
 
   /** Consulta los bancos disponibles para las cuentas de sueldo y CTS */
@@ -52,9 +47,6 @@ export const datosFinancierosCatalogosService = {
     const response =
       await protectedHttpClient.get<ApiResponse<Banco[]>>("/payroll/bancos");
 
-    return response.data.data.map(({ id, nombre }) => ({
-      value: id,
-      label: nombre,
-    }));
+    return toOptions(response.data.data);
   },
 };

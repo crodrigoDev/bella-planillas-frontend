@@ -1,37 +1,33 @@
-import { useQuery } from "@tanstack/react-query";
+import { useCatalogo } from "@/hooks/useCatalogo";
 import { empleadosCatalogosService } from "../services/empleadosCatalogos.service";
 
-// Tiempo de caducación de la cache para los catálogos
-const CATALOGO_STALE_TIME = 5 * 60_000;
+// Áreas, cargos y jornadas se editan con más frecuencia: caducan antes
+const STALE_TIME = 5 * 60_000;
 
 /**
- * Obtiene las opciones de los filtros del listado de empleados
+ * Obtiene las opciones del formulario y de los filtros de empleados
  *
  * @param areaId - Si se indica, los cargos se limitan a esa área
  * @returns Una consulta por cada catálogo
  */
 export function useEmpleadosCatalogos(areaId?: string) {
-  const areas = useQuery({
-    queryKey: ["catalogos", "areas"],
-    queryFn: () => empleadosCatalogosService.listAreas(),
-    staleTime: CATALOGO_STALE_TIME,
-  });
+  const areas = useCatalogo(
+    ["areas"],
+    () => empleadosCatalogosService.listAreas(),
+    STALE_TIME,
+  );
 
-  const cargos = useQuery({
-    queryKey: ["catalogos", "cargos", areaId ?? null],
-    queryFn: () => empleadosCatalogosService.listCargos(areaId),
-    staleTime: CATALOGO_STALE_TIME,
-  });
+  const cargos = useCatalogo(
+    ["cargos", areaId ?? null],
+    () => empleadosCatalogosService.listCargos(areaId),
+    STALE_TIME,
+  );
 
-  const jornadas = useQuery({
-    queryKey: ["catalogos", "jornadas"],
-    queryFn: () => empleadosCatalogosService.listJornadas(),
-    staleTime: CATALOGO_STALE_TIME,
-  });
+  const jornadas = useCatalogo(
+    ["jornadas"],
+    () => empleadosCatalogosService.listJornadas(),
+    STALE_TIME,
+  );
 
-  return {
-    areas,
-    cargos,
-    jornadas,
-  };
+  return { areas, cargos, jornadas };
 }
