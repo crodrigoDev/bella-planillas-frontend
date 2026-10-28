@@ -63,11 +63,11 @@ export default function AppLayout() {
       />
 
       <SidebarInset>
-        <header className="flex h-14 items-center border-b border-sidebar-border px-4">
+        <header className="flex h-14 items-center border-b border-sidebar-border px-4 sm:px-6 lg:px-8">
           <SidebarTrigger />
         </header>
 
-        <div className="flex-1 space-y-4 p-4">
+        <div className="flex-1 space-y-4 p-4 sm:p-6 lg:p-8">
           {logoutMutation.isError && (
             <Alert variant="destructive">
               <AlertTitle>No se pudo cerrar sesión</AlertTitle>
