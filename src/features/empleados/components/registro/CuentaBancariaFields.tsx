@@ -1,6 +1,6 @@
 import { SelectField } from "@/components/form/SelectField";
 import { TextField } from "@/components/form/TextField";
-import type { FilterOption } from "@/lib/types/filters.types";
+import type { SelectOption } from "@/lib/types/options.types";
 import { TIPO_CUENTA_OPTIONS } from "../../config/empleados.config";
 
 interface CuentaBancariaFieldsProps {
@@ -9,7 +9,7 @@ interface CuentaBancariaFieldsProps {
   bancoLabel: string;
   /** Opción para dejar la cuenta sin banco */
   sinBancoLabel: string;
-  bancos: FilterOption[] | undefined;
+  bancos: SelectOption[] | undefined;
   isLoadingBancos: boolean;
 }
 

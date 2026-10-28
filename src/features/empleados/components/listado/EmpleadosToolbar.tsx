@@ -1,7 +1,7 @@
 import { FilterSelect } from "@/components/filters/FilterSelect";
 import { Button } from "@/components/ui/button";
 import { XIcon } from "lucide-react";
-import { type FilterOption } from "@/lib/types/filters.types";
+import { type SelectOption } from "@/lib/types/options.types";
 import type {
   EmpleadoFilterKey,
   EmpleadoFilters,
@@ -18,7 +18,7 @@ interface EmpleadosToolbarProps {
   onClear: () => void;
 }
 
-const NO_OPTIONS: FilterOption[] = [];
+const NO_OPTIONS: SelectOption[] = [];
 
 /**
  * Barra con la búsqueda y los filtros del listado de empleados

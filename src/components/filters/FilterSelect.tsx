@@ -5,13 +5,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { FilterOption } from "@/lib/types/filters.types";
+import type { SelectOption } from "@/lib/types/options.types";
 import { cn } from "@/lib/utils";
 
 interface FilterSelectProps {
   ariaLabel: string;
   allLabel: string;
-  options: FilterOption[];
+  options: SelectOption[];
   value: string | undefined;
   onChange: (value: string | undefined) => void;
   isLoading?: boolean;
@@ -36,7 +36,7 @@ export function FilterSelect({
   id,
   className,
 }: FilterSelectProps) {
-  const items: FilterOption[] = [
+  const items: SelectOption[] = [
     { value: ALL_VALUE, label: allLabel },
     ...options,
   ];

@@ -1,4 +1,4 @@
-import type { FilterOption } from "@/lib/types/filters.types";
+import type { SelectOption } from "@/lib/types/options.types";
 
 /** Máximo de registros que permite el backend por página */
 export const CATALOGO_LIMIT = 100;
@@ -8,7 +8,7 @@ export const CATALOGO_LIMIT = 100;
  */
 export const toOptions = (
   items: { id: string; nombre: string }[],
-): FilterOption[] => items.map(({ id, nombre }) => ({ value: id, label: nombre }));
+): SelectOption[] => items.map(({ id, nombre }) => ({ value: id, label: nombre }));
 
 /**
  * Busca el texto de una opción a partir de su valor
@@ -16,7 +16,7 @@ export const toOptions = (
  * @returns El texto de la opción; si no está en la lista, el mismo valor
  */
 export const getOptionLabel = (
-  options: FilterOption[] | undefined,
+  options: SelectOption[] | undefined,
   value: string | null | undefined,
 ): string =>
   value ? (options?.find((option) => option.value === value)?.label ?? value) : "--";

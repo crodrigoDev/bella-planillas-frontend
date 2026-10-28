@@ -1,4 +1,4 @@
-import type { FilterOption } from "@/lib/types/filters.types";
+import type { SelectOption } from "@/lib/types/options.types";
 import type { EstadoLaboralEditable } from "../types/empleados.types";
 
 /**
@@ -20,7 +20,7 @@ export const ESTADO_LABORAL_OPTIONS: {
 /**
  * Motivos de baja que propone el diseño de Registrar cese
  */
-export const MOTIVO_BAJA_OPTIONS: FilterOption[] = [
+export const MOTIVO_BAJA_OPTIONS: SelectOption[] = [
   {
     value: "VENCIMIENTO_CONTRATO",
     label: "Vencimiento del plazo del contrato",
@@ -58,7 +58,7 @@ export const esRegimenAfp = (nombre: string | undefined): boolean =>
 /**
  * Tipos de comisión de la AFP, con los valores que acepta el contrato
  */
-export const TIPO_COMISION_OPTIONS: FilterOption[] = [
+export const TIPO_COMISION_OPTIONS: SelectOption[] = [
   { value: "FLUJO", label: "Comisión sobre flujo (remuneración)" },
   { value: "MIXTA", label: "Comisión mixta (flujo y saldo)" },
 ];
@@ -66,7 +66,7 @@ export const TIPO_COMISION_OPTIONS: FilterOption[] = [
 /**
  * Tipos de cuenta bancaria, con los valores que acepta el contrato
  */
-export const TIPO_CUENTA_OPTIONS: FilterOption[] = [
+export const TIPO_CUENTA_OPTIONS: SelectOption[] = [
   { value: "SUELDO", label: "Cuenta sueldo / haberes" },
   { value: "AHORROS", label: "Cuenta de ahorros" },
   { value: "CORRIENTE", label: "Cuenta corriente" },
@@ -75,7 +75,7 @@ export const TIPO_CUENTA_OPTIONS: FilterOption[] = [
 /**
  * Regímenes de salud, con los valores que acepta el contrato
  */
-export const REGIMEN_SALUD_OPTIONS: FilterOption[] = [
+export const REGIMEN_SALUD_OPTIONS: SelectOption[] = [
   { value: "ESSALUD_REGULAR", label: "EsSalud regular" },
   { value: "EPS", label: "EPS" },
   { value: "ESSALUD_Y_EPS", label: "EsSalud y EPS" },
@@ -88,7 +88,7 @@ export const REGIMENES_SALUD_CON_EPS = ["EPS", "ESSALUD_Y_EPS"];
 /**
  * Opciones de sexo del formulario, con los valores que acepta el contrato
  */
-export const SEXO_OPTIONS: FilterOption[] = [
+export const SEXO_OPTIONS: SelectOption[] = [
   { value: "MASCULINO", label: "Masculino" },
   { value: "FEMENINO", label: "Femenino" },
 ];
@@ -96,7 +96,7 @@ export const SEXO_OPTIONS: FilterOption[] = [
 /**
  * Opciones de estado civil del formulario, con los valores que acepta el contrato
  */
-export const ESTADO_CIVIL_OPTIONS: FilterOption[] = [
+export const ESTADO_CIVIL_OPTIONS: SelectOption[] = [
   { value: "SOLTERO", label: "Soltero(a)" },
   { value: "CASADO", label: "Casado(a)" },
   { value: "CONVIVIENTE", label: "Conviviente" },
@@ -107,7 +107,7 @@ export const ESTADO_CIVIL_OPTIONS: FilterOption[] = [
 /**
  * Vínculos del derechohabiente con el empleado, con los valores que acepta el contrato
  */
-export const VINCULO_OPTIONS: FilterOption[] = [
+export const VINCULO_OPTIONS: SelectOption[] = [
   { value: "CONYUGE", label: "Cónyuge" },
   { value: "CONCUBINO", label: "Concubino(a)" },
   { value: "HIJO_MENOR", label: "Hijo menor de edad" },

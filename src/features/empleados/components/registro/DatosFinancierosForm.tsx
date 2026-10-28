@@ -12,7 +12,7 @@ import {
 import { FormSection } from "@/components/form/FormSection";
 import { SelectField } from "@/components/form/SelectField";
 import { TextField } from "@/components/form/TextField";
-import type { FilterOption } from "@/lib/types/filters.types";
+import type { SelectOption } from "@/lib/types/options.types";
 import { zodResolverOptions } from "@/lib/zodMessages.utils";
 import {
   REGIMEN_PENSION_LABELS,
@@ -101,7 +101,7 @@ export function DatosFinancierosForm() {
   const esAfp = isRegimenAfp(regimenesData, idRegimen);
   const conEps = REGIMENES_SALUD_CON_EPS.includes(regimenSalud ?? "");
 
-  const regimenOptions: FilterOption[] = (regimenesData ?? []).map(
+  const regimenOptions: SelectOption[] = (regimenesData ?? []).map(
     ({ id, nombre }) => ({
       value: id,
       label: REGIMEN_PENSION_LABELS[nombre] ?? nombre,

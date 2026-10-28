@@ -4,7 +4,7 @@ import type {
   PaginationApiResponse,
 } from "@/lib/api/types/api.types";
 import { CATALOGO_LIMIT, toOptions } from "@/lib/catalogos.utils";
-import type { FilterOption } from "@/lib/types/filters.types";
+import type { SelectOption } from "@/lib/types/options.types";
 import {
   MODALIDADES_CONTRATO_MOCK,
   REGIMENES_PENSION_MOCK,
@@ -25,7 +25,7 @@ import type {
  */
 export const catalogosService = {
   /** Consulta las áreas activas */
-  listAreas: async (): Promise<FilterOption[]> => {
+  listAreas: async (): Promise<SelectOption[]> => {
     const response = await protectedHttpClient.get<
       PaginationApiResponse<EmpleadoRelacion>
     >("/rrhh/area", { params: { limit: CATALOGO_LIMIT, activo: true } });
@@ -38,7 +38,7 @@ export const catalogosService = {
    *
    * @param areaId - Si se indica, solo los cargos de esa área
    */
-  listCargos: async (areaId?: string): Promise<FilterOption[]> => {
+  listCargos: async (areaId?: string): Promise<SelectOption[]> => {
     const response = await protectedHttpClient.get<
       PaginationApiResponse<EmpleadoRelacion>
     >("/rrhh/cargo", {
@@ -49,7 +49,7 @@ export const catalogosService = {
   },
 
   /** Consulta las jornadas activas */
-  listJornadas: async (): Promise<FilterOption[]> => {
+  listJornadas: async (): Promise<SelectOption[]> => {
     const response = await protectedHttpClient.get<
       PaginationApiResponse<EmpleadoRelacion>
     >("/rrhh/jornadas", {
@@ -60,7 +60,7 @@ export const catalogosService = {
   },
 
   /** Consulta las administradoras de AFP */
-  listAfps: async (): Promise<FilterOption[]> => {
+  listAfps: async (): Promise<SelectOption[]> => {
     const response = await protectedHttpClient.get<
       PaginationApiResponse<EmpleadoRelacion>
     >("/payroll/afp/tipos", { params: { limit: CATALOGO_LIMIT } });
@@ -69,7 +69,7 @@ export const catalogosService = {
   },
 
   /** Consulta los bancos disponibles para las cuentas de sueldo y CTS */
-  listBancos: async (): Promise<FilterOption[]> => {
+  listBancos: async (): Promise<SelectOption[]> => {
     const response =
       await protectedHttpClient.get<ApiResponse<EmpleadoRelacion[]>>(
         "/payroll/bancos",
@@ -79,7 +79,7 @@ export const catalogosService = {
   },
 
   /** TEMPORAL: tipos de documento (DNI, CE, pasaporte...) */
-  listTiposDocumento: async (): Promise<FilterOption[]> => TIPOS_DOCUMENTO_MOCK,
+  listTiposDocumento: async (): Promise<SelectOption[]> => TIPOS_DOCUMENTO_MOCK,
 
   /** TEMPORAL: regímenes de pensión (ONP y SPP) */
   listRegimenesPension: async (): Promise<RegimenPension[]> =>
@@ -91,6 +91,6 @@ export const catalogosService = {
    * @remarks
    * El backend no define una lista: solo guarda el texto de la modalidad.
    */
-  listModalidadesContrato: async (): Promise<FilterOption[]> =>
+  listModalidadesContrato: async (): Promise<SelectOption[]> =>
     MODALIDADES_CONTRATO_MOCK,
 };

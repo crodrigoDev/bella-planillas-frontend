@@ -1,4 +1,4 @@
-import type { FilterOption } from "@/lib/types/filters.types";
+import type { SelectOption } from "@/lib/types/options.types";
 
 /**
  * DATOS TEMPORALES: catálogos que el backend todavía no expone.
@@ -16,7 +16,7 @@ import type { FilterOption } from "@/lib/types/filters.types";
  */
 
 /** Tipos de documento, tal como están en la tabla `tipo_documento` */
-export const TIPOS_DOCUMENTO_MOCK: FilterOption[] = [
+export const TIPOS_DOCUMENTO_MOCK: SelectOption[] = [
   { value: "01a17fb7-a2cd-760f-91fb-f9754617fb43", label: "DNI" },
   { value: "01a17fb7-a2d6-7754-9ddd-2fe38719a9b3", label: "CE" },
   { value: "01a17fb7-a2da-73a9-9649-f2ae3087b4be", label: "PASAPORTE" },
@@ -29,7 +29,7 @@ export const REGIMENES_PENSION_MOCK: { id: string; nombre: string }[] = [
 ];
 
 /** Modalidades de contrato; el valor es el texto que guarda el backend */
-export const MODALIDADES_CONTRATO_MOCK: FilterOption[] = [
+export const MODALIDADES_CONTRATO_MOCK: SelectOption[] = [
   { value: "PLAZO_FIJO", label: "Plazo fijo" },
   { value: "INDETERMINADO", label: "Indeterminado" },
 ];

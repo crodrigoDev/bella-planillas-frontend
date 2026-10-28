@@ -5,11 +5,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { FilterOption } from "@/lib/types/filters.types";
+import type { SelectOption } from "@/lib/types/options.types";
 
 interface OptionSelectProps {
   id: string;
-  options: FilterOption[];
+  options: SelectOption[];
   /** Valor elegido; undefined significa que aún no se eligió nada */
   value: string | undefined;
   onChange: (value: string) => void;
@@ -37,7 +37,7 @@ export function OptionSelect({
   invalid = false,
   disabled = false,
 }: OptionSelectProps) {
-  const items: FilterOption[] = [...options];
+  const items: SelectOption[] = [...options];
 
   // El valor puede existir antes de que lleguen las opciones (borrador guardado)
   if (value && !options.some((option) => option.value === value))

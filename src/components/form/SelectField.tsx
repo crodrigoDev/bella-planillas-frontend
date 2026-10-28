@@ -3,16 +3,16 @@ import { Controller, useFormContext } from "react-hook-form";
 import { FilterSelect } from "@/components/filters/FilterSelect";
 import { FormField } from "@/components/form/FormField";
 import { OptionSelect } from "@/components/form/OptionSelect";
-import type { FilterOption } from "@/lib/types/filters.types";
+import type { SelectOption } from "@/lib/types/options.types";
 
-const NO_OPTIONS: FilterOption[] = [];
+const NO_OPTIONS: SelectOption[] = [];
 
 interface SelectFieldProps {
   name: string;
   label: string;
   required?: boolean;
   /** Mientras no lleguen, el selector queda vacío */
-  options?: FilterOption[];
+  options?: SelectOption[];
   placeholder?: string;
   isLoading?: boolean;
   description?: string;
