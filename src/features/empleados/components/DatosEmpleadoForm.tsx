@@ -347,8 +347,8 @@ export function DatosEmpleadoForm() {
 
       <FormSection
         icon={Building2Icon}
-        title="C. Asignación laboral y previsional"
-        description="Posición dentro de la estructura organizacional y datos iniciales de contratación."
+        title="C. Asignación laboral"
+        description="Posición dentro de la estructura organizacional y fecha de inicio de labores."
       >
         <Field>
           <FieldLabel htmlFor="cargo_id">Cargo {REQUIRED_MARK}</FieldLabel>
@@ -431,22 +431,6 @@ export function DatosEmpleadoForm() {
             {...register("fecha_inicio")}
           />
           {showError("fecha_inicio")}
-        </Field>
-
-        <Field>
-          <FieldLabel htmlFor="afp_fecha_filiacion">
-            Fecha de filiación AFP
-          </FieldLabel>
-          <Input
-            id="afp_fecha_filiacion"
-            type="date"
-            aria-invalid={Boolean(errors.afp_fecha_filiacion)}
-            // Un campo vacío no debe enviarse como texto vacío
-            {...register("afp_fecha_filiacion", {
-              setValueAs: (value: string) => value || undefined,
-            })}
-          />
-          {showError("afp_fecha_filiacion")}
         </Field>
 
         <Field className="sm:col-span-2">

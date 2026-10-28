@@ -2,6 +2,7 @@ import { protectedHttpClient } from "@/lib/api/protected-http-client";
 import type { PaginationApiResponse } from "@/lib/api/types/api.types";
 import type { FilterOption } from "@/lib/types/filters.types";
 import type { EmpleadoRelacion } from "@/features/empleados/types/empleados.types";
+import { TIPOS_DOCUMENTO_MOCK } from "../data/catalogos.mock";
 
 // Máximo que permite el backend por página
 const CATALOGO_LIMIT = 100;
@@ -64,18 +65,9 @@ export const empleadosCatalogosService = {
    * Consulta los tipos de documento (DNI, CE, pasaporte...)
    *
    * @remarks
-   * El backend todavía no expone este catálogo. Se asume `GET /rrhh/tipo-documento`
-   * con registros `{ id, tipo_documento }`, que es como los guarda la base de datos.
-   * Si la ruta final es otra, solo hay que cambiarla aquí.
+   * TEMPORAL: el backend todavía no expone este catálogo, así que devuelve
+   * datos fijos (ver `catalogos.mock.ts`). Cuando exista el endpoint, solo
+   * hay que reemplazar el cuerpo por la llamada HTTP.
    */
-  listTiposDocumento: async (): Promise<FilterOption[]> => {
-    const response = await protectedHttpClient.get<
-      PaginationApiResponse<{ id: string; tipo_documento: string }>
-    >("/rrhh/tipo-documento", { params: { limit: CATALOGO_LIMIT } });
-
-    return response.data.data.map(({ id, tipo_documento }) => ({
-      value: id,
-      label: tipo_documento,
-    }));
-  },
+  listTiposDocumento: async (): Promise<FilterOption[]> => TIPOS_DOCUMENTO_MOCK,
 };

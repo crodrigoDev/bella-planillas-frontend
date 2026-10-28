@@ -12,6 +12,9 @@ import type { ParseParams, ZodErrorMap } from "zod/v3";
 export const zodEsErrorMap: ZodErrorMap = (issue, ctx) => {
   switch (issue.code) {
     case "invalid_type":
+      // Un campo numérico vacío o con texto llega como NaN
+      if (issue.expected === "number") return { message: "Ingresa un número válido" };
+
       if (issue.received === "undefined" || issue.received === "null")
         return { message: "Este campo es obligatorio" };
 
