@@ -1,6 +1,7 @@
 import { PencilIcon, Trash2Icon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { getOptionLabel } from "@/lib/catalogos.utils";
 import { VINCULO_OPTIONS } from "../../config/empleados.config";
 import type { DerechohabienteDraft } from "../../schemas/datosDerechohabiente.schema";
 
@@ -9,9 +10,6 @@ interface DerechohabientesListProps {
   onEdit: (index: number) => void;
   onRemove: (index: number) => void;
 }
-
-const getVinculoLabel = (vinculo: string) =>
-  VINCULO_OPTIONS.find((option) => option.value === vinculo)?.label ?? vinculo;
 
 /**
  * Lista de los derechohabientes agregados, con botones para editar y quitar
@@ -41,7 +39,7 @@ export function DerechohabientesList({
             <div>
               <p className="font-medium">{nombre}</p>
               <p className="text-muted-foreground">
-                {getVinculoLabel(item.vinculo)} · {item.nro_documento}
+                {getOptionLabel(VINCULO_OPTIONS, item.vinculo)} · {item.nro_documento}
               </p>
             </div>
 

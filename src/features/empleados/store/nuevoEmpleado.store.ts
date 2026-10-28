@@ -4,6 +4,29 @@ import type { DerechohabienteDraft } from "../schemas/datosDerechohabiente.schem
 import type { DatosContratoDraft } from "../schemas/datosContrato.schema";
 import type { DatosFinancierosDraft } from "../schemas/datosFinancieros.schema";
 
+/**
+ * Qué parte del registro ya se guardó en el backend
+ *
+ * @remarks
+ * El registro se envía en varias llamadas. Si una falla, esto permite
+ * reintentar solo lo que falta, sin volver a crear lo que ya existe.
+ */
+export interface ProgresoRegistro {
+  /** Id del empleado una vez creado; null mientras no se crea */
+  empleadoId: string | null;
+  financierosListos: boolean;
+  contratoListo: boolean;
+  /** Cuántos derechohabientes (en orden de la lista) ya se registraron */
+  derechohabientesListos: number;
+}
+
+const INITIAL_PROGRESO: ProgresoRegistro = {
+  empleadoId: null,
+  financierosListos: false,
+  contratoListo: false,
+  derechohabientesListos: 0,
+};
+
 interface NuevoEmpleadoState {
   /** Paso del registro que se muestra, empezando en 0 */
   step: number;
@@ -15,6 +38,8 @@ interface NuevoEmpleadoState {
   contrato: DatosContratoDraft | null;
   /** Derechohabientes del paso 4; vacío porque el paso es opcional */
   derechohabientes: DerechohabienteDraft[];
+  /** Avance del envío al backend, que ocurre en el último paso */
+  progreso: ProgresoRegistro;
   saveDatos: (datos: CrearEmpleadoDto) => void;
   saveDatosFinancieros: (datosFinancieros: DatosFinancierosDraft) => void;
   saveContrato: (contrato: DatosContratoDraft) => void;
@@ -24,6 +49,7 @@ interface NuevoEmpleadoState {
     derechohabiente: DerechohabienteDraft,
   ) => void;
   removeDerechohabiente: (index: number) => void;
+  updateProgreso: (progreso: Partial<ProgresoRegistro>) => void;
   goToStep: (step: number) => void;
   reset: () => void;
 }
@@ -34,6 +60,7 @@ const INITIAL_STATE = {
   datosFinancieros: null,
   contrato: null,
   derechohabientes: [] as DerechohabienteDraft[],
+  progreso: INITIAL_PROGRESO,
 };
 
 /**
@@ -64,6 +91,8 @@ export const useNuevoEmpleadoStore = create<NuevoEmpleadoState>()((set) => ({
     set((state) => ({
       derechohabientes: state.derechohabientes.filter((_, i) => i !== index),
     })),
+  updateProgreso: (progreso) =>
+    set((state) => ({ progreso: { ...state.progreso, ...progreso } })),
   goToStep: (step) => set({ step }),
   reset: () => set(INITIAL_STATE),
 }));

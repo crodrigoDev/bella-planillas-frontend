@@ -9,3 +9,14 @@ export const CATALOGO_LIMIT = 100;
 export const toOptions = (
   items: { id: string; nombre: string }[],
 ): FilterOption[] => items.map(({ id, nombre }) => ({ value: id, label: nombre }));
+
+/**
+ * Busca el texto de una opción a partir de su valor
+ *
+ * @returns El texto de la opción; si no está en la lista, el mismo valor
+ */
+export const getOptionLabel = (
+  options: FilterOption[] | undefined,
+  value: string | null | undefined,
+): string =>
+  value ? (options?.find((option) => option.value === value)?.label ?? value) : "--";

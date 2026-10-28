@@ -17,3 +17,30 @@ export const formatDate = (isoDate: string | null | undefined): string => {
 
   return `${day}/${month}/${year}`;
 };
+
+const currencyFormatter = new Intl.NumberFormat("es-PE", {
+  style: "currency",
+  currency: "PEN",
+});
+
+/**
+ * Da formato de soles a un monto, por ejemplo "S/ 1,500.00"
+ *
+ * @returns El monto formateado, o un guion si no hay monto
+ */
+export const formatCurrency = (amount: number | null | undefined): string =>
+  amount === null || amount === undefined
+    ? EMPTY_VALUE
+    : currencyFormatter.format(amount);
+
+/**
+ * Oculta un dato sensible y deja visibles solo sus últimos caracteres
+ *
+ * @param value - Dato a ocultar, por ejemplo un número de cuenta
+ * @param visible - Cuántos caracteres del final se muestran
+ * @returns El dato oculto ("•••• 1234"), o un guion si no hay dato
+ */
+export const maskEnd = (
+  value: string | null | undefined,
+  visible = 4,
+): string => (value ? `•••• ${value.slice(-visible)}` : EMPTY_VALUE);
