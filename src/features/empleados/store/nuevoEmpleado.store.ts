@@ -19,6 +19,10 @@ interface NuevoEmpleadoState {
   saveDatosFinancieros: (datosFinancieros: DatosFinancierosDraft) => void;
   saveContrato: (contrato: DatosContratoDraft) => void;
   addDerechohabiente: (derechohabiente: DerechohabienteDraft) => void;
+  updateDerechohabiente: (
+    index: number,
+    derechohabiente: DerechohabienteDraft,
+  ) => void;
   removeDerechohabiente: (index: number) => void;
   goToStep: (step: number) => void;
   reset: () => void;
@@ -49,6 +53,12 @@ export const useNuevoEmpleadoStore = create<NuevoEmpleadoState>()((set) => ({
   addDerechohabiente: (derechohabiente) =>
     set((state) => ({
       derechohabientes: [...state.derechohabientes, derechohabiente],
+    })),
+  updateDerechohabiente: (index, derechohabiente) =>
+    set((state) => ({
+      derechohabientes: state.derechohabientes.map((item, i) =>
+        i === index ? derechohabiente : item,
+      ),
     })),
   removeDerechohabiente: (index) =>
     set((state) => ({

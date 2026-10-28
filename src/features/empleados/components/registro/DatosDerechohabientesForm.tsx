@@ -1,9 +1,12 @@
+import { useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
+  PencilIcon,
   PlusIcon,
+  SaveIcon,
   Trash2Icon,
   UsersIcon,
 } from "lucide-react";
@@ -51,7 +54,8 @@ const getLabel = (options: { value: string; label: string }[], value: string) =>
  * @remarks
  * Es opcional. Cada derechohabiente se valida con el esquema de shared
  * contracts y se agrega a la lista del borrador del asistente; se guardan
- * junto al empleado en el último paso.
+ * junto al empleado en el último paso. Editar o quitar un familiar solo
+ * cambia el borrador en memoria: todavía no se ha enviado nada al backend.
  */
 export function DatosDerechohabientesForm() {
   const derechohabientes = useNuevoEmpleadoStore(
@@ -60,6 +64,9 @@ export function DatosDerechohabientesForm() {
   const addDerechohabiente = useNuevoEmpleadoStore(
     (state) => state.addDerechohabiente,
   );
+  const updateDerechohabiente = useNuevoEmpleadoStore(
+    (state) => state.updateDerechohabiente,
+  );
   const removeDerechohabiente = useNuevoEmpleadoStore(
     (state) => state.removeDerechohabiente,
   );
@@ -67,6 +74,13 @@ export function DatosDerechohabientesForm() {
   const reset = useNuevoEmpleadoStore((state) => state.reset);
 
   const tiposDocumento = useTiposDocumento();
+
+  // Posición del familiar que se está editando; null si se agrega uno nuevo
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  // Cambia cada vez que se rellena o se limpia el formulario, para volver a
+  // montar los campos: así se enlazan de nuevo con los valores nuevos
+  const [formKey, setFormKey] = useState(0);
+  const formRef = useRef<HTMLDivElement>(null);
 
   const methods = useForm<
     DerechohabienteFormValues,
@@ -77,11 +91,39 @@ export function DatosDerechohabientesForm() {
     defaultValues: EMPTY_VALUES,
   });
 
+  const isEditing = editingIndex !== null;
+
+  const resetForm = (values: Partial<DerechohabienteFormValues>) => {
+    methods.reset(values);
+    setFormKey((key) => key + 1);
+  };
+
+  const handleEdit = (index: number) => {
+    setEditingIndex(index);
+    resetForm(derechohabientes[index]);
+    formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingIndex(null);
+    resetForm(EMPTY_VALUES);
+  };
+
+  const handleRemove = (index: number) => {
+    removeDerechohabiente(index);
+
+    // Si se quita el que se edita, se descarta; si era uno anterior, la posición se corre
+    if (editingIndex === index) handleCancelEdit();
+    else if (editingIndex !== null && index < editingIndex)
+      setEditingIndex(editingIndex - 1);
+  };
+
   const onSubmit = (values: DerechohabienteDraft) => {
     // El backend rechaza dos familiares con el mismo documento
     if (
       derechohabientes.some(
-        (item) => item.nro_documento === values.nro_documento,
+        (item, index) =>
+          index !== editingIndex && item.nro_documento === values.nro_documento,
       )
     ) {
       methods.setError("nro_documento", {
@@ -90,8 +132,11 @@ export function DatosDerechohabientesForm() {
       return;
     }
 
-    addDerechohabiente(values);
-    methods.reset(EMPTY_VALUES);
+    if (isEditing) updateDerechohabiente(editingIndex, values);
+    else addDerechohabiente(values);
+
+    setEditingIndex(null);
+    resetForm(EMPTY_VALUES);
   };
 
   return (
@@ -121,27 +166,53 @@ export function DatosDerechohabientesForm() {
                     {item.nro_documento}
                   </p>
                 </div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  aria-label={`Quitar a ${item.nombres} ${item.apellidos}`}
-                  onClick={() => removeDerechohabiente(index)}
-                >
-                  <Trash2Icon />
-                </Button>
+                <div className="flex gap-1">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    aria-label={`Editar a ${item.nombres} ${item.apellidos}`}
+                    onClick={() => handleEdit(index)}
+                  >
+                    <PencilIcon />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    aria-label={`Quitar a ${item.nombres} ${item.apellidos}`}
+                    onClick={() => handleRemove(index)}
+                  >
+                    <Trash2Icon />
+                  </Button>
+                </div>
               </li>
             ))}
           </ul>
         )}
       </FormSection>
 
+      {/* Punto al que se desplaza la pantalla al editar un familiar */}
+      <div ref={formRef} className="scroll-mt-4" />
+
       <FormProvider {...methods}>
-        <form onSubmit={methods.handleSubmit(onSubmit)} noValidate>
+        <form
+          key={formKey}
+          onSubmit={methods.handleSubmit(onSubmit)}
+          noValidate
+        >
           <FormSection
-            icon={PlusIcon}
-            title="B. Agregar derechohabiente"
-            description="Completa los datos del familiar y agrégalo a la lista."
+            icon={isEditing ? PencilIcon : PlusIcon}
+            title={
+              isEditing
+                ? "B. Editar derechohabiente"
+                : "B. Agregar derechohabiente"
+            }
+            description={
+              isEditing
+                ? "Cambia los datos del familiar y guarda los cambios."
+                : "Completa los datos del familiar y agrégalo a la lista."
+            }
           >
             <SelectField
               name="vinculo"
@@ -187,10 +258,23 @@ export function DatosDerechohabientesForm() {
               type="date"
             />
 
-            <div className="flex justify-end sm:col-span-2 lg:col-span-4">
+            <div className="flex justify-end gap-2 sm:col-span-2 lg:col-span-4">
+              {isEditing && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={handleCancelEdit}
+                >
+                  Cancelar edición
+                </Button>
+              )}
               <Button type="submit" variant="outline">
-                <PlusIcon data-icon="inline-start" />
-                Agregar a la lista
+                {isEditing ? (
+                  <SaveIcon data-icon="inline-start" />
+                ) : (
+                  <PlusIcon data-icon="inline-start" />
+                )}
+                {isEditing ? "Guardar cambios" : "Agregar a la lista"}
               </Button>
             </div>
           </FormSection>

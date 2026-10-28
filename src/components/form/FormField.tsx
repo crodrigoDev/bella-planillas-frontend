@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { get, useFormContext } from "react-hook-form";
+import { get, useFormContext, useFormState } from "react-hook-form";
 
 import { RequiredMark } from "@/components/form/RequiredMark";
 import {
@@ -36,9 +36,10 @@ export function FormField({
   className,
   children,
 }: FormFieldProps) {
-  const {
-    formState: { errors },
-  } = useFormContext();
+  // Se suscribe al error de este campo: no depende de que el formulario padre
+  // se vuelva a renderizar cuando cambian los errores
+  const { control } = useFormContext();
+  const { errors } = useFormState({ control, name });
   const error = get(errors, name);
 
   return (
