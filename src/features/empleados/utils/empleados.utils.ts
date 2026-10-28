@@ -1,3 +1,5 @@
+import type { Empleado } from "../types/empleados.types";
+
 const TURNO_LABELS: Record<string, string> = {
   MANANA: "Mañana",
   TARDE: "Tarde",
@@ -14,3 +16,13 @@ const TURNO_LABELS: Record<string, string> = {
  */
 export const formatTurno = (turno: string): string =>
   TURNO_LABELS[turno] ?? turno;
+
+/**
+ * Arma el nombre completo de un empleado, como lo muestra el diseño
+ *
+ * @example "Carlos Andrés Méndez Ruiz"
+ */
+export const getNombreCompleto = ({
+  nombre,
+  apellido,
+}: Pick<Empleado, "nombre" | "apellido">): string => `${nombre} ${apellido}`;

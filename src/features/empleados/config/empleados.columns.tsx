@@ -3,6 +3,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import type { Empleado } from "../types/empleados.types";
 import { formatDate } from "@/lib/format.utils";
 import { EmpleadoEstadoBadge } from "../components/EmpleadoEstadoBadge";
+import { EmpleadoActions } from "../components/EmpleadoActions";
 import { formatTurno } from "../utils/empleados.utils";
 
 const columnHelper = createColumnHelper<DataTableFeatures, Empleado>();
@@ -87,5 +88,10 @@ export const empleadosColumns = columnHelper.columns([
       ) : (
         <span className="text-muted-foreground">Sin fecha</span>
       ),
+  }),
+  columnHelper.display({
+    id: "acciones",
+    header: "Acciones",
+    cell: ({ row }) => <EmpleadoActions empleado={row.original} />,
   }),
 ]);

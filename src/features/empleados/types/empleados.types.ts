@@ -1,5 +1,8 @@
 import type { PaginationMeta } from "@/lib/api/types/api.types";
-import type { EstadoEmpleado } from "@jyp/shared-contracts";
+import type {
+  CambiarEstadoLaboralDto,
+  EstadoEmpleado,
+} from "@jyp/shared-contracts";
 
 /**
  * Estado operativo de un empleado dentro de la empresa
@@ -9,7 +12,7 @@ export type EstadoLaboral = EstadoEmpleado;
 /**
  * Estados a los que RRHH puede cambiar a un empleado desde la lista
  */
-export type EstadoLaboralEditable = Exclude<EstadoEmpleado, "CESADO">;
+export type EstadoLaboralEditable = CambiarEstadoLaboralDto["estado_laboral"];
 
 /**
  * Datos mínimos de una relación (área o cargo)
