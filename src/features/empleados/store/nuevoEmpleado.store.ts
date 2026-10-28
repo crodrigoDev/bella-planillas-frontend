@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type { CrearEmpleadoDto } from "@jyp/shared-contracts";
+import type { DerechohabienteDraft } from "../schemas/datosDerechohabiente.schema";
 import type { DatosContratoDraft } from "../schemas/datosContrato.schema";
 import type { DatosFinancierosDraft } from "../schemas/datosFinancieros.schema";
 
@@ -12,9 +13,13 @@ interface NuevoEmpleadoState {
   datosFinancieros: DatosFinancierosDraft | null;
   /** Datos del paso 3 ya validados; null mientras no se completa */
   contrato: DatosContratoDraft | null;
+  /** Derechohabientes del paso 4; vacío porque el paso es opcional */
+  derechohabientes: DerechohabienteDraft[];
   saveDatos: (datos: CrearEmpleadoDto) => void;
   saveDatosFinancieros: (datosFinancieros: DatosFinancierosDraft) => void;
   saveContrato: (contrato: DatosContratoDraft) => void;
+  addDerechohabiente: (derechohabiente: DerechohabienteDraft) => void;
+  removeDerechohabiente: (index: number) => void;
   goToStep: (step: number) => void;
   reset: () => void;
 }
@@ -24,6 +29,7 @@ const INITIAL_STATE = {
   datos: null,
   datosFinancieros: null,
   contrato: null,
+  derechohabientes: [] as DerechohabienteDraft[],
 };
 
 /**
@@ -40,6 +46,14 @@ export const useNuevoEmpleadoStore = create<NuevoEmpleadoState>()((set) => ({
   saveDatos: (datos) => set({ datos }),
   saveDatosFinancieros: (datosFinancieros) => set({ datosFinancieros }),
   saveContrato: (contrato) => set({ contrato }),
+  addDerechohabiente: (derechohabiente) =>
+    set((state) => ({
+      derechohabientes: [...state.derechohabientes, derechohabiente],
+    })),
+  removeDerechohabiente: (index) =>
+    set((state) => ({
+      derechohabientes: state.derechohabientes.filter((_, i) => i !== index),
+    })),
   goToStep: (step) => set({ step }),
   reset: () => set(INITIAL_STATE),
 }));
