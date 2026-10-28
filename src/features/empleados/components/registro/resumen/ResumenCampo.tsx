@@ -14,7 +14,7 @@ export function ResumenCampo({ label, value, className }: ResumenCampoProps) {
   return (
     <dl className={cn("space-y-0.5", className)}>
       <dt className="text-sm text-muted-foreground">{label}</dt>
-      <dd className="text-sm font-medium break-words">{value}</dd>
+      <dd className="text-sm font-medium wrap-break-word">{value}</dd>
     </dl>
   );
 }

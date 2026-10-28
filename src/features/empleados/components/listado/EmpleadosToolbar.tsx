@@ -33,7 +33,8 @@ const NO_OPTIONS: SelectOption[] = [];
  * Barra con la búsqueda y los filtros del listado de empleados
  *
  * @remarks
- * No guarda los filtros, los recibe de la URL. Los selectores están ocultos
+ * No guarda los filtros, los recibe de la URL. Va suelta sobre la página,
+ * sin caja. Los selectores están ocultos
  * detrás del botón "Filtros"; los que estén aplicados se ven siempre como
  * etiquetas que se pueden quitar una a una.
  */
@@ -71,18 +72,18 @@ export function EmpleadosToolbar({
     });
 
   return (
-    <div className="space-y-3 rounded-lg border bg-card p-3">
+    <div className="space-y-3">
       <Collapsible open={open} onOpenChange={setOpen}>
         <div className="flex flex-wrap items-center gap-2">
           <SearchInput
-            className="sm:w-96"
+            className="flex-1 sm:w-auto sm:min-w-72"
             value={filters.search ?? ""}
             onSearch={onSearchChange}
             placeholder="Buscar por nombre, documento o correo"
             ariaLabel="Buscar empleados"
           />
 
-          <CollapsibleTrigger render={<Button variant="outline" />}>
+          <CollapsibleTrigger render={<Button variant="outline" size="lg" />}>
             <SlidersHorizontalIcon data-icon="inline-start" />
             Filtros
             {appliedFilters.length > 0 && (
@@ -93,7 +94,7 @@ export function EmpleadosToolbar({
           </CollapsibleTrigger>
 
           {hasActiveFilters && (
-            <Button variant="ghost" onClick={onClear}>
+            <Button variant="ghost" size="lg" onClick={onClear}>
               <XIcon data-icon="inline-start" />
               Limpiar filtros
             </Button>
