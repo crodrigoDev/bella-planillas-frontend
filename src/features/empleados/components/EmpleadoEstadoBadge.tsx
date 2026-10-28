@@ -8,7 +8,7 @@ interface EmpleadoEstadoBadgeProps {
 
 type BadgeVariant = "secondary" | "outline" | "destructive";
 
-const ESTADO_LABORAL_BAGE: Record<
+const ESTADO_LABORAL_BADGE: Record<
   string,
   { label: string; variant: BadgeVariant }
 > = {
@@ -17,6 +17,7 @@ const ESTADO_LABORAL_BAGE: Record<
   LICENCIA: { label: "Licencia", variant: "outline" },
   SUSPENDIDO: { label: "Suspendido", variant: "destructive" },
   CESADO: { label: "Cesado", variant: "destructive" },
+  DESPEDIDO: { label: "Despedido", variant: "destructive" },
 };
 
 /**
@@ -28,7 +29,7 @@ export function EmpleadoEstadoBadge({
 }: EmpleadoEstadoBadgeProps) {
   if (!activo) return <Badge variant="destructive">Inactivo</Badge>;
 
-  const badge = ESTADO_LABORAL_BAGE[estadoLaboral] ?? {
+  const badge = ESTADO_LABORAL_BADGE[estadoLaboral] ?? {
     label: estadoLaboral,
     variant: "outline",
   };

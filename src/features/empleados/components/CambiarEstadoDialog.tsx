@@ -82,7 +82,7 @@ function CambiarEstadoForm({ empleado, onClose }: CambiarEstadoFormProps) {
 
     mutation.mutate(
       {
-        id: empleado.id,
+        empleado,
         dto: { estado_laboral: estado, motivo: motivo.trim() || undefined },
       },
       { onSuccess: onClose },

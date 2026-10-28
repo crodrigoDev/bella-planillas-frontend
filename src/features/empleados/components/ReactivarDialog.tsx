@@ -54,7 +54,7 @@ function ReactivarContent({ empleado, onClose }: ReactivarContentProps) {
   const mutation = useReactivarEmpleado();
 
   const handleConfirm = () => {
-    mutation.mutate(empleado.id, { onSuccess: onClose });
+    mutation.mutate(empleado, { onSuccess: onClose });
   };
 
   return (

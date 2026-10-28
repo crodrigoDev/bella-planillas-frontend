@@ -30,17 +30,12 @@ export interface EmpleadoJornada extends EmpleadoRelacion {
 }
 
 /**
- * Datos financieros visibles en la lista
- */
-export interface EmpleadoDatoFinanciero {
-  sueldo_basico: string;
-  regimen_salud: string | null;
-}
-
-/**
  * Empleado tal como lo devuelve el listado
+ *
+ * @remarks
+ * Solo incluye lo que usa la lista. El backend también envía los ids de
+ * área, cargo y jornada, y los datos financieros.
  */
-
 export interface Empleado {
   id: string;
   estado_laboral: EstadoLaboral;
@@ -57,7 +52,6 @@ export interface Empleado {
   area: EmpleadoRelacion;
   cargo: EmpleadoRelacion;
   jornada: EmpleadoJornada | null;
-  dato_financiero: EmpleadoDatoFinanciero | null;
 }
 
 /**

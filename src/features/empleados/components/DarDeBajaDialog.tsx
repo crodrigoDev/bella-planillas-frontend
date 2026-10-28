@@ -81,7 +81,7 @@ function DarDeBajaForm({ empleado, onClose }: DarDeBajaFormProps) {
 
     mutation.mutate(
       {
-        id: empleado.id,
+        empleado,
         dto: { fecha_cese: fechaCese, motivo_cese: motivoLabel },
       },
       { onSuccess: onClose },
