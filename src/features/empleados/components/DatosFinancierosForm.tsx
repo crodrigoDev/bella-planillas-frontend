@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Controller, useForm, useWatch } from "react-hook-form";
+import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ArrowLeftIcon,
@@ -13,13 +13,11 @@ import {
 import { Link } from "react-router-dom";
 
 import { ROUTE_PATHS } from "@/app/routes/path";
-import { FilterSelect } from "@/components/filters/FilterSelect";
 import { FormSection } from "@/components/form/FormSection";
-import { OptionSelect } from "@/components/form/OptionSelect";
+import { SelectField } from "@/components/form/SelectField";
+import { TextField } from "@/components/form/TextField";
 import { StepperFooter } from "@/components/stepper/StepperFooter";
 import { Button } from "@/components/ui/button";
-import { Field, FieldError, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import type { FilterOption } from "@/lib/types/filters.types";
 import { zodResolverOptions } from "@/lib/zodMessages.utils";
 import {
@@ -27,7 +25,6 @@ import {
   REGIMEN_SALUD_OPTIONS,
   REGIMENES_SALUD_CON_EPS,
   TIPO_COMISION_OPTIONS,
-  TIPO_CUENTA_OPTIONS,
   esRegimenAfp,
 } from "../config/empleados.config";
 import { NUEVO_EMPLEADO_STEPS } from "../config/nuevoEmpleado.config";
@@ -36,15 +33,9 @@ import {
   createDatosFinancierosSchema,
   type DatosFinancierosDraft,
 } from "../schemas/datosFinancieros.schema";
+import type { RegimenPension } from "../types/nuevoEmpleado.types";
 import { useNuevoEmpleadoStore } from "../store/nuevoEmpleado.store";
-
-const NO_OPTIONS: FilterOption[] = [];
-
-const REQUIRED_MARK = (
-  <span aria-hidden className="text-destructive">
-    *
-  </span>
-);
+import { CuentaBancariaFields } from "./CuentaBancariaFields";
 
 // Valores con los que empiezan los datos financieros de un empleado nuevo
 const INITIAL_VALUES = {
@@ -54,8 +45,11 @@ const INITIAL_VALUES = {
   eps_costo_adicional: 0,
 } as const;
 
-// Un campo opcional vacío no debe enviarse como texto vacío
-const emptyToUndefined = (value: string) => value || undefined;
+// Indica si el régimen elegido es el de las AFP según el catálogo
+const isRegimenAfp = (
+  regimenes: RegimenPension[] | undefined,
+  idRegimen: string | undefined,
+) => esRegimenAfp(regimenes?.find((r) => r.id === idRegimen)?.nombre);
 
 const createResolver = (esRegimenAfp: (idRegimen: string) => boolean) =>
   zodResolver(createDatosFinancierosSchema(esRegimenAfp), zodResolverOptions);
@@ -91,32 +85,27 @@ export function DatosFinancierosForm() {
 
   // El esquema necesita saber qué régimen es el de las AFP, y eso lo dice el catálogo
   const resolver = useMemo(
-    () =>
-      createResolver((idRegimen) =>
-        esRegimenAfp(regimenesData?.find((r) => r.id === idRegimen)?.nombre),
-      ),
+    () => createResolver((idRegimen) => isRegimenAfp(regimenesData, idRegimen)),
     [regimenesData],
   );
 
-  const {
-    register,
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<DatosFinancierosFormValues, unknown, DatosFinancierosDraft>({
+  const methods = useForm<
+    DatosFinancierosFormValues,
+    unknown,
+    DatosFinancierosDraft
+  >({
     resolver,
     // Si el usuario vuelve a este paso, recupera lo que ya había escrito
     defaultValues: datosFinancieros ?? INITIAL_VALUES,
     // Los campos que se ocultan (AFP o EPS) dejan de validarse y de enviarse
     shouldUnregister: true,
   });
+  const { control, handleSubmit } = methods;
 
   const idRegimen = useWatch({ control, name: "id_regimen" });
   const regimenSalud = useWatch({ control, name: "regimen_salud" });
 
-  const esAfp = esRegimenAfp(
-    regimenesData?.find((regimen) => regimen.id === idRegimen)?.nombre,
-  );
+  const esAfp = isRegimenAfp(regimenesData, idRegimen);
   const conEps = REGIMENES_SALUD_CON_EPS.includes(regimenSalud ?? "");
 
   const regimenOptions: FilterOption[] = (regimenesData ?? []).map(
@@ -131,357 +120,158 @@ export function DatosFinancierosForm() {
     goToStep(2);
   };
 
-  const showError = (name: keyof typeof errors) => (
-    <FieldError errors={[errors[name]]} />
-  );
-
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
-      <FormSection
-        icon={LandmarkIcon}
-        title="A. Previsión social y régimen de pensiones"
-        description="Afiliación al Sistema Privado de Pensiones (AFP) o al Sistema Nacional de Pensiones (ONP)."
-      >
-        <Field className="sm:col-span-2">
-          <FieldLabel htmlFor="id_regimen">
-            Régimen previsional {REQUIRED_MARK}
-          </FieldLabel>
-          <Controller
+    <FormProvider {...methods}>
+      <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
+        <FormSection
+          icon={LandmarkIcon}
+          title="A. Previsión social y régimen de pensiones"
+          description="Afiliación al Sistema Privado de Pensiones (AFP) o al Sistema Nacional de Pensiones (ONP)."
+        >
+          <SelectField
             name="id_regimen"
-            control={control}
-            render={({ field }) => (
-              <OptionSelect
-                id="id_regimen"
-                options={regimenOptions}
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="Selecciona un régimen"
-                isLoading={regimenes.isLoading}
-                invalid={Boolean(errors.id_regimen)}
-              />
-            )}
+            label="Régimen previsional"
+            required
+            options={regimenOptions}
+            placeholder="Selecciona un régimen"
+            isLoading={regimenes.isLoading}
+            fieldClassName="sm:col-span-2"
           />
-          {showError("id_regimen")}
-        </Field>
 
-        {esAfp && (
-          <>
-            <Field>
-              <FieldLabel htmlFor="id_tipo_afp">
-                AFP administradora {REQUIRED_MARK}
-              </FieldLabel>
-              <Controller
+          {esAfp && (
+            <>
+              <SelectField
                 name="id_tipo_afp"
-                control={control}
-                render={({ field }) => (
-                  <OptionSelect
-                    id="id_tipo_afp"
-                    options={afps.data ?? NO_OPTIONS}
-                    value={field.value ?? undefined}
-                    onChange={field.onChange}
-                    placeholder="Selecciona una AFP"
-                    isLoading={afps.isLoading}
-                    invalid={Boolean(errors.id_tipo_afp)}
-                  />
-                )}
+                label="AFP administradora"
+                required
+                options={afps.data}
+                placeholder="Selecciona una AFP"
+                isLoading={afps.isLoading}
               />
-              {showError("id_tipo_afp")}
-            </Field>
-
-            <Field>
-              <FieldLabel htmlFor="cuspp">
-                Código CUSPP {REQUIRED_MARK}
-              </FieldLabel>
-              <Input
-                id="cuspp"
+              <TextField
+                name="cuspp"
+                label="Código CUSPP"
+                required
+                optional
                 maxLength={12}
                 placeholder="12 caracteres"
                 className="uppercase"
-                aria-invalid={Boolean(errors.cuspp)}
-                {...register("cuspp", { setValueAs: emptyToUndefined })}
               />
-              {showError("cuspp")}
-            </Field>
-
-            <Field>
-              <FieldLabel htmlFor="tipo_comision">
-                Tipo de comisión {REQUIRED_MARK}
-              </FieldLabel>
-              <Controller
+              <SelectField
                 name="tipo_comision"
-                control={control}
-                render={({ field }) => (
-                  <OptionSelect
-                    id="tipo_comision"
-                    options={TIPO_COMISION_OPTIONS}
-                    value={field.value ?? undefined}
-                    onChange={field.onChange}
-                    placeholder="Selecciona una comisión"
-                    invalid={Boolean(errors.tipo_comision)}
-                  />
-                )}
+                label="Tipo de comisión"
+                required
+                options={TIPO_COMISION_OPTIONS}
+                placeholder="Selecciona una comisión"
               />
-              {showError("tipo_comision")}
-            </Field>
-
-            <Field>
-              <FieldLabel htmlFor="afp_fecha_filiacion">
-                Fecha de filiación a la AFP {REQUIRED_MARK}
-              </FieldLabel>
-              <Input
-                id="afp_fecha_filiacion"
+              <TextField
+                name="afp_fecha_filiacion"
+                label="Fecha de filiación a la AFP"
+                required
+                optional
                 type="date"
-                aria-invalid={Boolean(errors.afp_fecha_filiacion)}
-                {...register("afp_fecha_filiacion", {
-                  setValueAs: emptyToUndefined,
-                })}
               />
-              {showError("afp_fecha_filiacion")}
-            </Field>
-          </>
-        )}
-      </FormSection>
+            </>
+          )}
+        </FormSection>
 
-      <FormSection
-        icon={BanknoteIcon}
-        title="B. Remuneración"
-        description="Sueldo básico mensual pactado, en soles."
-      >
-        <Field>
-          <FieldLabel htmlFor="sueldo_basico">
-            Sueldo básico mensual (S/) {REQUIRED_MARK}
-          </FieldLabel>
-          <Input
-            id="sueldo_basico"
+        <FormSection
+          icon={BanknoteIcon}
+          title="B. Remuneración"
+          description="Sueldo básico mensual pactado, en soles."
+        >
+          <TextField
+            name="sueldo_basico"
+            label="Sueldo básico mensual (S/)"
+            required
             type="number"
             inputMode="decimal"
             step="0.01"
             min="0"
             placeholder="0.00"
-            aria-invalid={Boolean(errors.sueldo_basico)}
-            {...register("sueldo_basico")}
           />
-          {showError("sueldo_basico")}
-        </Field>
-      </FormSection>
+        </FormSection>
 
-      <FormSection
-        icon={CreditCardIcon}
-        title="C. Cuenta bancaria de haberes"
-        description="Cuenta donde se deposita el sueldo mensual o quincenal."
-      >
-        <Field>
-          <FieldLabel htmlFor="id_banco_sueldo">Banco de abono</FieldLabel>
-          <Controller
-            name="id_banco_sueldo"
-            control={control}
-            render={({ field }) => (
-              <FilterSelect
-                id="id_banco_sueldo"
-                ariaLabel="Banco de abono"
-                allLabel="Sin cuenta bancaria"
-                options={bancos.data ?? NO_OPTIONS}
-                value={field.value ?? undefined}
-                onChange={field.onChange}
-                isLoading={bancos.isLoading}
-                className="sm:w-full"
-              />
-            )}
+        <FormSection
+          icon={CreditCardIcon}
+          title="C. Cuenta bancaria de haberes"
+          description="Cuenta donde se deposita el sueldo mensual o quincenal."
+        >
+          <CuentaBancariaFields
+            cuenta="sueldo"
+            bancoLabel="Banco de abono"
+            sinBancoLabel="Sin cuenta bancaria"
+            bancos={bancos.data}
+            isLoadingBancos={bancos.isLoading}
           />
-        </Field>
+        </FormSection>
 
-        <Field>
-          <FieldLabel htmlFor="tipo_cuenta_sueldo">Tipo de cuenta</FieldLabel>
-          <Controller
-            name="tipo_cuenta_sueldo"
-            control={control}
-            render={({ field }) => (
-              <OptionSelect
-                id="tipo_cuenta_sueldo"
-                options={TIPO_CUENTA_OPTIONS}
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="Selecciona un tipo"
-                invalid={Boolean(errors.tipo_cuenta_sueldo)}
-              />
-            )}
+        <FormSection
+          icon={PiggyBankIcon}
+          title="D. Cuenta de CTS"
+          description="Entidad que recibe los depósitos semestrales de la compensación por tiempo de servicios."
+        >
+          <CuentaBancariaFields
+            cuenta="cts"
+            bancoLabel="Entidad financiera"
+            sinBancoLabel="Sin cuenta de CTS"
+            bancos={bancos.data}
+            isLoadingBancos={bancos.isLoading}
           />
-          {showError("tipo_cuenta_sueldo")}
-        </Field>
+        </FormSection>
 
-        <Field>
-          <FieldLabel htmlFor="nro_cuenta_sueldo">Nº de cuenta</FieldLabel>
-          <Input
-            id="nro_cuenta_sueldo"
-            aria-invalid={Boolean(errors.nro_cuenta_sueldo)}
-            {...register("nro_cuenta_sueldo", { setValueAs: emptyToUndefined })}
-          />
-          {showError("nro_cuenta_sueldo")}
-        </Field>
-
-        <Field>
-          <FieldLabel htmlFor="cci_sueldo">CCI</FieldLabel>
-          <Input
-            id="cci_sueldo"
-            aria-invalid={Boolean(errors.cci_sueldo)}
-            {...register("cci_sueldo", { setValueAs: emptyToUndefined })}
-          />
-          {showError("cci_sueldo")}
-        </Field>
-      </FormSection>
-
-      <FormSection
-        icon={PiggyBankIcon}
-        title="D. Cuenta de CTS"
-        description="Entidad que recibe los depósitos semestrales de la compensación por tiempo de servicios."
-      >
-        <Field>
-          <FieldLabel htmlFor="id_banco_cts">Entidad financiera</FieldLabel>
-          <Controller
-            name="id_banco_cts"
-            control={control}
-            render={({ field }) => (
-              <FilterSelect
-                id="id_banco_cts"
-                ariaLabel="Entidad financiera de la CTS"
-                allLabel="Sin cuenta de CTS"
-                options={bancos.data ?? NO_OPTIONS}
-                value={field.value ?? undefined}
-                onChange={field.onChange}
-                isLoading={bancos.isLoading}
-                className="sm:w-full"
-              />
-            )}
-          />
-        </Field>
-
-        <Field>
-          <FieldLabel htmlFor="tipo_cuenta_cts">Tipo de cuenta</FieldLabel>
-          <Controller
-            name="tipo_cuenta_cts"
-            control={control}
-            render={({ field }) => (
-              <OptionSelect
-                id="tipo_cuenta_cts"
-                options={TIPO_CUENTA_OPTIONS}
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="Selecciona un tipo"
-                invalid={Boolean(errors.tipo_cuenta_cts)}
-              />
-            )}
-          />
-          {showError("tipo_cuenta_cts")}
-        </Field>
-
-        <Field>
-          <FieldLabel htmlFor="nro_cuenta_cts">Nº de cuenta</FieldLabel>
-          <Input
-            id="nro_cuenta_cts"
-            aria-invalid={Boolean(errors.nro_cuenta_cts)}
-            {...register("nro_cuenta_cts", { setValueAs: emptyToUndefined })}
-          />
-          {showError("nro_cuenta_cts")}
-        </Field>
-
-        <Field>
-          <FieldLabel htmlFor="cci_cts">CCI</FieldLabel>
-          <Input
-            id="cci_cts"
-            aria-invalid={Boolean(errors.cci_cts)}
-            {...register("cci_cts", { setValueAs: emptyToUndefined })}
-          />
-          {showError("cci_cts")}
-        </Field>
-      </FormSection>
-
-      <FormSection
-        icon={HeartPulseIcon}
-        title="E. Régimen de salud"
-        description="Prestaciones de salud obligatorias y planes de salud complementarios."
-      >
-        <Field className="sm:col-span-2">
-          <FieldLabel htmlFor="regimen_salud">Régimen de salud</FieldLabel>
-          <Controller
+        <FormSection
+          icon={HeartPulseIcon}
+          title="E. Régimen de salud"
+          description="Prestaciones de salud obligatorias y planes de salud complementarios."
+        >
+          <SelectField
             name="regimen_salud"
-            control={control}
-            render={({ field }) => (
-              <OptionSelect
-                id="regimen_salud"
-                options={REGIMEN_SALUD_OPTIONS}
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="Selecciona un régimen"
-                invalid={Boolean(errors.regimen_salud)}
-              />
-            )}
+            label="Régimen de salud"
+            options={REGIMEN_SALUD_OPTIONS}
+            placeholder="Selecciona un régimen"
+            fieldClassName="sm:col-span-2"
           />
-          {showError("regimen_salud")}
-        </Field>
 
-        {conEps && (
-          <>
-            <Field>
-              <FieldLabel htmlFor="eps_nombre">Entidad EPS</FieldLabel>
-              <Input
-                id="eps_nombre"
-                aria-invalid={Boolean(errors.eps_nombre)}
-                {...register("eps_nombre", { setValueAs: emptyToUndefined })}
-              />
-              {showError("eps_nombre")}
-            </Field>
-
-            <Field>
-              <FieldLabel htmlFor="eps_plan">Plan contratado</FieldLabel>
-              <Input
-                id="eps_plan"
-                aria-invalid={Boolean(errors.eps_plan)}
-                {...register("eps_plan", { setValueAs: emptyToUndefined })}
-              />
-              {showError("eps_plan")}
-            </Field>
-
-            <Field>
-              <FieldLabel htmlFor="eps_costo_adicional">
-                Copago mensual del colaborador (S/)
-              </FieldLabel>
-              <Input
-                id="eps_costo_adicional"
+          {conEps && (
+            <>
+              <TextField name="eps_nombre" label="Entidad EPS" optional />
+              <TextField name="eps_plan" label="Plan contratado" optional />
+              <TextField
+                name="eps_costo_adicional"
+                label="Copago mensual del colaborador (S/)"
                 type="number"
                 inputMode="decimal"
                 step="0.01"
                 min="0"
-                aria-invalid={Boolean(errors.eps_costo_adicional)}
-                {...register("eps_costo_adicional")}
               />
-              {showError("eps_costo_adicional")}
-            </Field>
-          </>
-        )}
-      </FormSection>
+            </>
+          )}
+        </FormSection>
 
-      <StepperFooter
-        cancelAction={
-          <Button
-            variant="outline"
-            nativeButton={false}
-            render={<Link to={ROUTE_PATHS.gestionPersonal.empleados} />}
-            onClick={reset}
-          >
-            Cancelar
+        <StepperFooter
+          cancelAction={
+            <Button
+              variant="outline"
+              nativeButton={false}
+              render={<Link to={ROUTE_PATHS.gestionPersonal.empleados} />}
+              onClick={reset}
+            >
+              Cancelar
+            </Button>
+          }
+          progressLabel={`Paso 2 de ${NUEVO_EMPLEADO_STEPS.length} completándose`}
+        >
+          <Button variant="outline" onClick={() => goToStep(0)}>
+            <ArrowLeftIcon data-icon="inline-start" />
+            Atrás
           </Button>
-        }
-        progressLabel={`Paso 2 de ${NUEVO_EMPLEADO_STEPS.length} completándose`}
-      >
-        <Button variant="outline" onClick={() => goToStep(0)}>
-          <ArrowLeftIcon data-icon="inline-start" />
-          Atrás
-        </Button>
-        <Button type="submit">
-          Guardar y continuar
-          <ArrowRightIcon data-icon="inline-end" />
-        </Button>
-      </StepperFooter>
-    </form>
+          <Button type="submit">
+            Guardar y continuar
+            <ArrowRightIcon data-icon="inline-end" />
+          </Button>
+        </StepperFooter>
+      </form>
+    </FormProvider>
   );
 }
