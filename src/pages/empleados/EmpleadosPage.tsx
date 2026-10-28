@@ -5,6 +5,7 @@ import type { OnChangeFn, PaginationState } from "@tanstack/react-table";
 import { ROUTE_PATHS } from "@/app/routes/path";
 import { DataTable } from "@/components/data-table/DataTable";
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
+import { PageHeader } from "@/components/page/PageHeader";
 import { Button } from "@/components/ui/button";
 import { EmpleadosToolbar } from "@/features/empleados/components/listado/EmpleadosToolbar";
 import { empleadosColumns } from "@/features/empleados/config/empleados.columns";
@@ -63,24 +64,20 @@ export default function EmpleadosPage() {
 
   return (
     <section className="space-y-4" aria-labelledby="empleados-title">
-      <header className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 id="empleados-title" className="text-2xl font-semibold">
-            Empleados
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Colaboradores de la empresa
-          </p>
-        </div>
-
-        <Button
-          nativeButton={false}
-          render={<Link to={ROUTE_PATHS.gestionPersonal.nuevoEmpleado} />}
-        >
-          <PlusIcon data-icon="inline-start" />
-          Nuevo empleado
-        </Button>
-      </header>
+      <PageHeader
+        id="empleados-title"
+        title="Empleados"
+        description="Colaboradores de la empresa"
+        action={
+          <Button
+            nativeButton={false}
+            render={<Link to={ROUTE_PATHS.gestionPersonal.nuevoEmpleado} />}
+          >
+            <PlusIcon data-icon="inline-start" />
+            Nuevo empleado
+          </Button>
+        }
+      />
 
       <EmpleadosToolbar
         filters={filters}
