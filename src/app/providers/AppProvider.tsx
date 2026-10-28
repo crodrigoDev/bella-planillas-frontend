@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/app/config/query-client.config";
+import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/features/auth/providers/AuthProvider";
 
@@ -19,6 +20,7 @@ export function AppProvider({ children }: AppProviderProps) {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TooltipProvider delay={0}>{children}</TooltipProvider>
+        <Toaster position="top-right" />
       </AuthProvider>
     </QueryClientProvider>
   );

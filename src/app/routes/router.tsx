@@ -12,6 +12,7 @@ import EnConstruccionPage from "@/pages/construccion/EnConstruccionPage";
 import LoginPage from "@/pages/auth/LoginPage";
 import RecuperarPasswordPage from "@/pages/auth/RecuperarPasswordPage";
 import RestablecerPasswordPage from "@/pages/auth/RestablecerPasswordPage";
+import EmpleadosPage from "@/pages/empleados/EmpleadosPage";
 
 /**
  * Relaciona las URLs de la aplicación con sus páginas y layouts.
@@ -59,6 +60,15 @@ export const router = createBrowserRouter([
               {
                 path: ROUTE_PATHS.dashboard,
                 element: <DashboardPage />,
+              },
+            ],
+          },
+          {
+            element: <RoleRoute path={ROUTE_PATHS.gestionPersonal.empleados} />,
+            children: [
+              {
+                path: ROUTE_PATHS.gestionPersonal.empleados,
+                element: <EmpleadosPage />,
               },
             ],
           },

@@ -21,10 +21,6 @@ export const configureAuth = (nextHandlers: AuthHandlers): void => {
   handlers = nextHandlers;
 };
 
-const baseV1URL = import.meta.env.VITE_API_V1_URL;
-
-if (!baseV1URL) throw new Error("Falta configurar VITE_API_V1_URL");
-
 // Reutiliza la URL, timeout y configuración de cookies
 export const protectedHttpClient = axios.create(publicHttpClient.defaults);
 
