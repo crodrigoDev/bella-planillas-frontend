@@ -2,22 +2,16 @@ import { useMemo } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  ArrowLeftIcon,
-  ArrowRightIcon,
   BanknoteIcon,
   CreditCardIcon,
   HeartPulseIcon,
   LandmarkIcon,
   PiggyBankIcon,
 } from "lucide-react";
-import { Link } from "react-router-dom";
 
-import { ROUTE_PATHS } from "@/app/routes/path";
 import { FormSection } from "@/components/form/FormSection";
 import { SelectField } from "@/components/form/SelectField";
 import { TextField } from "@/components/form/TextField";
-import { StepperFooter } from "@/components/stepper/StepperFooter";
-import { Button } from "@/components/ui/button";
 import type { FilterOption } from "@/lib/types/filters.types";
 import { zodResolverOptions } from "@/lib/zodMessages.utils";
 import {
@@ -27,7 +21,6 @@ import {
   TIPO_COMISION_OPTIONS,
   esRegimenAfp,
 } from "../../config/empleados.config";
-import { NUEVO_EMPLEADO_STEPS } from "../../config/nuevoEmpleado.config";
 import { useDatosFinancierosCatalogos } from "../../hooks/useDatosFinancierosCatalogos";
 import {
   createDatosFinancierosSchema,
@@ -35,6 +28,7 @@ import {
 } from "../../schemas/datosFinancieros.schema";
 import type { RegimenPension } from "../../types/nuevoEmpleado.types";
 import { useNuevoEmpleadoStore } from "../../store/nuevoEmpleado.store";
+import { RegistroFooter } from "./RegistroFooter";
 import { CuentaBancariaFields } from "./CuentaBancariaFields";
 
 // Valores con los que empiezan los datos financieros de un empleado nuevo
@@ -77,7 +71,6 @@ export function DatosFinancierosForm() {
     (state) => state.saveDatosFinancieros,
   );
   const goToStep = useNuevoEmpleadoStore((state) => state.goToStep);
-  const reset = useNuevoEmpleadoStore((state) => state.reset);
 
   const { regimenes, afps, bancos } = useDatosFinancierosCatalogos();
 
@@ -249,28 +242,7 @@ export function DatosFinancierosForm() {
           )}
         </FormSection>
 
-        <StepperFooter
-          cancelAction={
-            <Button
-              variant="outline"
-              nativeButton={false}
-              render={<Link to={ROUTE_PATHS.gestionPersonal.empleados} />}
-              onClick={reset}
-            >
-              Cancelar
-            </Button>
-          }
-          progressLabel={`Paso 2 de ${NUEVO_EMPLEADO_STEPS.length} completándose`}
-        >
-          <Button variant="outline" onClick={() => goToStep(0)}>
-            <ArrowLeftIcon data-icon="inline-start" />
-            Atrás
-          </Button>
-          <Button type="submit">
-            Guardar y continuar
-            <ArrowRightIcon data-icon="inline-end" />
-          </Button>
-        </StepperFooter>
+        <RegistroFooter step={1} />
       </form>
     </FormProvider>
   );

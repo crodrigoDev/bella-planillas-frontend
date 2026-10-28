@@ -1,24 +1,20 @@
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeftIcon, ArrowRightIcon, FileSignatureIcon } from "lucide-react";
-import { Link } from "react-router-dom";
+import { FileSignatureIcon } from "lucide-react";
 
-import { ROUTE_PATHS } from "@/app/routes/path";
 import { FormField } from "@/components/form/FormField";
 import { FormSection } from "@/components/form/FormSection";
 import { SelectField } from "@/components/form/SelectField";
 import { TextField } from "@/components/form/TextField";
-import { StepperFooter } from "@/components/stepper/StepperFooter";
-import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolverOptions } from "@/lib/zodMessages.utils";
-import { NUEVO_EMPLEADO_STEPS } from "../../config/nuevoEmpleado.config";
 import {
   DatosContratoSchema,
   type DatosContratoDraft,
 } from "../../schemas/datosContrato.schema";
 import { useModalidadesContrato } from "../../hooks/useModalidadesContrato";
 import { useNuevoEmpleadoStore } from "../../store/nuevoEmpleado.store";
+import { RegistroFooter } from "./RegistroFooter";
 
 const resolver = zodResolver(DatosContratoSchema, zodResolverOptions);
 
@@ -40,7 +36,6 @@ export function DatosContratoForm() {
   const contrato = useNuevoEmpleadoStore((state) => state.contrato);
   const saveContrato = useNuevoEmpleadoStore((state) => state.saveContrato);
   const goToStep = useNuevoEmpleadoStore((state) => state.goToStep);
-  const reset = useNuevoEmpleadoStore((state) => state.reset);
 
   const methods = useForm<
     DatosContratoFormValues,
@@ -116,28 +111,7 @@ export function DatosContratoForm() {
           </FormField>
         </FormSection>
 
-        <StepperFooter
-          cancelAction={
-            <Button
-              variant="outline"
-              nativeButton={false}
-              render={<Link to={ROUTE_PATHS.gestionPersonal.empleados} />}
-              onClick={reset}
-            >
-              Cancelar
-            </Button>
-          }
-          progressLabel={`Paso 3 de ${NUEVO_EMPLEADO_STEPS.length} completándose`}
-        >
-          <Button variant="outline" onClick={() => goToStep(1)}>
-            <ArrowLeftIcon data-icon="inline-start" />
-            Atrás
-          </Button>
-          <Button type="submit">
-            Guardar y continuar
-            <ArrowRightIcon data-icon="inline-end" />
-          </Button>
-        </StepperFooter>
+        <RegistroFooter step={2} />
       </form>
     </FormProvider>
   );

@@ -5,20 +5,15 @@ import {
   type CrearEmpleadoDto,
 } from "@jyp/shared-contracts";
 import {
-  ArrowRightIcon,
   Building2Icon,
   IdCardIcon,
   MapPinHouseIcon,
 } from "lucide-react";
-import { Link } from "react-router-dom";
 
-import { ROUTE_PATHS } from "@/app/routes/path";
 import { FormSection } from "@/components/form/FormSection";
 import { RequiredMark } from "@/components/form/RequiredMark";
 import { SelectField } from "@/components/form/SelectField";
 import { TextField } from "@/components/form/TextField";
-import { StepperFooter } from "@/components/stepper/StepperFooter";
-import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldDescription,
@@ -32,10 +27,10 @@ import {
   ESTADO_CIVIL_OPTIONS,
   SEXO_OPTIONS,
 } from "../../config/empleados.config";
-import { NUEVO_EMPLEADO_STEPS } from "../../config/nuevoEmpleado.config";
 import { useEmpleadosCatalogos } from "../../hooks/useEmpleadosCatalogos";
 import { useTiposDocumento } from "../../hooks/useTiposDocumento";
 import { useNuevoEmpleadoStore } from "../../store/nuevoEmpleado.store";
+import { RegistroFooter } from "./RegistroFooter";
 
 // Valores con los que empieza un empleado nuevo, como en el diseño
 const INITIAL_VALUES = {
@@ -76,7 +71,6 @@ export function DatosEmpleadoForm() {
   const datos = useNuevoEmpleadoStore((state) => state.datos);
   const saveDatos = useNuevoEmpleadoStore((state) => state.saveDatos);
   const goToStep = useNuevoEmpleadoStore((state) => state.goToStep);
-  const reset = useNuevoEmpleadoStore((state) => state.reset);
 
   const methods = useForm<DatosEmpleadoFormValues, unknown, CrearEmpleadoDto>({
     resolver,
@@ -288,24 +282,7 @@ export function DatosEmpleadoForm() {
           </Field>
         </FormSection>
 
-        <StepperFooter
-          cancelAction={
-            <Button
-              variant="outline"
-              nativeButton={false}
-              render={<Link to={ROUTE_PATHS.gestionPersonal.empleados} />}
-              onClick={reset}
-            >
-              Cancelar
-            </Button>
-          }
-          progressLabel={`Paso 1 de ${NUEVO_EMPLEADO_STEPS.length} completándose`}
-        >
-          <Button type="submit">
-            Guardar y continuar
-            <ArrowRightIcon data-icon="inline-end" />
-          </Button>
-        </StepperFooter>
+        <RegistroFooter step={0} />
       </form>
     </FormProvider>
   );
