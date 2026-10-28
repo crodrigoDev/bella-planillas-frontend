@@ -78,7 +78,7 @@ export function DataTable<TData extends RowData>({
 
   return (
     <div className="space-y-3">
-      <div className="overflow-hidden rounded-lg border">
+      <div className="overflow-hidden rounded-lg border bg-card">
         <Table
           className={cn(
             isFetching && !isLoading && "opacity-60 transition-opacity",
