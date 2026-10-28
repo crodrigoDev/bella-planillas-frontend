@@ -12,7 +12,7 @@ import {
   DatosContratoSchema,
   type DatosContratoDraft,
 } from "../../schemas/datosContrato.schema";
-import { useModalidadesContrato } from "../../hooks/useModalidadesContrato";
+import { useModalidadesContrato } from "../../hooks/useCatalogos";
 import { useNuevoEmpleadoStore } from "../../store/nuevoEmpleado.store";
 import { RegistroFooter } from "./RegistroFooter";
 

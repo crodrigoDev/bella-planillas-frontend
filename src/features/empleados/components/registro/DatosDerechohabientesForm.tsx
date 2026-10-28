@@ -11,7 +11,7 @@ import {
   VINCULO_OPTIONS,
 } from "../../config/empleados.config";
 import { useDerechohabientesForm } from "../../hooks/useDerechohabientesForm";
-import { useTiposDocumento } from "../../hooks/useTiposDocumento";
+import { useTiposDocumento } from "../../hooks/useCatalogos";
 import { useNuevoEmpleadoStore } from "../../store/nuevoEmpleado.store";
 import { DerechohabientesList } from "./DerechohabientesList";
 import { RegistroFooter } from "./RegistroFooter";

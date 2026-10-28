@@ -10,7 +10,7 @@ import {
   TIPO_COMISION_OPTIONS,
   TIPO_CUENTA_OPTIONS,
 } from "../../../config/empleados.config";
-import { useDatosFinancierosCatalogos } from "../../../hooks/useDatosFinancierosCatalogos";
+import { useDatosFinancierosCatalogos } from "../../../hooks/useCatalogos";
 import type { DatosFinancierosDraft } from "../../../schemas/datosFinancieros.schema";
 import { ResumenCampo } from "./ResumenCampo";
 

@@ -21,12 +21,12 @@ import {
   TIPO_COMISION_OPTIONS,
   esRegimenAfp,
 } from "../../config/empleados.config";
-import { useDatosFinancierosCatalogos } from "../../hooks/useDatosFinancierosCatalogos";
+import { useDatosFinancierosCatalogos } from "../../hooks/useCatalogos";
 import {
   createDatosFinancierosSchema,
   type DatosFinancierosDraft,
 } from "../../schemas/datosFinancieros.schema";
-import type { RegimenPension } from "../../types/nuevoEmpleado.types";
+import type { RegimenPension } from "../../types/empleados.types";
 import { useNuevoEmpleadoStore } from "../../store/nuevoEmpleado.store";
 import { RegistroFooter } from "./RegistroFooter";
 import { CuentaBancariaFields } from "./CuentaBancariaFields";

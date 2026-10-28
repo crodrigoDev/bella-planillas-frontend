@@ -27,8 +27,7 @@ import {
   ESTADO_CIVIL_OPTIONS,
   SEXO_OPTIONS,
 } from "../../config/empleados.config";
-import { useEmpleadosCatalogos } from "../../hooks/useEmpleadosCatalogos";
-import { useTiposDocumento } from "../../hooks/useTiposDocumento";
+import { useEmpleadosCatalogos, useTiposDocumento } from "../../hooks/useCatalogos";
 import { useNuevoEmpleadoStore } from "../../store/nuevoEmpleado.store";
 import { RegistroFooter } from "./RegistroFooter";
 

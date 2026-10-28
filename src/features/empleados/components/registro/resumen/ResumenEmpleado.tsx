@@ -5,8 +5,7 @@ import { FormSection } from "@/components/form/FormSection";
 import { getOptionLabel } from "@/lib/catalogos.utils";
 import { formatDate } from "@/lib/format.utils";
 import { ESTADO_CIVIL_OPTIONS, SEXO_OPTIONS } from "../../../config/empleados.config";
-import { useEmpleadosCatalogos } from "../../../hooks/useEmpleadosCatalogos";
-import { useTiposDocumento } from "../../../hooks/useTiposDocumento";
+import { useEmpleadosCatalogos, useTiposDocumento } from "../../../hooks/useCatalogos";
 import { ResumenCampo } from "./ResumenCampo";
 
 interface ResumenEmpleadoProps {

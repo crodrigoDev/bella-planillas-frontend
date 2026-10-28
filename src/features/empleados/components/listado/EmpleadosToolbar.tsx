@@ -6,7 +6,7 @@ import type {
   EmpleadoFilterKey,
   EmpleadoFilters,
 } from "@/features/empleados/types/empleados.types";
-import { useEmpleadosCatalogos } from "@/features/empleados/hooks/useEmpleadosCatalogos";
+import { useEmpleadosCatalogos } from "@/features/empleados/hooks/useCatalogos";
 import { ACTIVO_FILTER_OPTIONS } from "@/components/filters/filters.config";
 import { SearchInput } from "@/components/filters/SearchInput";
 
