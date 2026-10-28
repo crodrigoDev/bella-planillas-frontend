@@ -48,7 +48,7 @@ export function RegistroFooter({
     <StepperFooter
       cancelAction={
         <Button
-          variant="outline"
+          variant="ghost"
           nativeButton={false}
           render={<Link to={ROUTE_PATHS.gestionPersonal.empleados} />}
           onClick={reset}
@@ -57,7 +57,7 @@ export function RegistroFooter({
           Cancelar
         </Button>
       }
-      progressLabel={`Paso ${step + 1} de ${NUEVO_EMPLEADO_STEPS.length} completándose`}
+      progressLabel={`Paso ${step + 1} de ${NUEVO_EMPLEADO_STEPS.length}`}
     >
       {step > 0 && !hideBack && (
         <Button

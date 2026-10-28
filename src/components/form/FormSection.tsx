@@ -1,39 +1,28 @@
 import type { ReactNode } from "react";
-import type { LucideIcon } from "lucide-react";
 
 interface FormSectionProps {
-  icon: LucideIcon;
   title: string;
   description: string;
   children: ReactNode;
 }
 
 /**
- * Bloque de un formulario con icono, título y descripción
+ * Bloque de un formulario: el título y la descripción a la izquierda, los campos a la derecha
  *
  * @remarks
- * Los campos se acomodan en una cuadrícula de hasta cuatro columnas.
- * Un campo que necesite más ancho puede usar `sm:col-span-2` o `lg:col-span-4`.
+ * Las secciones se separan con una línea y no con tarjetas. Los campos se
+ * acomodan en 1, 2 o 3 columnas según el ancho; un campo que necesite más
+ * ancho puede usar `sm:col-span-2`, o `col-span-full` para ocupar toda la fila.
  */
-export function FormSection({
-  icon: Icon,
-  title,
-  description,
-  children,
-}: FormSectionProps) {
+export function FormSection({ title, description, children }: FormSectionProps) {
   return (
-    <section className="rounded-xl border bg-card p-4 sm:p-6">
-      <header className="flex items-center gap-3 border-b pb-4">
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-          <Icon className="size-5" />
-        </span>
-        <div>
-          <h2 className="text-base font-semibold">{title}</h2>
-          <p className="text-sm text-muted-foreground">{description}</p>
-        </div>
+    <section className="grid gap-4 border-t pt-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,3fr)] lg:gap-8">
+      <header>
+        <h2 className="text-base font-semibold">{title}</h2>
+        <p className="mt-1 text-sm text-muted-foreground">{description}</p>
       </header>
 
-      <div className="grid gap-4 pt-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid content-start gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {children}
       </div>
     </section>

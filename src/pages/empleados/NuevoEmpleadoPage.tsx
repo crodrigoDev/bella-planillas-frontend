@@ -27,7 +27,7 @@ export default function NuevoEmpleadoPage() {
   useEffect(() => reset, [reset]);
 
   return (
-    <section aria-labelledby="nuevo-empleado-title" className="space-y-6">
+    <section aria-labelledby="nuevo-empleado-title" className="mx-auto w-full max-w-7xl space-y-6">
       <Link
         to={ROUTE_PATHS.gestionPersonal.empleados}
         className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"

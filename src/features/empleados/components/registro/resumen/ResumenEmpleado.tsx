@@ -1,5 +1,4 @@
 import type { CrearEmpleadoDto } from "@jyp/shared-contracts";
-import { IdCardIcon } from "lucide-react";
 
 import { FormSection } from "@/components/form/FormSection";
 import { getOptionLabel } from "@/lib/catalogos.utils";
@@ -21,7 +20,6 @@ export function ResumenEmpleado({ datos }: ResumenEmpleadoProps) {
 
   return (
     <FormSection
-      icon={IdCardIcon}
       title="Datos del empleado"
       description="Identificación, domicilio y asignación laboral."
     >
@@ -55,7 +53,7 @@ export function ResumenEmpleado({ datos }: ResumenEmpleadoProps) {
       <ResumenCampo
         label="Referencia de ubicación"
         value={datos.referencia_direccion}
-        className="sm:col-span-2 lg:col-span-4"
+        className="col-span-full"
       />
       <ResumenCampo label="Departamento" value={datos.departamento} />
       <ResumenCampo label="Provincia" value={datos.provincia} />

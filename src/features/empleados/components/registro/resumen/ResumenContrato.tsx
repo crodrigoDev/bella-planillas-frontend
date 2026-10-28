@@ -1,5 +1,3 @@
-import { FileSignatureIcon } from "lucide-react";
-
 import { FormSection } from "@/components/form/FormSection";
 import { getOptionLabel } from "@/lib/catalogos.utils";
 import { formatDate } from "@/lib/format.utils";
@@ -19,7 +17,6 @@ export function ResumenContrato({ contrato }: ResumenContratoProps) {
 
   return (
     <FormSection
-      icon={FileSignatureIcon}
       title="Contrato"
       description="Modalidad y vigencia del vínculo laboral."
     >
@@ -38,7 +35,7 @@ export function ResumenContrato({ contrato }: ResumenContratoProps) {
       <ResumenCampo
         label="Observación"
         value={contrato.observacion ?? "--"}
-        className="sm:col-span-2 lg:col-span-4"
+        className="col-span-full"
       />
     </FormSection>
   );

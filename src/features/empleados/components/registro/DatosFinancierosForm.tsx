@@ -1,13 +1,6 @@
 import { useMemo } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  BanknoteIcon,
-  CreditCardIcon,
-  HeartPulseIcon,
-  LandmarkIcon,
-  PiggyBankIcon,
-} from "lucide-react";
 
 import { FormSection } from "@/components/form/FormSection";
 import { SelectField } from "@/components/form/SelectField";
@@ -117,8 +110,7 @@ export function DatosFinancierosForm() {
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
         <FormSection
-          icon={LandmarkIcon}
-          title="A. Previsión social y régimen de pensiones"
+          title="Previsión social y régimen de pensiones"
           description="Afiliación al Sistema Privado de Pensiones (AFP) o al Sistema Nacional de Pensiones (ONP)."
         >
           <SelectField
@@ -169,8 +161,7 @@ export function DatosFinancierosForm() {
         </FormSection>
 
         <FormSection
-          icon={BanknoteIcon}
-          title="B. Remuneración"
+          title="Remuneración"
           description="Sueldo básico mensual pactado, en soles."
         >
           <TextField
@@ -186,8 +177,7 @@ export function DatosFinancierosForm() {
         </FormSection>
 
         <FormSection
-          icon={CreditCardIcon}
-          title="C. Cuenta bancaria de haberes"
+          title="Cuenta bancaria de haberes"
           description="Cuenta donde se deposita el sueldo mensual o quincenal."
         >
           <CuentaBancariaFields
@@ -200,8 +190,7 @@ export function DatosFinancierosForm() {
         </FormSection>
 
         <FormSection
-          icon={PiggyBankIcon}
-          title="D. Cuenta de CTS"
+          title="Cuenta de CTS"
           description="Entidad que recibe los depósitos semestrales de la compensación por tiempo de servicios."
         >
           <CuentaBancariaFields
@@ -214,8 +203,7 @@ export function DatosFinancierosForm() {
         </FormSection>
 
         <FormSection
-          icon={HeartPulseIcon}
-          title="E. Régimen de salud"
+          title="Régimen de salud"
           description="Prestaciones de salud obligatorias y planes de salud complementarios."
         >
           <SelectField

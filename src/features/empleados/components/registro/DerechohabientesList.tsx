@@ -21,13 +21,13 @@ export function DerechohabientesList({
 }: DerechohabientesListProps) {
   if (derechohabientes.length === 0)
     return (
-      <p className="text-sm text-muted-foreground sm:col-span-2 lg:col-span-4">
+      <p className="text-sm text-muted-foreground col-span-full">
         Aún no agregaste ningún derechohabiente.
       </p>
     );
 
   return (
-    <ul className="space-y-2 sm:col-span-2 lg:col-span-4">
+    <ul className="space-y-2 col-span-full">
       {derechohabientes.map((item, index) => {
         const nombre = `${item.nombres} ${item.apellidos}`;
 
@@ -58,6 +58,7 @@ export function DerechohabientesList({
                 variant="ghost"
                 size="icon"
                 aria-label={`Quitar a ${nombre}`}
+                className="hover:bg-destructive/10 hover:text-destructive"
                 onClick={() => onRemove(index)}
               >
                 <Trash2Icon />

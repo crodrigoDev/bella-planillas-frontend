@@ -1,5 +1,3 @@
-import { BanknoteIcon } from "lucide-react";
-
 import { FormSection } from "@/components/form/FormSection";
 import { getOptionLabel } from "@/lib/catalogos.utils";
 import { formatCurrency, formatDate, maskEnd } from "@/lib/format.utils";
@@ -33,7 +31,6 @@ export function ResumenFinancieros({ datos }: ResumenFinancierosProps) {
 
   return (
     <FormSection
-      icon={BanknoteIcon}
       title="Datos financieros"
       description="Previsión social, remuneración, cuentas y salud."
     >

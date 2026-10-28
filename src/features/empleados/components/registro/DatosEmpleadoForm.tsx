@@ -4,11 +4,6 @@ import {
   CrearEmpleadoSchema,
   type CrearEmpleadoDto,
 } from "@jyp/shared-contracts";
-import {
-  Building2Icon,
-  IdCardIcon,
-  MapPinHouseIcon,
-} from "lucide-react";
 
 import { FormSection } from "@/components/form/FormSection";
 import { RequiredMark } from "@/components/form/RequiredMark";
@@ -97,8 +92,7 @@ export function DatosEmpleadoForm() {
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
         <FormSection
-          icon={IdCardIcon}
-          title="A. Identificación y datos personales"
+          title="Identificación y datos personales"
           description="Información legal y datos de identidad del colaborador."
         >
           <SelectField
@@ -176,8 +170,7 @@ export function DatosEmpleadoForm() {
         </FormSection>
 
         <FormSection
-          icon={MapPinHouseIcon}
-          title="B. Contacto y domicilio"
+          title="Contacto y domicilio"
           description="Dirección de residencia habitual y canales de comunicación del colaborador."
         >
           <TextField
@@ -206,7 +199,7 @@ export function DatosEmpleadoForm() {
             label="Referencia de ubicación"
             required
             placeholder="A media cuadra del Parque Kennedy, frente al banco"
-            fieldClassName="sm:col-span-2 lg:col-span-4"
+            fieldClassName="col-span-full"
           />
           <TextField name="departamento" label="Departamento" required />
           <TextField name="provincia" label="Provincia" required />
@@ -222,8 +215,7 @@ export function DatosEmpleadoForm() {
         </FormSection>
 
         <FormSection
-          icon={Building2Icon}
-          title="C. Asignación laboral"
+          title="Asignación laboral"
           description="Posición dentro de la estructura organizacional y fecha de inicio de labores."
         >
           <SelectField

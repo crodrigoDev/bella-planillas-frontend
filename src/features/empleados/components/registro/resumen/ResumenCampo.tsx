@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 interface ResumenCampoProps {
   label: string;
   value: string;
-  /** Clases de la cuadrícula (`sm:col-span-2`...) para ocupar más columnas */
+  /** Clases de la cuadrícula (`sm:col-span-2`, `col-span-full`) para ocupar más columnas */
   className?: string;
 }
 

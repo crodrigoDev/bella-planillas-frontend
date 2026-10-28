@@ -1,6 +1,5 @@
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FileSignatureIcon } from "lucide-react";
 
 import { FormField } from "@/components/form/FormField";
 import { FormSection } from "@/components/form/FormSection";
@@ -67,8 +66,7 @@ export function DatosContratoForm() {
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
         <FormSection
-          icon={FileSignatureIcon}
-          title="A. Datos del contrato"
+          title="Datos del contrato"
           description="Modalidad y vigencia del vínculo laboral."
         >
           <SelectField
@@ -96,7 +94,7 @@ export function DatosContratoForm() {
           <FormField
             name="observacion"
             label="Observación"
-            className="sm:col-span-2 lg:col-span-4"
+            className="col-span-full"
           >
             {(invalid) => (
               <Textarea

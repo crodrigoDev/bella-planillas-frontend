@@ -1,5 +1,3 @@
-import { UsersIcon } from "lucide-react";
-
 import { FormSection } from "@/components/form/FormSection";
 import { getOptionLabel } from "@/lib/catalogos.utils";
 import { formatDate } from "@/lib/format.utils";
@@ -18,16 +16,15 @@ export function ResumenDerechohabientes({
 }: ResumenDerechohabientesProps) {
   return (
     <FormSection
-      icon={UsersIcon}
       title="Derechohabientes"
       description="Familiares con derecho a beneficios."
     >
       {derechohabientes.length === 0 ? (
-        <p className="text-sm text-muted-foreground sm:col-span-2 lg:col-span-4">
+        <p className="text-sm text-muted-foreground col-span-full">
           No se agregaron derechohabientes.
         </p>
       ) : (
-        <ul className="space-y-2 sm:col-span-2 lg:col-span-4">
+        <ul className="space-y-2 col-span-full">
           {derechohabientes.map((item) => (
             <li
               key={item.nro_documento}

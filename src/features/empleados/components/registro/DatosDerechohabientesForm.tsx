@@ -1,5 +1,5 @@
 import { FormProvider } from "react-hook-form";
-import { PencilIcon, PlusIcon, SaveIcon, UsersIcon } from "lucide-react";
+import { PlusIcon, SaveIcon } from "lucide-react";
 
 import { FormSection } from "@/components/form/FormSection";
 import { SelectField } from "@/components/form/SelectField";
@@ -43,8 +43,7 @@ export function DatosDerechohabientesForm() {
   return (
     <div className="space-y-6">
       <FormSection
-        icon={UsersIcon}
-        title="A. Derechohabientes agregados"
+        title="Derechohabientes agregados"
         description="Cónyuge, hijos y otros familiares con derecho a beneficios. Este paso es opcional."
       >
         <DerechohabientesList
@@ -59,11 +58,10 @@ export function DatosDerechohabientesForm() {
       <FormProvider {...methods}>
         <form key={formKey} onSubmit={handleSubmit} noValidate>
           <FormSection
-            icon={isEditing ? PencilIcon : PlusIcon}
             title={
               isEditing
-                ? "B. Editar derechohabiente"
-                : "B. Agregar derechohabiente"
+                ? "Editar derechohabiente"
+                : "Agregar derechohabiente"
             }
             description={
               isEditing
@@ -115,12 +113,7 @@ export function DatosDerechohabientesForm() {
               type="date"
             />
 
-            <div className="flex justify-end gap-2 sm:col-span-2 lg:col-span-4">
-              {isEditing && (
-                <Button type="button" variant="ghost" onClick={handleCancelEdit}>
-                  Cancelar edición
-                </Button>
-              )}
+            <div className="flex justify-start gap-2 col-span-full">
               <Button type="submit" variant="outline">
                 {isEditing ? (
                   <SaveIcon data-icon="inline-start" />
@@ -129,6 +122,12 @@ export function DatosDerechohabientesForm() {
                 )}
                 {isEditing ? "Guardar cambios" : "Agregar a la lista"}
               </Button>
+              {isEditing && (
+                <Button type="button" variant="ghost" onClick={handleCancelEdit}>
+                  Cancelar edición
+                </Button>
+              )}
+              
             </div>
           </FormSection>
         </form>
