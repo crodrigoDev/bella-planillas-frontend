@@ -57,6 +57,16 @@ const INITIAL_VALUES = {
 // Un campo opcional vacío no debe enviarse como texto vacío
 const emptyToUndefined = (value: string) => value || undefined;
 
+const createResolver = (esRegimenAfp: (idRegimen: string) => boolean) =>
+  zodResolver(createDatosFinancierosSchema(esRegimenAfp), zodResolverOptions);
+
+// Valores del formulario antes de validar: los campos con valor por defecto
+// del contrato todavía son opcionales. Se indican a `useForm` de forma
+// explícita para que no los deduzca de `INITIAL_VALUES`.
+type DatosFinancierosFormValues = Parameters<
+  ReturnType<typeof createResolver>
+>[0];
+
 /**
  * Paso 2 del registro: previsión social, sueldo, cuentas y régimen de salud
  *
@@ -82,11 +92,8 @@ export function DatosFinancierosForm() {
   // El esquema necesita saber qué régimen es el de las AFP, y eso lo dice el catálogo
   const resolver = useMemo(
     () =>
-      zodResolver(
-        createDatosFinancierosSchema((idRegimen) =>
-          esRegimenAfp(regimenesData?.find((r) => r.id === idRegimen)?.nombre),
-        ),
-        zodResolverOptions,
+      createResolver((idRegimen) =>
+        esRegimenAfp(regimenesData?.find((r) => r.id === idRegimen)?.nombre),
       ),
     [regimenesData],
   );
@@ -96,7 +103,7 @@ export function DatosFinancierosForm() {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<DatosFinancierosFormValues, unknown, DatosFinancierosDraft>({
     resolver,
     // Si el usuario vuelve a este paso, recupera lo que ya había escrito
     defaultValues: datosFinancieros ?? INITIAL_VALUES,

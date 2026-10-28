@@ -63,6 +63,13 @@ const INITIAL_VALUES = {
   asig_familiar: false,
 } as const;
 
+const resolver = zodResolver(CrearEmpleadoSchema, zodResolverOptions);
+
+// Valores del formulario antes de validar: los campos con valor por defecto
+// del contrato todavía son opcionales. Se indican a `useForm` de forma
+// explícita para que no los deduzca de `INITIAL_VALUES`.
+type DatosEmpleadoFormValues = Parameters<typeof resolver>[0];
+
 /**
  * Paso 1 del registro: datos personales, domicilio y asignación laboral
  *
@@ -82,8 +89,8 @@ export function DatosEmpleadoForm() {
     setValue,
     handleSubmit,
     formState: { errors },
-  } = useForm({
-    resolver: zodResolver(CrearEmpleadoSchema, zodResolverOptions),
+  } = useForm<DatosEmpleadoFormValues, unknown, CrearEmpleadoDto>({
+    resolver,
     // Si el usuario vuelve a este paso, recupera lo que ya había escrito
     defaultValues: datos ?? INITIAL_VALUES,
   });
