@@ -33,8 +33,8 @@ export interface EmpleadoJornada extends EmpleadoRelacion {
  * Empleado tal como lo devuelve el listado
  *
  * @remarks
- * Solo incluye lo que usa la lista. El backend también envía los ids de
- * área, cargo y jornada, y los datos financieros.
+ * Incluye lo que usan la lista y la ficha. El backend también envía los ids
+ * de área, cargo y jornada, y los datos financieros.
  */
 export interface Empleado {
   id: string;
@@ -44,6 +44,18 @@ export interface Empleado {
   nro_documento: string;
   email: string | null;
   telefono: string | null;
+  documento_id?: string;
+  sexo?: string | null;
+  estado_civil?: string | null;
+  nacionalidad?: string | null;
+  fecha_nacimiento?: string | null;
+  direccion?: string | null;
+  referencia_direccion?: string | null;
+  departamento?: string | null;
+  provincia?: string | null;
+  distrito?: string | null;
+  ubigeo?: string | null;
+  asig_familiar?: boolean;
   fecha_inicio: string | null;
   fecha_cese: string | null;
   activo: boolean;

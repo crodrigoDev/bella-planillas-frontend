@@ -9,6 +9,7 @@ import type {
   EmpleadosPage,
 } from "../types/empleados.types";
 import { protectedHttpClient } from "@/lib/api/protected-http-client";
+import { CATALOGO_LIMIT } from "@/lib/catalogos.utils";
 
 /**
  * Agrupa las operaciones de empleados que se comunican al backend
@@ -35,6 +36,36 @@ export const empleadosService = {
       items: response.data.data,
       pagination: { total, page, limit, totalPages },
     };
+  },
+
+  /**
+   * Busca un empleado por su id
+   *
+   * @returns El empleado, o null si no existe
+   *
+   * @remarks
+   * TEMPORAL: el backend todavía no tiene `GET /rrhh/empleado/:id`. Recorre
+   * el listado de 100 en 100 hasta encontrarlo. Cuando exista el endpoint,
+   * se reemplaza el cuerpo por una sola llamada y nada más cambia.
+   */
+  getById: async (id: string): Promise<Empleado | null> => {
+    let page = 1;
+    let totalPages = 1;
+
+    while (page <= totalPages) {
+      const result = await empleadosService.list({
+        page,
+        limit: CATALOGO_LIMIT,
+      });
+      const found = result.items.find((empleado) => empleado.id === id);
+
+      if (found) return found;
+
+      totalPages = result.pagination.totalPages;
+      page += 1;
+    }
+
+    return null;
   },
 
   /**

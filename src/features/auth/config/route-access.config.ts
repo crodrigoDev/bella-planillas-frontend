@@ -10,6 +10,7 @@ const ROUTE_ROLES: Readonly<Record<string, readonly AuthRol[] | null>> = {
   [ROUTE_PATHS.perfil]: null,
   [ROUTE_PATHS.gestionPersonal.empleados]: [RRHH],
   [ROUTE_PATHS.gestionPersonal.nuevoEmpleado]: [RRHH],
+  [ROUTE_PATHS.gestionPersonal.detalleEmpleado]: [RRHH],
   [ROUTE_PATHS.gestionPersonal.solicitudes]: [RRHH],
   [ROUTE_PATHS.organizacion.areas]: [RRHH],
   [ROUTE_PATHS.organizacion.cargos]: [RRHH],

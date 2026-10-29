@@ -1,5 +1,7 @@
 import type { DataTableFeatures } from "@/components/data-table/dataTable.config";
 import { createColumnHelper } from "@tanstack/react-table";
+import { Link } from "react-router-dom";
+import { buildEmpleadoPath } from "@/app/routes/path";
 import type { Empleado } from "../types/empleados.types";
 import { formatDate } from "@/lib/format.utils";
 import { EmpleadoEstadoBadge } from "../components/listado/EmpleadoEstadoBadge";
@@ -32,9 +34,12 @@ export const empleadosColumns = columnHelper.columns([
           </Avatar>
 
           <div className="flex min-w-0 flex-col">
-            <span className="font-medium">
+            <Link
+              to={buildEmpleadoPath(row.original.id)}
+              className="font-medium hover:underline"
+            >
               {getNombreCompleto(row.original)}
-            </span>
+            </Link>
             <span className="truncate text-xs text-muted-foreground">
               {email ? `${nro_documento} · ${email}` : nro_documento}
             </span>

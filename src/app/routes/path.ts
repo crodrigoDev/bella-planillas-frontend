@@ -15,6 +15,7 @@ export const ROUTE_PATHS = {
   gestionPersonal: {
     empleados: "/empleados",
     nuevoEmpleado: "/empleados/nuevo",
+    detalleEmpleado: "/empleados/:id",
     solicitudes: "/solicitudes",
   },
 
@@ -32,3 +33,7 @@ export const ROUTE_PATHS = {
 
   perfil: "/perfil",
 } as const;
+
+/** Arma la ruta de la ficha de un empleado */
+export const buildEmpleadoPath = (id: string): string =>
+  `${ROUTE_PATHS.gestionPersonal.empleados}/${id}`;

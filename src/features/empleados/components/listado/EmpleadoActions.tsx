@@ -8,6 +8,9 @@ import {
   UserXIcon,
 } from "lucide-react";
 
+import { Link } from "react-router-dom";
+
+import { buildEmpleadoPath } from "@/app/routes/path";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -26,6 +29,8 @@ type EmpleadoModal = "estado" | "baja" | "reactivar";
 
 interface EmpleadoActionsProps {
   empleado: Empleado;
+  /** Muestra "Ver ficha"; se oculta en la propia ficha */
+  showFicha?: boolean;
 }
 
 /**
@@ -34,10 +39,13 @@ interface EmpleadoActionsProps {
  * @remarks
  * Un empleado activo puede cambiar de estado o darse de baja; uno inactivo
  * solo puede reactivarse, porque el backend rechaza las demás operaciones.
- * "Ver ficha" y "Editar" aparecen como en el diseño, pero siguen
- * deshabilitadas hasta que exista la rama de detalle y edición.
+ * "Editar" aparece como en el diseño, pero sigue deshabilitada hasta que
+ * exista la edición.
  */
-export function EmpleadoActions({ empleado }: EmpleadoActionsProps) {
+export function EmpleadoActions({
+  empleado,
+  showFicha = true,
+}: EmpleadoActionsProps) {
   const [openModal, setOpenModal] = useState<EmpleadoModal | null>(null);
 
   const closeModal = (open: boolean) => {
@@ -60,10 +68,14 @@ export function EmpleadoActions({ empleado }: EmpleadoActionsProps) {
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align="end">
-          <DropdownMenuItem disabled>
-            <IdCardIcon />
-            Ver ficha
-          </DropdownMenuItem>
+          {showFicha && (
+            <DropdownMenuItem
+              render={<Link to={buildEmpleadoPath(empleado.id)} />}
+            >
+              <IdCardIcon />
+              Ver ficha
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem disabled>
             <PencilIcon />
             Editar

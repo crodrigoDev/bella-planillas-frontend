@@ -13,6 +13,7 @@ import LoginPage from "@/pages/auth/LoginPage";
 import RecuperarPasswordPage from "@/pages/auth/RecuperarPasswordPage";
 import RestablecerPasswordPage from "@/pages/auth/RestablecerPasswordPage";
 import EmpleadosPage from "@/pages/empleados/EmpleadosPage";
+import EmpleadoDetallePage from "@/pages/empleados/EmpleadoDetallePage";
 import NuevoEmpleadoPage from "@/pages/empleados/NuevoEmpleadoPage";
 
 /**
@@ -81,6 +82,17 @@ export const router = createBrowserRouter([
               {
                 path: ROUTE_PATHS.gestionPersonal.nuevoEmpleado,
                 element: <NuevoEmpleadoPage />,
+              },
+            ],
+          },
+          {
+            element: (
+              <RoleRoute path={ROUTE_PATHS.gestionPersonal.detalleEmpleado} />
+            ),
+            children: [
+              {
+                path: ROUTE_PATHS.gestionPersonal.detalleEmpleado,
+                element: <EmpleadoDetallePage />,
               },
             ],
           },
