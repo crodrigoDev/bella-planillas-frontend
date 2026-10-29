@@ -15,8 +15,9 @@ export function EmpleadoDetalleHeader({ empleado }: EmpleadoDetalleHeaderProps) 
   return (
     <header className="flex flex-wrap items-center justify-between gap-4">
       <div className="flex items-center gap-4">
-        <Avatar className="size-14">
-          <AvatarFallback className="bg-primary/10 text-lg font-medium text-primary">
+        {/* `cn` no resuelve conflictos de Tailwind: el `!` hace ganar al size-8 y text-sm base */}
+        <Avatar className="size-14!">
+          <AvatarFallback className="bg-primary/10 text-lg! font-medium text-primary">
             {getIniciales(empleado)}
           </AvatarFallback>
         </Avatar>

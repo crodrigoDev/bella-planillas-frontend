@@ -103,3 +103,48 @@ export interface RegimenPension {
   id: string;
   nombre: string;
 }
+
+/**
+ * Contrato de un empleado tal como lo devuelve el listado del backend
+ *
+ * @remarks
+ * No es `ContratoDetalleDto` del contrato compartido: ese es el detalle por id.
+ */
+export interface EmpleadoContrato {
+  id: string;
+  estado: "VIGENTE" | "RENOVADO" | "VENCIDO" | "ANULADO" | "FINALIZADO";
+  tipo_modalidad: string;
+  fecha_inicio: string;
+  fecha_fin: string | null;
+  dias_restantes: number | null;
+  alerta_vencimiento: "VENCIDO" | "CRITICO" | "PREVENTIVO" | "REGULAR" | null;
+  es_prorroga: boolean;
+  tiene_archivo: boolean;
+}
+
+/**
+ * Datos financieros de un empleado tal como los devuelve el backend
+ *
+ * @remarks
+ * Los números de cuenta, CCI y CUSPP ya llegan enmascarados. Los nombres
+ * no llevan el sufijo `_mascara` que declara `DatoFinancieroResponseSchema`.
+ */
+export interface EmpleadoDatosFinancieros {
+  regimen_nombre: string | null;
+  afp_nombre: string | null;
+  cuspp: string | null;
+  tipo_comision: "FLUJO" | "MIXTA" | null;
+  sueldo_basico: number;
+  banco_sueldo_nombre: string | null;
+  tipo_cuenta_sueldo: string;
+  nro_cuenta_sueldo: string | null;
+  cci_sueldo: string | null;
+  banco_cts_nombre: string | null;
+  tipo_cuenta_cts: string;
+  nro_cuenta_cts: string | null;
+  cci_cts: string | null;
+  regimen_salud: string;
+  eps_nombre: string | null;
+  eps_plan: string | null;
+  eps_costo_adicional: number;
+}
