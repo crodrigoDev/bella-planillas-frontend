@@ -1,39 +1,38 @@
 import { useLayoutEffect, useRef } from "react";
-import type { KeyboardEvent, ReactNode } from "react";
+import { NavLink, matchPath, useLocation } from "react-router-dom";
 
 import { cn } from "@/lib/utils";
 
 export interface PageTab {
-  value: string;
+  /** Ruta a la que lleva la pestaña */
+  to: string;
   label: string;
+  /** La pestaña solo está activa con esa ruta exacta (la pestaña inicial) */
+  end?: boolean;
 }
 
 interface PageTabsProps {
   tabs: PageTab[];
-  /** Valor de la pestaña activa */
-  value: string;
-  onChange: (value: string) => void;
-  /** Texto para lectores de pantalla que describe el grupo de pestañas */
+  /** Texto para lectores de pantalla que describe la navegación */
   label: string;
 }
 
-/** Id de cada pestaña y de su panel, para enlazarlos con `aria-controls` */
-const getTabId = (value: string) => `tab-${value}`;
-const getTabPanelId = (value: string) => `tabpanel-${value}`;
-
 /**
- * Barra de pestañas de una página
+ * Pestañas de una página, donde cada una es una ruta
  *
  * @remarks
- * Es controlada: la página decide qué pestaña está activa (por ejemplo desde
- * `?tab=` en la URL) y pinta su panel con `PageTabPanel`.
- * Con las flechas izquierda y derecha, Inicio y Fin se cambia de pestaña.
- * El subrayado se desliza hasta la pestaña activa; se mueve por el DOM
- * directamente para no volver a renderizar al medir.
+ * La pestaña activa sale de la URL. Son enlaces reales (se pueden abrir en
+ * otra pestaña del navegador) y el subrayado se desliza hasta la activa;
+ * se mueve por el DOM directamente para no volver a renderizar al medir.
  */
-export function PageTabs({ tabs, value, onChange, label }: PageTabsProps) {
-  const listRef = useRef<HTMLDivElement>(null);
+export function PageTabs({ tabs, label }: PageTabsProps) {
+  const { pathname } = useLocation();
+  const listRef = useRef<HTMLElement>(null);
   const indicatorRef = useRef<HTMLSpanElement>(null);
+
+  const activeIndex = tabs.findIndex((tab) =>
+    matchPath({ path: tab.to, end: tab.end ?? false }, pathname),
+  );
 
   useLayoutEffect(() => {
     const list = listRef.current;
@@ -41,7 +40,7 @@ export function PageTabs({ tabs, value, onChange, label }: PageTabsProps) {
     if (!list || !indicator) return;
 
     const moveIndicator = () => {
-      const active = document.getElementById(getTabId(value));
+      const active = list.querySelector<HTMLElement>("[aria-current='page']");
       if (!active) return;
 
       indicator.style.width = `${active.offsetWidth}px`;
@@ -55,85 +54,35 @@ export function PageTabs({ tabs, value, onChange, label }: PageTabsProps) {
     observer.observe(list);
 
     return () => observer.disconnect();
-  }, [value, tabs]);
-
-  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    const current = tabs.findIndex((tab) => tab.value === value);
-    const last = tabs.length - 1;
-    const keyTargets: Record<string, number> = {
-      ArrowRight: current === last ? 0 : current + 1,
-      ArrowLeft: current === 0 ? last : current - 1,
-      Home: 0,
-      End: last,
-    };
-    const next = keyTargets[event.key];
-
-    if (next === undefined) return;
-
-    event.preventDefault();
-    onChange(tabs[next].value);
-    document.getElementById(getTabId(tabs[next].value))?.focus();
-  };
+  }, [activeIndex, tabs]);
 
   return (
-    <div
+    <nav
       ref={listRef}
-      role="tablist"
       aria-label={label}
-      onKeyDown={handleKeyDown}
       className="relative flex gap-8 overflow-x-auto border-b"
     >
-      {tabs.map((tab) => {
-        const active = tab.value === value;
-
-        return (
-          <button
-            key={tab.value}
-            id={getTabId(tab.value)}
-            type="button"
-            role="tab"
-            aria-selected={active}
-            aria-controls={getTabPanelId(tab.value)}
-            tabIndex={active ? 0 : -1}
-            onClick={() => onChange(tab.value)}
-            className={cn(
-              "shrink-0 pb-3.5 text-base font-medium transition-colors outline-none focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-ring/50",
-              active
-                ? "text-primary"
-                : "text-muted-foreground hover:text-foreground",
-            )}
-          >
-            {tab.label}
-          </button>
-        );
-      })}
+      {tabs.map((tab, index) => (
+        <NavLink
+          key={tab.to}
+          to={tab.to}
+          end={tab.end}
+          className={cn(
+            "mb-2 inline-flex h-7 shrink-0 items-center rounded-lg px-2.5 text-sm font-medium transition-colors outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring/50",
+            index === activeIndex
+              ? "text-primary"
+              : "text-muted-foreground hover:text-foreground",
+          )}
+        >
+          {tab.label}
+        </NavLink>
+      ))}
 
       <span
         ref={indicatorRef}
         aria-hidden
-        className="pointer-events-none absolute bottom-0 left-0 h-[3px] rounded-full bg-primary transition-[transform,width] duration-300 ease-out motion-reduce:transition-none"
+        className="pointer-events-none absolute bottom-0 left-0 h-0.5 rounded-full bg-primary transition-[transform,width] duration-300 ease-out motion-reduce:transition-none"
       />
-    </div>
-  );
-}
-
-/**
- * Panel de la pestaña activa; envuelve el contenido que le corresponde
- */
-export function PageTabPanel({
-  value,
-  children,
-}: {
-  value: string;
-  children: ReactNode;
-}) {
-  return (
-    <div
-      role="tabpanel"
-      id={getTabPanelId(value)}
-      aria-labelledby={getTabId(value)}
-    >
-      {children}
-    </div>
+    </nav>
   );
 }
