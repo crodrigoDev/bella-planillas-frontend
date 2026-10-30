@@ -1,11 +1,12 @@
+import { useParams } from "react-router-dom";
+
 import { EmpleadoDetalleDerechohabientes } from "@/features/empleados/components/detalle/EmpleadoDetalleDerechohabientes";
-import { useEmpleadoDetalleContext } from "@/features/empleados/hooks/useEmpleadoDetalleContext";
 
 /**
  * Pestaña Derechohabientes de la ficha
  */
 export default function EmpleadoDerechohabientesPage() {
-  const { empleado } = useEmpleadoDetalleContext();
+  const { id = "" } = useParams();
 
-  return <EmpleadoDetalleDerechohabientes empleadoId={empleado.id} />;
+  return <EmpleadoDetalleDerechohabientes empleadoId={id} />;
 }

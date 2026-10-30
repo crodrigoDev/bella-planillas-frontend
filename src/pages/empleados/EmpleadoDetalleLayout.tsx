@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmpleadoDetalleHeader } from "@/features/empleados/components/detalle/EmpleadoDetalleHeader";
 import { useEmpleado } from "@/features/empleados/hooks/useEmpleado";
-import type { EmpleadoDetalleContext } from "@/features/empleados/hooks/useEmpleadoDetalleContext";
 
 const getTabs = (id: string): PageTab[] => [
   { to: buildEmpleadoPath(id), label: "Información", end: true },
@@ -24,6 +23,7 @@ const getTabs = (id: string): PageTab[] => [
  * @remarks
  * Cada pestaña es una ruta hija (`/empleados/:id/contratos`). Este layout
  * carga al empleado una sola vez y se queda montado al cambiar de pestaña.
+ * Las pestañas leen al empleado de la caché de TanStack Query (`useEmpleado`).
  */
 export default function EmpleadoDetalleLayout() {
   const { id } = useParams();
@@ -70,7 +70,7 @@ export default function EmpleadoDetalleLayout() {
         <>
           <EmpleadoDetalleHeader empleado={empleado} />
           <PageTabs label="Secciones de la ficha" tabs={getTabs(id)} />
-          <Outlet context={{ empleado } satisfies EmpleadoDetalleContext} />
+          <Outlet />
         </>
       )}
     </section>
