@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 
-import { EmpleadoDetalleContratos } from "@/features/empleados/components/detalle/EmpleadoDetalleContratos";
+import { ContratosEmpleado } from "@/features/contratos/components/ContratosEmpleado";
 
 /**
  * Pestaña Contratos de la ficha
@@ -8,5 +8,5 @@ import { EmpleadoDetalleContratos } from "@/features/empleados/components/detall
 export default function EmpleadoContratosPage() {
   const { id = "" } = useParams();
 
-  return <EmpleadoDetalleContratos empleadoId={id} />;
+  return <ContratosEmpleado empleadoId={id} />;
 }

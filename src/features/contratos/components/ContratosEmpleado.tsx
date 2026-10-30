@@ -1,16 +1,16 @@
 import { Badge } from "@/components/ui/badge";
 import { getOptionLabel } from "@/lib/catalogos.utils";
 import { formatDate } from "@/lib/format.utils";
-import { useModalidadesContrato } from "../../hooks/useCatalogos";
-import { useEmpleadoContratos } from "../../hooks/useEmpleadoDetalle";
-import type { EmpleadoContrato } from "../../types/empleados.types";
-import { DetalleTabEstado } from "./DetalleTabEstado";
+import { DetalleTabEstado } from "@/components/feedback/DetalleTabEstado";
+import { useModalidadesContrato } from "../hooks/useCatalogos";
+import { useContratosEmpleado } from "../hooks/useContratos";
+import type { Contrato } from "../types/contratos.types";
 
-interface EmpleadoDetalleContratosProps {
+interface ContratosEmpleadoProps {
   empleadoId: string;
 }
 
-const ESTADO_CONTRATO_LABELS: Record<EmpleadoContrato["estado"], string> = {
+const ESTADO_CONTRATO_LABELS: Record<Contrato["estado"], string> = {
   VIGENTE: "Vigente",
   RENOVADO: "Renovado",
   VENCIDO: "Vencido",
@@ -18,7 +18,7 @@ const ESTADO_CONTRATO_LABELS: Record<EmpleadoContrato["estado"], string> = {
   FINALIZADO: "Finalizado",
 };
 
-const ESTADO_CONTRATO_STYLES: Record<EmpleadoContrato["estado"], string> = {
+const ESTADO_CONTRATO_STYLES: Record<Contrato["estado"], string> = {
   VIGENTE: "border-emerald-200 bg-emerald-50 text-emerald-700",
   RENOVADO: "border-sky-200 bg-sky-50 text-sky-700",
   VENCIDO: "border-red-200 bg-red-50 text-red-700",
@@ -29,10 +29,8 @@ const ESTADO_CONTRATO_STYLES: Record<EmpleadoContrato["estado"], string> = {
 /**
  * Pestaña Contratos de la ficha: el historial de contratos del empleado
  */
-export function EmpleadoDetalleContratos({
-  empleadoId,
-}: EmpleadoDetalleContratosProps) {
-  const { data, isLoading, error, refetch } = useEmpleadoContratos(empleadoId);
+export function ContratosEmpleado({ empleadoId }: ContratosEmpleadoProps) {
+  const { data, isLoading, error, refetch } = useContratosEmpleado(empleadoId);
   const modalidades = useModalidadesContrato();
 
   return (

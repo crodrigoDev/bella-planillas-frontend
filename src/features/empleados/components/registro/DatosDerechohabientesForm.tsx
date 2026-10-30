@@ -5,11 +5,8 @@ import { FormSection } from "@/components/form/FormSection";
 import { SelectField } from "@/components/form/SelectField";
 import { TextField } from "@/components/form/TextField";
 import { Button } from "@/components/ui/button";
-import {
-  ESTADO_CIVIL_OPTIONS,
-  SEXO_OPTIONS,
-  VINCULO_OPTIONS,
-} from "../../config/empleados.config";
+import { VINCULO_OPTIONS } from "@/features/derechohabientes/config/derechohabientes.config";
+import { ESTADO_CIVIL_OPTIONS, SEXO_OPTIONS } from "../../config/empleados.config";
 import { useDerechohabientesForm } from "../../hooks/useDerechohabientesForm";
 import { useTiposDocumento } from "../../hooks/useCatalogos";
 import { useNuevoEmpleadoStore } from "../../store/nuevoEmpleado.store";

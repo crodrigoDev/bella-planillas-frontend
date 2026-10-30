@@ -1,4 +1,6 @@
+import { DetalleTabEstado } from "@/components/feedback/DetalleTabEstado";
 import { FormSection } from "@/components/form/FormSection";
+import { ResumenCampo } from "@/components/form/ResumenCampo";
 import { getOptionLabel } from "@/lib/catalogos.utils";
 import { formatCurrency, maskEnd } from "@/lib/format.utils";
 import {
@@ -7,12 +9,10 @@ import {
   REGIMENES_SALUD_CON_EPS,
   TIPO_COMISION_OPTIONS,
   TIPO_CUENTA_OPTIONS,
-} from "../../config/empleados.config";
-import { useEmpleadoDatosFinancieros } from "../../hooks/useEmpleadoDetalle";
-import { ResumenCampo } from "../registro/resumen/ResumenCampo";
-import { DetalleTabEstado } from "./DetalleTabEstado";
+} from "../config/datosFinancieros.config";
+import { useDatosFinancierosEmpleado } from "../hooks/useDatosFinancieros";
 
-interface EmpleadoDetalleFinancierosProps {
+interface DatosFinancierosEmpleadoProps {
   empleadoId: string;
 }
 
@@ -25,11 +25,11 @@ const orDash = (value: string | null | undefined): string => value || "--";
  * El backend ya envía los números de cuenta, CCI y CUSPP enmascarados; aquí
  * solo se muestran con `maskEnd`, nunca completos.
  */
-export function EmpleadoDetalleFinancieros({
+export function DatosFinancierosEmpleado({
   empleadoId,
-}: EmpleadoDetalleFinancierosProps) {
+}: DatosFinancierosEmpleadoProps) {
   const { data, isLoading, error, refetch } =
-    useEmpleadoDatosFinancieros(empleadoId);
+    useDatosFinancierosEmpleado(empleadoId);
 
   return (
     <DetalleTabEstado

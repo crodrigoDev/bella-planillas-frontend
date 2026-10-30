@@ -32,33 +32,9 @@ export function useEmpleadosCatalogos(areaId?: string) {
   return { areas, cargos, jornadas };
 }
 
-/**
- * Obtiene los regímenes de pensión, AFP y bancos del paso de datos financieros
- *
- * @returns Una consulta por cada catálogo
- */
-export function useDatosFinancierosCatalogos() {
-  const regimenes = useCatalogo(["regimenes-pension"], () =>
-    catalogosService.listRegimenesPension(),
-  );
-
-  const afps = useCatalogo(["afps"], () => catalogosService.listAfps());
-
-  const bancos = useCatalogo(["bancos"], () => catalogosService.listBancos());
-
-  return { regimenes, afps, bancos };
-}
-
 /** Obtiene los tipos de documento (empleado y derechohabientes) */
 export function useTiposDocumento() {
   return useCatalogo(["tipos-documento"], () =>
     catalogosService.listTiposDocumento(),
-  );
-}
-
-/** Obtiene las modalidades de contrato del paso 3 del registro */
-export function useModalidadesContrato() {
-  return useCatalogo(["modalidades-contrato"], () =>
-    catalogosService.listModalidadesContrato(),
   );
 }

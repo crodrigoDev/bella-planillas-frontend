@@ -1,9 +1,9 @@
 import { FormSection } from "@/components/form/FormSection";
 import { getOptionLabel } from "@/lib/catalogos.utils";
 import { formatDate } from "@/lib/format.utils";
-import { useModalidadesContrato } from "../../../hooks/useCatalogos";
+import { useModalidadesContrato } from "@/features/contratos/hooks/useCatalogos";
 import type { DatosContratoDraft } from "../../../schemas/datosContrato.schema";
-import { ResumenCampo } from "./ResumenCampo";
+import { ResumenCampo } from "@/components/form/ResumenCampo";
 
 interface ResumenContratoProps {
   contrato: DatosContratoDraft;

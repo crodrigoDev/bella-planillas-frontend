@@ -8,7 +8,7 @@ import {
 import { useTiposDocumento } from "../../hooks/useCatalogos";
 import type { Empleado } from "../../types/empleados.types";
 import { formatTurno, getNombreCompleto } from "../../utils/empleados.utils";
-import { ResumenCampo } from "../registro/resumen/ResumenCampo";
+import { ResumenCampo } from "@/components/form/ResumenCampo";
 
 interface EmpleadoDetalleDatosProps {
   empleado: Empleado;

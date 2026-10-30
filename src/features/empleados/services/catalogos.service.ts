@@ -1,19 +1,9 @@
 import { protectedHttpClient } from "@/lib/api/protected-http-client";
-import type {
-  ApiResponse,
-  PaginationApiResponse,
-} from "@/lib/api/types/api.types";
+import type { PaginationApiResponse } from "@/lib/api/types/api.types";
 import { CATALOGO_LIMIT, toOptions } from "@/lib/catalogos.utils";
 import type { SelectOption } from "@/lib/types/options.types";
-import {
-  MODALIDADES_CONTRATO_MOCK,
-  REGIMENES_PENSION_MOCK,
-  TIPOS_DOCUMENTO_MOCK,
-} from "../data/catalogos.mock";
-import type {
-  EmpleadoRelacion,
-  RegimenPension,
-} from "../types/empleados.types";
+import { TIPOS_DOCUMENTO_MOCK } from "../data/catalogos.mock";
+import type { EmpleadoRelacion } from "../types/empleados.types";
 
 /**
  * Obtiene las listas de opciones que usan el listado y el registro de empleados
@@ -59,38 +49,6 @@ export const catalogosService = {
     return toOptions(response.data.data);
   },
 
-  /** Consulta las administradoras de AFP */
-  listAfps: async (): Promise<SelectOption[]> => {
-    const response = await protectedHttpClient.get<
-      PaginationApiResponse<EmpleadoRelacion>
-    >("/payroll/afp/tipos", { params: { limit: CATALOGO_LIMIT } });
-
-    return toOptions(response.data.data);
-  },
-
-  /** Consulta los bancos disponibles para las cuentas de sueldo y CTS */
-  listBancos: async (): Promise<SelectOption[]> => {
-    const response =
-      await protectedHttpClient.get<ApiResponse<EmpleadoRelacion[]>>(
-        "/payroll/bancos",
-      );
-
-    return toOptions(response.data.data);
-  },
-
   /** TEMPORAL: tipos de documento (DNI, CE, pasaporte...) */
   listTiposDocumento: async (): Promise<SelectOption[]> => TIPOS_DOCUMENTO_MOCK,
-
-  /** TEMPORAL: regímenes de pensión (ONP y SPP) */
-  listRegimenesPension: async (): Promise<RegimenPension[]> =>
-    REGIMENES_PENSION_MOCK,
-
-  /**
-   * TEMPORAL: modalidades de contrato (plazo fijo, indeterminado)
-   *
-   * @remarks
-   * El backend no define una lista: solo guarda el texto de la modalidad.
-   */
-  listModalidadesContrato: async (): Promise<SelectOption[]> =>
-    MODALIDADES_CONTRATO_MOCK,
 };

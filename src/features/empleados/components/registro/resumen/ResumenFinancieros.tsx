@@ -7,10 +7,10 @@ import {
   REGIMENES_SALUD_CON_EPS,
   TIPO_COMISION_OPTIONS,
   TIPO_CUENTA_OPTIONS,
-} from "../../../config/empleados.config";
-import { useDatosFinancierosCatalogos } from "../../../hooks/useCatalogos";
+} from "@/features/datosFinancieros/config/datosFinancieros.config";
+import { useDatosFinancierosCatalogos } from "@/features/datosFinancieros/hooks/useCatalogos";
 import type { DatosFinancierosDraft } from "../../../schemas/datosFinancieros.schema";
-import { ResumenCampo } from "./ResumenCampo";
+import { ResumenCampo } from "@/components/form/ResumenCampo";
 
 interface ResumenFinancierosProps {
   datos: DatosFinancierosDraft;

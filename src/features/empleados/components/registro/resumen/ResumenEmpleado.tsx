@@ -5,7 +5,7 @@ import { getOptionLabel } from "@/lib/catalogos.utils";
 import { formatDate } from "@/lib/format.utils";
 import { ESTADO_CIVIL_OPTIONS, SEXO_OPTIONS } from "../../../config/empleados.config";
 import { useEmpleadosCatalogos, useTiposDocumento } from "../../../hooks/useCatalogos";
-import { ResumenCampo } from "./ResumenCampo";
+import { ResumenCampo } from "@/components/form/ResumenCampo";
 
 interface ResumenEmpleadoProps {
   datos: CrearEmpleadoDto;

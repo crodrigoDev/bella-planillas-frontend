@@ -11,7 +11,7 @@ import {
   DatosContratoSchema,
   type DatosContratoDraft,
 } from "../../schemas/datosContrato.schema";
-import { useModalidadesContrato } from "../../hooks/useCatalogos";
+import { useModalidadesContrato } from "@/features/contratos/hooks/useCatalogos";
 import { useNuevoEmpleadoStore } from "../../store/nuevoEmpleado.store";
 import { RegistroFooter } from "./RegistroFooter";
 

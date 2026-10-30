@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 
-import { EmpleadoDetalleDerechohabientes } from "@/features/empleados/components/detalle/EmpleadoDetalleDerechohabientes";
+import { DerechohabientesEmpleado } from "@/features/derechohabientes/components/DerechohabientesEmpleado";
 
 /**
  * Pestaña Derechohabientes de la ficha
@@ -8,5 +8,5 @@ import { EmpleadoDetalleDerechohabientes } from "@/features/empleados/components
 export default function EmpleadoDerechohabientesPage() {
   const { id = "" } = useParams();
 
-  return <EmpleadoDetalleDerechohabientes empleadoId={id} />;
+  return <DerechohabientesEmpleado empleadoId={id} />;
 }

@@ -1,8 +1,8 @@
 import { useParams } from "react-router-dom";
 
 import { Skeleton } from "@/components/ui/skeleton";
+import { DatosFinancierosEmpleado } from "@/features/datosFinancieros/components/DatosFinancierosEmpleado";
 import { EmpleadoDetalleDatos } from "@/features/empleados/components/detalle/EmpleadoDetalleDatos";
-import { EmpleadoDetalleFinancieros } from "@/features/empleados/components/detalle/EmpleadoDetalleFinancieros";
 import { useEmpleado } from "@/features/empleados/hooks/useEmpleado";
 
 /**
@@ -21,7 +21,7 @@ export default function EmpleadoInformacionPage() {
   return (
     <div className="space-y-6">
       <EmpleadoDetalleDatos empleado={empleado} />
-      <EmpleadoDetalleFinancieros empleadoId={empleado.id} />
+      <DatosFinancierosEmpleado empleadoId={empleado.id} />
     </div>
   );
 }

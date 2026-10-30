@@ -1,22 +1,22 @@
 import { Badge } from "@/components/ui/badge";
 import { getOptionLabel } from "@/lib/catalogos.utils";
 import { formatDate } from "@/lib/format.utils";
-import { VINCULO_OPTIONS } from "../../config/empleados.config";
-import { useEmpleadoDerechohabientes } from "../../hooks/useEmpleadoDetalle";
-import { DetalleTabEstado } from "./DetalleTabEstado";
+import { DetalleTabEstado } from "@/components/feedback/DetalleTabEstado";
+import { VINCULO_OPTIONS } from "../config/derechohabientes.config";
+import { useDerechohabientesEmpleado } from "../hooks/useDerechohabientes";
 
-interface EmpleadoDetalleDerechohabientesProps {
+interface DerechohabientesEmpleadoProps {
   empleadoId: string;
 }
 
 /**
  * Pestaña Derechohabientes de la ficha: los familiares registrados del empleado
  */
-export function EmpleadoDetalleDerechohabientes({
+export function DerechohabientesEmpleado({
   empleadoId,
-}: EmpleadoDetalleDerechohabientesProps) {
+}: DerechohabientesEmpleadoProps) {
   const { data, isLoading, error, refetch } =
-    useEmpleadoDerechohabientes(empleadoId);
+    useDerechohabientesEmpleado(empleadoId);
 
   return (
     <DetalleTabEstado

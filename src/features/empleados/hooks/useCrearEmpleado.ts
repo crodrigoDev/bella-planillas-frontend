@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 import { ROUTE_PATHS } from "@/app/routes/path";
+import { contratosService } from "@/features/contratos/services/contratos.service";
+import { datosFinancierosService } from "@/features/datosFinancieros/services/datosFinancieros.service";
+import { derechohabientesService } from "@/features/derechohabientes/services/derechohabientes.service";
 import { nuevoEmpleadoService } from "../services/nuevoEmpleado.service";
 import { useNuevoEmpleadoStore } from "../store/nuevoEmpleado.store";
 import { empleadosKey } from "./useEmpleados";
@@ -44,7 +47,7 @@ export function useCrearEmpleado() {
       }
 
       if (!getState().progreso.financierosListos) {
-        await nuevoEmpleadoService.crearDatosFinancieros(
+        await datosFinancierosService.crear(
           empleadoId,
           financieros,
         );
@@ -52,7 +55,7 @@ export function useCrearEmpleado() {
       }
 
       if (!getState().progreso.contratoListo) {
-        await nuevoEmpleadoService.crearContrato(empleadoId, contrato);
+        await contratosService.crear(empleadoId, contrato);
         getState().updateProgreso({ contratoListo: true });
       }
 
@@ -63,7 +66,7 @@ export function useCrearEmpleado() {
         index < derechohabientes.length;
         index++
       ) {
-        await nuevoEmpleadoService.registrarDerechohabiente(
+        await derechohabientesService.registrar(
           empleadoId,
           derechohabientes[index],
         );

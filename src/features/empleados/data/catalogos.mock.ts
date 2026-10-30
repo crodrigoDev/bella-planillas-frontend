@@ -21,15 +21,3 @@ export const TIPOS_DOCUMENTO_MOCK: SelectOption[] = [
   { value: "01a17fb7-a2d6-7754-9ddd-2fe38719a9b3", label: "CE" },
   { value: "01a17fb7-a2da-73a9-9649-f2ae3087b4be", label: "PASAPORTE" },
 ];
-
-/** Regímenes de pensión, tal como están en la tabla `regimen_pension` */
-export const REGIMENES_PENSION_MOCK: { id: string; nombre: string }[] = [
-  { id: "01a17fb7-a2e1-757b-98a7-2fdbe37cc9c7", nombre: "ONP" },
-  { id: "01a17fb7-a2e4-7113-910a-9284f4a0f1f6", nombre: "SPP" },
-];
-
-/** Modalidades de contrato; el valor es el texto que guarda el backend */
-export const MODALIDADES_CONTRATO_MOCK: SelectOption[] = [
-  { value: "PLAZO_FIJO", label: "Plazo fijo" },
-  { value: "INDETERMINADO", label: "Indeterminado" },
-];
