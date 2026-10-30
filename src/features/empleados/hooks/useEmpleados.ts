@@ -11,6 +11,7 @@ import { empleadosService } from "../services/empleados.service";
 export const empleadosKey = {
   all: ["empleados"] as const,
   list: (filters: EmpleadoFilters) => ["empleados", "list", filters] as const,
+  detail: (id: string) => ["empleados", "detail", id] as const,
 };
 
 /**

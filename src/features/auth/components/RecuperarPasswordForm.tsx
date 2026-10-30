@@ -1,3 +1,4 @@
+import { LoadingButton } from "@/components/form/LoadingButton";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   SolicitudRecuperacionSchema,
@@ -5,7 +6,6 @@ import {
 } from "@jyp/shared-contracts";
 import { Send } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldError,
@@ -13,7 +13,6 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
 
 interface RecuperarPasswordFormProps {
   onSubmit: (values: SolicitudRecuperacionDTO) => Promise<void>;
@@ -72,19 +71,15 @@ export default function RecuperarPasswordForm({
           />
         </Field>
 
-        <Button type="submit" disabled={isSubmitting} className="h-10 w-full">
-          {isSubmitting ? (
-            <>
-              <Spinner />
-              Enviando…
-            </>
-          ) : (
-            <>
-              Solicitar recuperación
-              <Send aria-hidden="true" />
-            </>
-          )}
-        </Button>
+        <LoadingButton
+          type="submit"
+          isLoading={isSubmitting}
+          loadingText="Enviando…"
+          icon={Send}
+          className="h-10 w-full"
+        >
+          Solicitar recuperación
+        </LoadingButton>
       </FieldGroup>
     </form>
   );

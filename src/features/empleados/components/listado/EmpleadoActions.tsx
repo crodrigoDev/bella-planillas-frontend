@@ -8,6 +8,9 @@ import {
   UserXIcon,
 } from "lucide-react";
 
+import { Link } from "react-router-dom";
+
+import { buildEmpleadoPath } from "@/app/routes/path";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,32 +19,32 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { Empleado } from "../types/empleados.types";
-import { getNombreCompleto } from "../utils/empleados.utils";
-import { CambiarEstadoDialog } from "./CambiarEstadoDialog";
-import { DarDeBajaDialog } from "./DarDeBajaDialog";
-import { ReactivarDialog } from "./ReactivarDialog";
+import type { Empleado } from "../../types/empleados.types";
+import { getNombreCompleto } from "../../utils/empleados.utils";
+import { CambiarEstadoModal } from "../modals/CambiarEstadoModal";
+import { DarDeBajaModal } from "../modals/DarDeBajaModal";
+import { ReactivarModal } from "../modals/ReactivarModal";
 
-type EmpleadoDialog = "estado" | "baja" | "reactivar";
+type EmpleadoModal = "estado" | "baja" | "reactivar";
 
 interface EmpleadoActionsProps {
   empleado: Empleado;
 }
 
 /**
- * Menú de acciones de una fila de empleados y los diálogos que abre
+ * Menú de acciones de una fila de empleados y los modales que abre
  *
  * @remarks
  * Un empleado activo puede cambiar de estado o darse de baja; uno inactivo
  * solo puede reactivarse, porque el backend rechaza las demás operaciones.
- * "Ver ficha" y "Editar" aparecen como en el diseño, pero siguen
- * deshabilitadas hasta que exista la rama de detalle y edición.
+ * "Editar" aparece como en el diseño, pero sigue deshabilitada hasta que
+ * exista la edición.
  */
 export function EmpleadoActions({ empleado }: EmpleadoActionsProps) {
-  const [openDialog, setOpenDialog] = useState<EmpleadoDialog | null>(null);
+  const [openModal, setOpenModal] = useState<EmpleadoModal | null>(null);
 
-  const closeDialog = (open: boolean) => {
-    if (!open) setOpenDialog(null);
+  const closeModal = (open: boolean) => {
+    if (!open) setOpenModal(null);
   };
 
   return (
@@ -60,7 +63,9 @@ export function EmpleadoActions({ empleado }: EmpleadoActionsProps) {
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align="end">
-          <DropdownMenuItem disabled>
+          <DropdownMenuItem
+            render={<Link to={buildEmpleadoPath(empleado.id)} />}
+          >
             <IdCardIcon />
             Ver ficha
           </DropdownMenuItem>
@@ -73,20 +78,20 @@ export function EmpleadoActions({ empleado }: EmpleadoActionsProps) {
 
           {empleado.activo ? (
             <>
-              <DropdownMenuItem onClick={() => setOpenDialog("estado")}>
+              <DropdownMenuItem onClick={() => setOpenModal("estado")}>
                 <RefreshCwIcon />
                 Cambiar estado
               </DropdownMenuItem>
               <DropdownMenuItem
                 variant="destructive"
-                onClick={() => setOpenDialog("baja")}
+                onClick={() => setOpenModal("baja")}
               >
                 <UserXIcon />
                 Dar de baja
               </DropdownMenuItem>
             </>
           ) : (
-            <DropdownMenuItem onClick={() => setOpenDialog("reactivar")}>
+            <DropdownMenuItem onClick={() => setOpenModal("reactivar")}>
               <UserCheckIcon />
               Reactivar
             </DropdownMenuItem>
@@ -94,20 +99,20 @@ export function EmpleadoActions({ empleado }: EmpleadoActionsProps) {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <CambiarEstadoDialog
+      <CambiarEstadoModal
         empleado={empleado}
-        open={openDialog === "estado"}
-        onOpenChange={closeDialog}
+        open={openModal === "estado"}
+        onOpenChange={closeModal}
       />
-      <DarDeBajaDialog
+      <DarDeBajaModal
         empleado={empleado}
-        open={openDialog === "baja"}
-        onOpenChange={closeDialog}
+        open={openModal === "baja"}
+        onOpenChange={closeModal}
       />
-      <ReactivarDialog
+      <ReactivarModal
         empleado={empleado}
-        open={openDialog === "reactivar"}
-        onOpenChange={closeDialog}
+        open={openModal === "reactivar"}
+        onOpenChange={closeModal}
       />
     </>
   );

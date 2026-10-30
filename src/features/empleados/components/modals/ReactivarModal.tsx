@@ -1,4 +1,4 @@
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,29 +10,28 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Spinner } from "@/components/ui/spinner";
-import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
-import { useReactivarEmpleado } from "../hooks/useEmpleadoActions";
-import type { Empleado } from "../types/empleados.types";
-import { getNombreCompleto } from "../utils/empleados.utils";
+import { useReactivarEmpleado } from "../../hooks/useEmpleadoActions";
+import type { Empleado } from "../../types/empleados.types";
+import { getNombreCompleto } from "../../utils/empleados.utils";
 
-interface ReactivarDialogProps {
+interface ReactivarModalProps {
   empleado: Empleado;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 /**
- * Diálogo de confirmación para reactivar a un empleado dado de baja
+ * Modal de confirmación para reactivar a un empleado dado de baja
  *
  * @remarks
- * El contenido está dentro del diálogo: al cerrarse se desmonta y se
+ * El contenido está dentro del modal: al cerrarse se desmonta y se
  * descarta el error de un intento anterior.
  */
-export function ReactivarDialog({
+export function ReactivarModal({
   empleado,
   open,
   onOpenChange,
-}: ReactivarDialogProps) {
+}: ReactivarModalProps) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
@@ -68,11 +67,7 @@ function ReactivarContent({ empleado, onClose }: ReactivarContentProps) {
         </AlertDialogDescription>
       </AlertDialogHeader>
 
-      {mutation.isError && (
-        <Alert variant="destructive">
-          <AlertDescription>{getApiErrorMessage(mutation.error)}</AlertDescription>
-        </Alert>
-      )}
+      <ErrorAlert error={mutation.error} />
 
       <AlertDialogFooter>
         <AlertDialogCancel disabled={mutation.isPending}>

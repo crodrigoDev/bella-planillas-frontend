@@ -13,6 +13,32 @@ import LoginPage from "@/pages/auth/LoginPage";
 import RecuperarPasswordPage from "@/pages/auth/RecuperarPasswordPage";
 import RestablecerPasswordPage from "@/pages/auth/RestablecerPasswordPage";
 import EmpleadosPage from "@/pages/empleados/EmpleadosPage";
+import EmpleadoDetalleLayout from "@/pages/empleados/EmpleadoDetalleLayout";
+import EmpleadoInformacionPage from "@/pages/empleados/detalle/EmpleadoInformacionPage";
+import EmpleadoContratosPage from "@/pages/empleados/detalle/EmpleadoContratosPage";
+import EmpleadoDerechohabientesPage from "@/pages/empleados/detalle/EmpleadoDerechohabientesPage";
+import EmpleadoAsistenciaPage from "@/pages/empleados/detalle/EmpleadoAsistenciaPage";
+import EmpleadoHistorialPage from "@/pages/empleados/detalle/EmpleadoHistorialPage";
+import NuevoEmpleadoPage from "@/pages/empleados/NuevoEmpleadoPage";
+
+const DETALLE_EMPLEADO_TABS = [
+  {
+    path: ROUTE_PATHS.gestionPersonal.detalleEmpleadoContratos,
+    element: <EmpleadoContratosPage />,
+  },
+  {
+    path: ROUTE_PATHS.gestionPersonal.detalleEmpleadoDerechohabientes,
+    element: <EmpleadoDerechohabientesPage />,
+  },
+  {
+    path: ROUTE_PATHS.gestionPersonal.detalleEmpleadoAsistencia,
+    element: <EmpleadoAsistenciaPage />,
+  },
+  {
+    path: ROUTE_PATHS.gestionPersonal.detalleEmpleadoHistorial,
+    element: <EmpleadoHistorialPage />,
+  },
+];
 
 /**
  * Relaciona las URLs de la aplicación con sus páginas y layouts.
@@ -69,6 +95,36 @@ export const router = createBrowserRouter([
               {
                 path: ROUTE_PATHS.gestionPersonal.empleados,
                 element: <EmpleadosPage />,
+              },
+            ],
+          },
+          {
+            element: (
+              <RoleRoute path={ROUTE_PATHS.gestionPersonal.nuevoEmpleado} />
+            ),
+            children: [
+              {
+                path: ROUTE_PATHS.gestionPersonal.nuevoEmpleado,
+                element: <NuevoEmpleadoPage />,
+              },
+            ],
+          },
+          {
+            element: (
+              <RoleRoute path={ROUTE_PATHS.gestionPersonal.detalleEmpleado} />
+            ),
+            children: [
+              {
+                path: ROUTE_PATHS.gestionPersonal.detalleEmpleado,
+                element: <EmpleadoDetalleLayout />,
+                // Cada pestaña de la ficha es una ruta hija con su propio permiso
+                children: [
+                  { index: true, element: <EmpleadoInformacionPage /> },
+                  ...DETALLE_EMPLEADO_TABS.map(({ path, element }) => ({
+                    element: <RoleRoute path={path} />,
+                    children: [{ path, element }],
+                  })),
+                ],
               },
             ],
           },

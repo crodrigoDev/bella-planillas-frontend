@@ -1,4 +1,4 @@
-import type { FilterOption } from "@/lib/types/filters.types";
+import type { SelectOption } from "@/lib/types/options.types";
 import type { EstadoLaboralEditable } from "../types/empleados.types";
 
 /**
@@ -20,7 +20,7 @@ export const ESTADO_LABORAL_OPTIONS: {
 /**
  * Motivos de baja que propone el diseño de Registrar cese
  */
-export const MOTIVO_BAJA_OPTIONS: FilterOption[] = [
+export const MOTIVO_BAJA_OPTIONS: SelectOption[] = [
   {
     value: "VENCIMIENTO_CONTRATO",
     label: "Vencimiento del plazo del contrato",
@@ -36,4 +36,23 @@ export const MOTIVO_BAJA_OPTIONS: FilterOption[] = [
     value: "PERIODO_PRUEBA",
     label: "Término de la relación durante el periodo de prueba",
   },
+];
+
+/**
+ * Opciones de sexo del formulario, con los valores que acepta el contrato
+ */
+export const SEXO_OPTIONS: SelectOption[] = [
+  { value: "MASCULINO", label: "Masculino" },
+  { value: "FEMENINO", label: "Femenino" },
+];
+
+/**
+ * Opciones de estado civil del formulario, con los valores que acepta el contrato
+ */
+export const ESTADO_CIVIL_OPTIONS: SelectOption[] = [
+  { value: "SOLTERO", label: "Soltero(a)" },
+  { value: "CASADO", label: "Casado(a)" },
+  { value: "CONVIVIENTE", label: "Conviviente" },
+  { value: "DIVORCIADO", label: "Divorciado(a)" },
+  { value: "VIUDO", label: "Viudo(a)" },
 ];

@@ -1,3 +1,4 @@
+import { LoadingButton } from "@/components/form/LoadingButton";
 import {
   Field,
   FieldError,
@@ -16,8 +17,6 @@ import {
   SelectValue,
   SelectItem,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
 import { Link } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -173,19 +172,15 @@ export default function LoginForm({ onSubmit }: LoginFormProps) {
           <FieldError id="login-password-error" errors={[errors.password]} />
         </Field>
 
-        <Button type="submit" disabled={isSubmitting} className="h-10 w-full">
-          {isSubmitting ? (
-            <>
-              <Spinner />
-              Ingresando…
-            </>
-          ) : (
-            <>
-              Ingresar
-              <ArrowRight aria-hidden="true" />
-            </>
-          )}
-        </Button>
+        <LoadingButton
+          type="submit"
+          isLoading={isSubmitting}
+          loadingText="Ingresando…"
+          icon={ArrowRight}
+          className="h-10 w-full"
+        >
+          Ingresar
+        </LoadingButton>
       </FieldGroup>
     </form>
   );

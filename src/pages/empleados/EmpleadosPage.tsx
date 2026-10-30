@@ -1,10 +1,13 @@
 import { useEffect } from "react";
+import { PlusIcon } from "lucide-react";
+import { Link } from "react-router-dom";
 import type { OnChangeFn, PaginationState } from "@tanstack/react-table";
-import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
+import { ROUTE_PATHS } from "@/app/routes/path";
 import { DataTable } from "@/components/data-table/DataTable";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ErrorAlert } from "@/components/feedback/ErrorAlert";
+import { PageHeader } from "@/components/page/PageHeader";
 import { Button } from "@/components/ui/button";
-import { EmpleadosToolbar } from "@/features/empleados/components/EmpleadosToolbar";
+import { EmpleadosToolbar } from "@/features/empleados/components/listado/EmpleadosToolbar";
 import { empleadosColumns } from "@/features/empleados/config/empleados.columns";
 import { useEmpleados } from "@/features/empleados/hooks/useEmpleados";
 import { useEmpleadosFilters } from "@/features/empleados/hooks/useEmpleadosFilters";
@@ -61,14 +64,20 @@ export default function EmpleadosPage() {
 
   return (
     <section className="space-y-4" aria-labelledby="empleados-title">
-      <header>
-        <h1 id="empleados-title" className="text-2xl font-semibold">
-          Empleados
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Colaboradores de la empresa
-        </p>
-      </header>
+      <PageHeader
+        id="empleados-title"
+        title="Empleados"
+        description="Colaboradores de la empresa"
+        action={
+          <Button
+            nativeButton={false}
+            render={<Link to={ROUTE_PATHS.gestionPersonal.nuevoEmpleado} />}
+          >
+            <PlusIcon data-icon="inline-start" />
+            Nuevo empleado
+          </Button>
+        }
+      />
 
       <EmpleadosToolbar
         filters={filters}
@@ -79,15 +88,15 @@ export default function EmpleadosPage() {
       />
 
       {isError && (
-        <Alert variant="destructive">
-          <AlertTitle>No se pudo cargar la lista de empleados</AlertTitle>
-          <AlertDescription className="flex items-center justify-between gap-2">
-            {getApiErrorMessage(error)}
+        <ErrorAlert
+          error={error}
+          title="No se pudo cargar la lista de empleados"
+          action={
             <Button variant="outline" size="sm" onClick={() => refetch()}>
               Reintentar
             </Button>
-          </AlertDescription>
-        </Alert>
+          }
+        />
       )}
 
       <DataTable
