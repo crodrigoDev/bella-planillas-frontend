@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { EmpleadoActions } from "../listado/EmpleadoActions";
 import { EmpleadoEstadoBadge } from "../listado/EmpleadoEstadoBadge";
+import { EmpleadoDetalleAcciones } from "./EmpleadoDetalleAcciones";
 import type { Empleado } from "../../types/empleados.types";
 import { getIniciales, getNombreCompleto } from "../../utils/empleados.utils";
 
@@ -38,7 +38,7 @@ export function EmpleadoDetalleHeader({ empleado }: EmpleadoDetalleHeaderProps) 
         </div>
       </div>
 
-      <EmpleadoActions empleado={empleado} showFicha={false} />
+      <EmpleadoDetalleAcciones empleado={empleado} />
     </header>
   );
 }

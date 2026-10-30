@@ -29,8 +29,6 @@ type EmpleadoModal = "estado" | "baja" | "reactivar";
 
 interface EmpleadoActionsProps {
   empleado: Empleado;
-  /** Muestra "Ver ficha"; se oculta en la propia ficha */
-  showFicha?: boolean;
 }
 
 /**
@@ -42,10 +40,7 @@ interface EmpleadoActionsProps {
  * "Editar" aparece como en el diseño, pero sigue deshabilitada hasta que
  * exista la edición.
  */
-export function EmpleadoActions({
-  empleado,
-  showFicha = true,
-}: EmpleadoActionsProps) {
+export function EmpleadoActions({ empleado }: EmpleadoActionsProps) {
   const [openModal, setOpenModal] = useState<EmpleadoModal | null>(null);
 
   const closeModal = (open: boolean) => {
@@ -68,14 +63,12 @@ export function EmpleadoActions({
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align="end">
-          {showFicha && (
-            <DropdownMenuItem
-              render={<Link to={buildEmpleadoPath(empleado.id)} />}
-            >
-              <IdCardIcon />
-              Ver ficha
-            </DropdownMenuItem>
-          )}
+          <DropdownMenuItem
+            render={<Link to={buildEmpleadoPath(empleado.id)} />}
+          >
+            <IdCardIcon />
+            Ver ficha
+          </DropdownMenuItem>
           <DropdownMenuItem disabled>
             <PencilIcon />
             Editar
