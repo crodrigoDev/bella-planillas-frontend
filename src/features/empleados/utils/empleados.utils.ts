@@ -1,5 +1,5 @@
 import { toTitleCase } from "@/lib/format.utils";
-import type { Empleado } from "../types/empleados.types";
+import type { Empleado, EmpleadoJornada } from "../types/empleados.types";
 
 const TURNO_LABELS: Record<string, string> = {
   MANANA: "Mañana",
@@ -19,6 +19,22 @@ export const formatTurno = (turno: string): string =>
   TURNO_LABELS[turno] ?? turno;
 
 /**
+ * Arma el texto de la jornada de un empleado
+ *
+ * @example "Administrativa (Mañana)"
+ *
+ * @remarks
+ * El turno solo llega en el detalle; si falta, se muestra solo el nombre.
+ */
+export const formatJornada = (jornada: EmpleadoJornada | null): string => {
+  if (!jornada) return "Sin jornada";
+
+  return jornada.turno
+    ? `${jornada.nombre} (${formatTurno(jornada.turno)})`
+    : jornada.nombre;
+};
+
+/**
  * Arma el nombre completo de un empleado para mostrarlo
  *
  * @example "Carlos Andrés Méndez Ruiz"
@@ -27,20 +43,27 @@ export const formatTurno = (turno: string): string =>
  * El backend guarda los nombres en mayúsculas; aquí se muestran como nombre propio.
  */
 export const getNombreCompleto = ({
-  nombre,
-  apellido,
-}: Pick<Empleado, "nombre" | "apellido">): string =>
-  toTitleCase(`${nombre} ${apellido}`);
+  nombre_completo,
+}: Pick<Empleado, "nombre_completo">): string => toTitleCase(nombre_completo);
 
 /**
- * Obtiene las iniciales de un empleado: la del primer nombre y la del primer apellido
+ * Obtiene las iniciales de un empleado
  *
  * @example "CM" para "Carlos Andrés" y "Méndez Ruiz"
+ *
+ * @remarks
+ * El listado solo trae el nombre completo, así que se toma la primera letra de la
+ * primera y de la última palabra. Si el backend envía nombre y apellido por
+ * separado (la ficha), se usan esos.
  */
 export const getIniciales = ({
   nombre,
   apellido,
-}: Pick<Empleado, "nombre" | "apellido">): string =>
-  `${nombre.trim().charAt(0)}${apellido.trim().charAt(0)}`.toLocaleUpperCase(
-    "es-PE",
-  );
+  nombre_completo,
+}: Pick<Empleado, "nombre" | "apellido" | "nombre_completo">): string => {
+  const palabras = nombre_completo.trim().split(/\s+/);
+  const primera = nombre?.trim() || palabras[0] || "";
+  const segunda = apellido?.trim() || (palabras.length > 1 ? palabras.at(-1)! : "");
+
+  return `${primera.charAt(0)}${segunda.charAt(0)}`.toLocaleUpperCase("es-PE");
+};

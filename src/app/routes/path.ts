@@ -16,6 +16,7 @@ export const ROUTE_PATHS = {
     empleados: "/empleados",
     nuevoEmpleado: "/empleados/nuevo",
     detalleEmpleado: "/empleados/:id",
+    editarEmpleado: "/empleados/:id/editar",
     detalleEmpleadoContratos: "/empleados/:id/contratos",
     detalleEmpleadoDerechohabientes: "/empleados/:id/derechohabientes",
     detalleEmpleadoAsistencia: "/empleados/:id/asistencia",
@@ -45,3 +46,9 @@ export const ROUTE_PATHS = {
  */
 export const buildEmpleadoPath = (id: string, section?: string): string =>
   `${ROUTE_PATHS.gestionPersonal.empleados}/${id}${section ? `/${section}` : ""}`;
+
+/**
+ * Arma la ruta de la edición de un empleado
+ */
+export const buildEditarEmpleadoPath = (id: string): string =>
+  buildEmpleadoPath(id, "editar");

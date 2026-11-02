@@ -1,15 +1,19 @@
 import type {
   CambiarEstadoLaboralDto,
   DesactivarEmpleadoDto,
+  EditarEmpleadoDto,
 } from "@jyp/shared-contracts";
-import type { PaginationApiResponse } from "@/lib/api/types/api.types";
+import { isAxiosError } from "axios";
+import type {
+  ApiResponse,
+  PaginationApiResponse,
+} from "@/lib/api/types/api.types";
 import type {
   Empleado,
   EmpleadoFilters,
   EmpleadosPage,
 } from "../types/empleados.types";
 import { protectedHttpClient } from "@/lib/api/protected-http-client";
-import { CATALOGO_LIMIT } from "@/lib/catalogos.utils";
 
 /**
  * Agrupa las operaciones de empleados que se comunican al backend
@@ -39,33 +43,32 @@ export const empleadosService = {
   },
 
   /**
-   * Busca un empleado por su id
+   * Busca un empleado por su id con todos sus datos (personales, domicilio y laborales)
    *
    * @returns El empleado, o null si no existe
-   *
-   * @remarks
-   * TEMPORAL: el backend todavía no tiene `GET /rrhh/empleado/:id`. Recorre
-   * el listado de 100 en 100 hasta encontrarlo. Cuando exista el endpoint,
-   * se reemplaza el cuerpo por una sola llamada y nada más cambia.
    */
   getById: async (id: string): Promise<Empleado | null> => {
-    let page = 1;
-    let totalPages = 1;
+    try {
+      const response = await protectedHttpClient.get<ApiResponse<Empleado>>(
+        `/rrhh/empleado/${id}`,
+      );
 
-    while (page <= totalPages) {
-      const result = await empleadosService.list({
-        page,
-        limit: CATALOGO_LIMIT,
-      });
-      const found = result.items.find((empleado) => empleado.id === id);
+      return response.data.data;
+    } catch (error) {
+      if (isAxiosError(error) && error.response?.status === 404) return null;
 
-      if (found) return found;
-
-      totalPages = result.pagination.totalPages;
-      page += 1;
+      throw error;
     }
+  },
 
-    return null;
+  /**
+   * Actualiza los datos del empleado (no toca contratos, derechohabientes ni datos financieros)
+   *
+   * @param id - Identificador del empleado
+   * @param dto - Campos a cambiar; los que no se envían quedan igual
+   */
+  editar: async (id: string, dto: EditarEmpleadoDto): Promise<void> => {
+    await protectedHttpClient.put(`/rrhh/empleado/${id}`, dto);
   },
 
   /**

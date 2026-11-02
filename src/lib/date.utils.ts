@@ -16,6 +16,14 @@ export const getTodayIsoDate = (): string => {
 };
 
 /**
+ * Recorta una fecha ISO a AAAA-MM-DD, el único formato que acepta `<input type="date">`
+ *
+ * @returns La fecha recortada, o texto vacío si no hay fecha
+ */
+export const toDateInput = (isoDate: string | null | undefined): string =>
+  isoDate?.slice(0, 10) ?? "";
+
+/**
  * Calcula los años cumplidos entre una fecha de nacimiento y otra fecha
  *
  * @param birthIsoDate - Fecha de nacimiento (YYYY-MM-DD)

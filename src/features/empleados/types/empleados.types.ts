@@ -26,7 +26,8 @@ export interface EmpleadoRelacion {
  * Jornada asignada al empleado
  */
 export interface EmpleadoJornada extends EmpleadoRelacion {
-  turno: string;
+  /** El listado solo envía id y nombre; el turno llega en el detalle */
+  turno?: string;
 }
 
 /**
@@ -39,12 +40,16 @@ export interface EmpleadoJornada extends EmpleadoRelacion {
 export interface Empleado {
   id: string;
   estado_laboral: EstadoLaboral;
-  nombre: string;
-  apellido: string;
+  nombre_completo: string;
+  /** Solo los envía el detalle; el listado trae únicamente `nombre_completo` */
+  nombre?: string;
+  apellido?: string;
   nro_documento: string;
   email: string | null;
   telefono: string | null;
   documento_id?: string;
+  /** Solo lo envía el detalle: el tipo con su nombre ("DNI") */
+  tipo_documento?: { id: string; tipo_documento: string };
   sexo?: string | null;
   estado_civil?: string | null;
   nacionalidad?: string | null;

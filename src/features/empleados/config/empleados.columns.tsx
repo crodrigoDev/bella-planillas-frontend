@@ -7,11 +7,7 @@ import { formatDate } from "@/lib/format.utils";
 import { EmpleadoEstadoBadge } from "../components/listado/EmpleadoEstadoBadge";
 import { EmpleadoActions } from "../components/listado/EmpleadoActions";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import {
-  formatTurno,
-  getIniciales,
-  getNombreCompleto,
-} from "../utils/empleados.utils";
+import { getIniciales, getNombreCompleto } from "../utils/empleados.utils";
 
 const columnHelper = createColumnHelper<DataTableFeatures, Empleado>();
 
@@ -63,21 +59,15 @@ export const empleadosColumns = columnHelper.columns([
     },
   }),
   columnHelper.display({
-    id: "jornadaTurno",
-    header: "Jornada y turno",
+    id: "jornada",
+    header: "Jornada",
     cell: ({ row }) => {
       const { jornada } = row.original;
 
-      if (!jornada)
-        return <span className="text-muted-foreground">Sin jornada</span>;
-
-      return (
-        <div className="flex flex-col">
-          <span>{jornada.nombre}</span>
-          <span className="text-xs text-muted-foreground">
-            {formatTurno(jornada.turno)}
-          </span>
-        </div>
+      return jornada ? (
+        <span>{jornada.nombre}</span>
+      ) : (
+        <span className="text-muted-foreground">Sin jornada</span>
       );
     },
   }),

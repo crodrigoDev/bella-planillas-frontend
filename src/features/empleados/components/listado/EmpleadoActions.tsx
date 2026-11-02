@@ -10,7 +10,7 @@ import {
 
 import { Link } from "react-router-dom";
 
-import { buildEmpleadoPath } from "@/app/routes/path";
+import { buildEditarEmpleadoPath, buildEmpleadoPath } from "@/app/routes/path";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -21,11 +21,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import type { Empleado } from "../../types/empleados.types";
 import { getNombreCompleto } from "../../utils/empleados.utils";
-import { CambiarEstadoModal } from "../modals/CambiarEstadoModal";
-import { DarDeBajaModal } from "../modals/DarDeBajaModal";
-import { ReactivarModal } from "../modals/ReactivarModal";
-
-type EmpleadoModal = "estado" | "baja" | "reactivar";
+import {
+  EmpleadoModales,
+  type EmpleadoModal,
+} from "../modals/EmpleadoModales";
 
 interface EmpleadoActionsProps {
   empleado: Empleado;
@@ -37,15 +36,11 @@ interface EmpleadoActionsProps {
  * @remarks
  * Un empleado activo puede cambiar de estado o darse de baja; uno inactivo
  * solo puede reactivarse, porque el backend rechaza las demás operaciones.
- * "Editar" aparece como en el diseño, pero sigue deshabilitada hasta que
- * exista la edición.
  */
 export function EmpleadoActions({ empleado }: EmpleadoActionsProps) {
   const [openModal, setOpenModal] = useState<EmpleadoModal | null>(null);
 
-  const closeModal = (open: boolean) => {
-    if (!open) setOpenModal(null);
-  };
+  const closeModal = () => setOpenModal(null);
 
   return (
     <>
@@ -69,7 +64,9 @@ export function EmpleadoActions({ empleado }: EmpleadoActionsProps) {
             <IdCardIcon />
             Ver ficha
           </DropdownMenuItem>
-          <DropdownMenuItem disabled>
+          <DropdownMenuItem
+            render={<Link to={buildEditarEmpleadoPath(empleado.id)} />}
+          >
             <PencilIcon />
             Editar
           </DropdownMenuItem>
@@ -99,20 +96,10 @@ export function EmpleadoActions({ empleado }: EmpleadoActionsProps) {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <CambiarEstadoModal
+      <EmpleadoModales
         empleado={empleado}
-        open={openModal === "estado"}
-        onOpenChange={closeModal}
-      />
-      <DarDeBajaModal
-        empleado={empleado}
-        open={openModal === "baja"}
-        onOpenChange={closeModal}
-      />
-      <ReactivarModal
-        empleado={empleado}
-        open={openModal === "reactivar"}
-        onOpenChange={closeModal}
+        openModal={openModal}
+        onClose={closeModal}
       />
     </>
   );

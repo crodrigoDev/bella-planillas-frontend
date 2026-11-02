@@ -18,6 +18,12 @@ export const formatDate = (isoDate: string | null | undefined): string => {
   return `${day}/${month}/${year}`;
 };
 
+/**
+ * Muestra un guion cuando el dato no existe o está vacío
+ */
+export const orDash = (value: string | null | undefined): string =>
+  value || EMPTY_VALUE;
+
 // Palabras que van en minúscula dentro de un nombre ("Juan de la Cruz")
 const NAME_PARTICLES = new Set(["de", "del", "la", "las", "los", "y"]);
 

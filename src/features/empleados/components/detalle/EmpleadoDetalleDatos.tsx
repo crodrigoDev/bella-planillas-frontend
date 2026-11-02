@@ -1,21 +1,17 @@
 import { FormSection } from "@/components/form/FormSection";
 import { getOptionLabel } from "@/lib/catalogos.utils";
-import { formatDate } from "@/lib/format.utils";
+import { formatDate, orDash } from "@/lib/format.utils";
 import {
   ESTADO_CIVIL_OPTIONS,
   SEXO_OPTIONS,
 } from "../../config/empleados.config";
-import { useTiposDocumento } from "../../hooks/useCatalogos";
 import type { Empleado } from "../../types/empleados.types";
-import { formatTurno, getNombreCompleto } from "../../utils/empleados.utils";
+import { formatJornada, getNombreCompleto } from "../../utils/empleados.utils";
 import { ResumenCampo } from "@/components/form/ResumenCampo";
 
 interface EmpleadoDetalleDatosProps {
   empleado: Empleado;
 }
-
-// Un dato que no se registró se muestra con un guion
-const orDash = (value: string | null | undefined): string => value || "--";
 
 /**
  * Datos del empleado en la ficha: personales, contacto y domicilio, y laborales
@@ -24,8 +20,6 @@ const orDash = (value: string | null | undefined): string => value || "--";
  * Solo lectura. Usa los mismos bloques que el resumen del registro.
  */
 export function EmpleadoDetalleDatos({ empleado }: EmpleadoDetalleDatosProps) {
-  const tiposDocumento = useTiposDocumento();
-
   return (
     <div className="space-y-6">
       <FormSection
@@ -34,7 +28,7 @@ export function EmpleadoDetalleDatos({ empleado }: EmpleadoDetalleDatosProps) {
       >
         <ResumenCampo
           label="Tipo de documento"
-          value={getOptionLabel(tiposDocumento.data, empleado.documento_id)}
+          value={orDash(empleado.tipo_documento?.tipo_documento)}
         />
         <ResumenCampo label="Nº de documento" value={empleado.nro_documento} />
         <ResumenCampo
@@ -92,11 +86,7 @@ export function EmpleadoDetalleDatos({ empleado }: EmpleadoDetalleDatosProps) {
         <ResumenCampo label="Cargo" value={empleado.cargo.nombre} />
         <ResumenCampo
           label="Jornada"
-          value={
-            empleado.jornada
-              ? `${empleado.jornada.nombre} (${formatTurno(empleado.jornada.turno)})`
-              : "Sin jornada"
-          }
+          value={formatJornada(empleado.jornada)}
         />
         <ResumenCampo
           label="Inicio de labores"

@@ -1,6 +1,6 @@
 import { FormSection } from "@/components/form/FormSection";
 import { getOptionLabel } from "@/lib/catalogos.utils";
-import { formatDate } from "@/lib/format.utils";
+import { formatDate, orDash } from "@/lib/format.utils";
 import { useModalidadesContrato } from "@/features/contratos/hooks/useCatalogos";
 import type { DatosContratoDraft } from "../../../schemas/datosContrato.schema";
 import { ResumenCampo } from "@/components/form/ResumenCampo";
@@ -34,7 +34,7 @@ export function ResumenContrato({ contrato }: ResumenContratoProps) {
       />
       <ResumenCampo
         label="Observación"
-        value={contrato.observacion ?? "--"}
+        value={orDash(contrato.observacion)}
         className="col-span-full"
       />
     </FormSection>
