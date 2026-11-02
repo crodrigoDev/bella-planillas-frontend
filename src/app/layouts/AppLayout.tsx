@@ -23,9 +23,6 @@ import { NotificacionesButton } from "@/features/notificaciones/components/Notif
 const getAccessToken = (): string | null =>
   useAuthStore.getState().session?.accessToken ?? null;
 
-/**
- * Comparte el sidebar y la estructura principal entre las páginas internas
- */
 export default function AppLayout() {
   const { session, logout } = useAuth();
 
@@ -82,7 +79,10 @@ export default function AppLayout() {
         </header>
 
         <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4 sm:p-6 lg:p-10">
-          <ErrorAlert error={logoutMutation.error} title="No se pudo cerrar sesión" />
+          <ErrorAlert
+            error={logoutMutation.error}
+            title="No se pudo cerrar sesión"
+          />
 
           <Outlet />
         </div>
