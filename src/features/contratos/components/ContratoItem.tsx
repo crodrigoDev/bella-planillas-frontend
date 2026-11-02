@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { EllipsisVerticalIcon, PencilIcon, RefreshCwIcon } from "lucide-react";
+import {
+  BanIcon,
+  EllipsisVerticalIcon,
+  PencilIcon,
+  RefreshCwIcon,
+} from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -52,6 +57,14 @@ export function ContratoItem({
         Renovar
       </DropdownMenuItem>
     ),
+    <DropdownMenuItem
+      key="anular"
+      variant="destructive"
+      onClick={() => setOpenModal("anular")}
+    >
+      <BanIcon />
+      Anular
+    </DropdownMenuItem>,
   ].filter(Boolean);
 
   return (
