@@ -63,10 +63,3 @@ export function useSubirContratoPdf(id: string) {
     },
   });
 }
-
-/** Descarga el PDF de un contrato para mostrarlo */
-export function useDescargarContratoPdf(id: string) {
-  return useMutation({
-    mutationFn: () => contratosService.descargarPdf(id),
-  });
-}
