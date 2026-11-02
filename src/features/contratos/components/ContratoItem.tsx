@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { EllipsisVerticalIcon, PencilIcon } from "lucide-react";
+import { EllipsisVerticalIcon, PencilIcon, RefreshCwIcon } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ import {
 } from "../config/contratos.config";
 import { useModalidadesContrato } from "../hooks/useCatalogos";
 import type { Contrato } from "../types/contratos.types";
-import { puedeEditar } from "../utils/contratos.utils";
+import { puedeEditar, puedeRenovar } from "../utils/contratos.utils";
 import {
   ContratoModales,
   type ContratoModal,
@@ -32,7 +32,10 @@ interface ContratoItemProps {
 /**
  * Un contrato en la lista de la ficha, con su estado y el menú de acciones
  */
-export function ContratoItem({ contrato }: ContratoItemProps) {
+export function ContratoItem({
+  contrato,
+  empleadoActivo,
+}: ContratoItemProps) {
   const [openModal, setOpenModal] = useState<ContratoModal | null>(null);
   const modalidades = useModalidadesContrato();
 
@@ -41,6 +44,12 @@ export function ContratoItem({ contrato }: ContratoItemProps) {
       <DropdownMenuItem key="editar" onClick={() => setOpenModal("editar")}>
         <PencilIcon />
         Editar
+      </DropdownMenuItem>
+    ),
+    puedeRenovar(contrato, empleadoActivo) && (
+      <DropdownMenuItem key="renovar" onClick={() => setOpenModal("renovar")}>
+        <RefreshCwIcon />
+        Renovar
       </DropdownMenuItem>
     ),
   ].filter(Boolean);
