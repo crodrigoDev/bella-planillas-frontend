@@ -2,7 +2,7 @@ import type { CrearEmpleadoDto } from "@jyp/shared-contracts";
 
 import { FormSection } from "@/components/form/FormSection";
 import { getOptionLabel } from "@/lib/catalogos.utils";
-import { formatDate } from "@/lib/format.utils";
+import { formatDate, orDash } from "@/lib/format.utils";
 import { ESTADO_CIVIL_OPTIONS, SEXO_OPTIONS } from "../../../config/empleados.config";
 import { useEmpleadosCatalogos, useTiposDocumento } from "../../../hooks/useCatalogos";
 import { ResumenCampo } from "@/components/form/ResumenCampo";
@@ -38,7 +38,7 @@ export function ResumenEmpleado({ datos }: ResumenEmpleadoProps) {
         label="Estado civil"
         value={getOptionLabel(ESTADO_CIVIL_OPTIONS, datos.estado_civil)}
       />
-      <ResumenCampo label="Nacionalidad" value={datos.nacionalidad ?? "--"} />
+      <ResumenCampo label="Nacionalidad" value={orDash(datos.nacionalidad)} />
       <ResumenCampo
         label="Fecha de nacimiento"
         value={formatDate(datos.fecha_nacimiento)}

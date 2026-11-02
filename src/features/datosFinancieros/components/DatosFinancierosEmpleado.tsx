@@ -2,7 +2,7 @@ import { DetalleTabEstado } from "@/components/feedback/DetalleTabEstado";
 import { FormSection } from "@/components/form/FormSection";
 import { ResumenCampo } from "@/components/form/ResumenCampo";
 import { getOptionLabel } from "@/lib/catalogos.utils";
-import { formatCurrency, maskEnd } from "@/lib/format.utils";
+import { formatCurrency, maskEnd, orDash } from "@/lib/format.utils";
 import {
   REGIMEN_PENSION_LABELS,
   REGIMEN_SALUD_OPTIONS,
@@ -15,8 +15,6 @@ import { useDatosFinancierosEmpleado } from "../hooks/useDatosFinancieros";
 interface DatosFinancierosEmpleadoProps {
   empleadoId: string;
 }
-
-const orDash = (value: string | null | undefined): string => value || "--";
 
 /**
  * Pestaña Datos financieros de la ficha: pensiones, sueldo, cuentas y salud

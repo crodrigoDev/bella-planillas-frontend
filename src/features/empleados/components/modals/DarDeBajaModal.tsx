@@ -12,7 +12,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -21,7 +26,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getTodayIsoDate } from "@/lib/date.utils";
+import { getTodayIsoDate, toDateInput } from "@/lib/date.utils";
+import { formatDate } from "@/lib/format.utils";
 import { MOTIVO_BAJA_OPTIONS } from "../../config/empleados.config";
 import { useDesactivarEmpleado } from "../../hooks/useEmpleadoActions";
 import type { Empleado } from "../../types/empleados.types";
@@ -65,6 +71,8 @@ interface DarDeBajaFormProps {
 function DarDeBajaForm({ empleado, onClose }: DarDeBajaFormProps) {
   const today = getTodayIsoDate();
 
+  const fechaInicio = toDateInput(empleado.fecha_inicio);
+
   const [fechaCese, setFechaCese] = useState(today);
   const [motivo, setMotivo] = useState<string | null>(null);
   const mutation = useDesactivarEmpleado();
@@ -73,10 +81,15 @@ function DarDeBajaForm({ empleado, onClose }: DarDeBajaFormProps) {
     (option) => option.value === motivo,
   )?.label;
 
+  // Las fechas AAAA-MM-DD se comparan bien como texto
+  const fechaFueraDeRango =
+    Boolean(fechaCese) &&
+    ((Boolean(fechaInicio) && fechaCese < fechaInicio) || fechaCese > today);
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!fechaCese || !motivoLabel) return;
+    if (!fechaCese || !motivoLabel || fechaFueraDeRango) return;
 
     mutation.mutate(
       {
@@ -126,14 +139,23 @@ function DarDeBajaForm({ empleado, onClose }: DarDeBajaFormProps) {
           value={fechaCese}
           onChange={(event) => setFechaCese(event.target.value)}
           // No puede ser anterior al ingreso ni posterior a hoy
-          min={empleado.fecha_inicio?.slice(0, 10)}
+          min={fechaInicio || undefined}
           max={today}
+          aria-invalid={fechaFueraDeRango}
           required
           disabled={mutation.isPending}
         />
-        <FieldDescription>
-          La baja se aplica al confirmar; por eso no se permiten fechas futuras.
-        </FieldDescription>
+        {fechaFueraDeRango ? (
+          <FieldError>
+            {fechaCese > today
+              ? "La fecha no puede ser posterior a hoy."
+              : `La fecha no puede ser anterior al ingreso (${formatDate(fechaInicio)}).`}
+          </FieldError>
+        ) : (
+          <FieldDescription>
+            La baja se aplica al confirmar; por eso no se permiten fechas futuras.
+          </FieldDescription>
+        )}
       </Field>
 
       <ErrorAlert error={mutation.error} />
@@ -149,7 +171,7 @@ function DarDeBajaForm({ empleado, onClose }: DarDeBajaFormProps) {
           type="submit"
           variant="destructive"
           isLoading={mutation.isPending}
-          disabled={!fechaCese || !motivo}
+          disabled={!fechaCese || !motivo || fechaFueraDeRango}
         >
           Dar de baja
         </LoadingButton>

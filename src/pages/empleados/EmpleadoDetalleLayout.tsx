@@ -2,10 +2,8 @@ import { ArrowLeftIcon } from "lucide-react";
 import { Link, Outlet, useParams } from "react-router-dom";
 
 import { ROUTE_PATHS, buildEmpleadoPath } from "@/app/routes/path";
-import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { PageTabs, type PageTab } from "@/components/page/PageTabs";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import { EmpleadoCargaEstado } from "@/features/empleados/components/detalle/EmpleadoCargaEstado";
 import { EmpleadoDetalleHeader } from "@/features/empleados/components/detalle/EmpleadoDetalleHeader";
 import { useEmpleado } from "@/features/empleados/hooks/useEmpleado";
 
@@ -42,37 +40,21 @@ export default function EmpleadoDetalleLayout() {
         Volver a Empleados
       </Link>
 
-      {isLoading ? (
-        <div className="space-y-6" aria-busy>
-          <Skeleton className="h-14 w-80" />
-          <Skeleton className="h-64 w-full" />
-        </div>
-      ) : isError ? (
-        <ErrorAlert
-          error={error}
-          title="No se pudo cargar al empleado"
-          action={
-            <Button variant="outline" size="sm" onClick={() => refetch()}>
-              Reintentar
-            </Button>
-          }
-        />
-      ) : !empleado || !id ? (
-        <div className="space-y-1 py-12 text-center">
-          <h1 id="empleado-title" className="text-xl font-semibold">
-            No se encontró al empleado
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Puede que ya no exista o que el enlace no sea correcto.
-          </p>
-        </div>
-      ) : (
-        <>
-          <EmpleadoDetalleHeader empleado={empleado} />
-          <PageTabs label="Secciones de la ficha" tabs={getTabs(id)} />
-          <Outlet />
-        </>
-      )}
+      <EmpleadoCargaEstado
+        isLoading={isLoading}
+        error={isError ? error : null}
+        onRetry={refetch}
+        empleado={empleado}
+        titleId="empleado-title"
+      >
+        {(empleado) => (
+          <>
+            <EmpleadoDetalleHeader empleado={empleado} />
+            <PageTabs label="Secciones de la ficha" tabs={getTabs(empleado.id)} />
+            <Outlet />
+          </>
+        )}
+      </EmpleadoCargaEstado>
     </section>
   );
 }

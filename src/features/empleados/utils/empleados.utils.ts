@@ -1,5 +1,5 @@
 import { toTitleCase } from "@/lib/format.utils";
-import type { Empleado } from "../types/empleados.types";
+import type { Empleado, EmpleadoJornada } from "../types/empleados.types";
 
 const TURNO_LABELS: Record<string, string> = {
   MANANA: "Mañana",
@@ -17,6 +17,22 @@ const TURNO_LABELS: Record<string, string> = {
  */
 export const formatTurno = (turno: string): string =>
   TURNO_LABELS[turno] ?? turno;
+
+/**
+ * Arma el texto de la jornada de un empleado
+ *
+ * @example "Administrativa (Mañana)"
+ *
+ * @remarks
+ * El turno solo llega en el detalle; si falta, se muestra solo el nombre.
+ */
+export const formatJornada = (jornada: EmpleadoJornada | null): string => {
+  if (!jornada) return "Sin jornada";
+
+  return jornada.turno
+    ? `${jornada.nombre} (${formatTurno(jornada.turno)})`
+    : jornada.nombre;
+};
 
 /**
  * Arma el nombre completo de un empleado para mostrarlo

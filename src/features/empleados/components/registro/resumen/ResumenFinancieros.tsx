@@ -1,6 +1,6 @@
 import { FormSection } from "@/components/form/FormSection";
 import { getOptionLabel } from "@/lib/catalogos.utils";
-import { formatCurrency, formatDate, maskEnd } from "@/lib/format.utils";
+import { formatCurrency, formatDate, maskEnd, orDash } from "@/lib/format.utils";
 import {
   REGIMEN_PENSION_LABELS,
   REGIMEN_SALUD_OPTIONS,
@@ -101,8 +101,8 @@ export function ResumenFinancieros({ datos }: ResumenFinancierosProps) {
       />
       {conEps && (
         <>
-          <ResumenCampo label="Entidad EPS" value={datos.eps_nombre ?? "--"} />
-          <ResumenCampo label="Plan contratado" value={datos.eps_plan ?? "--"} />
+          <ResumenCampo label="Entidad EPS" value={orDash(datos.eps_nombre)} />
+          <ResumenCampo label="Plan contratado" value={orDash(datos.eps_plan)} />
           <ResumenCampo
             label="Copago mensual"
             value={formatCurrency(datos.eps_costo_adicional)}

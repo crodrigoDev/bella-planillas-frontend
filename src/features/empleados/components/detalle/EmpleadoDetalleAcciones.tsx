@@ -10,11 +10,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import type { Empleado } from "../../types/empleados.types";
-import { CambiarEstadoModal } from "../modals/CambiarEstadoModal";
-import { DarDeBajaModal } from "../modals/DarDeBajaModal";
-import { ReactivarModal } from "../modals/ReactivarModal";
-
-type EmpleadoModal = "estado" | "baja" | "reactivar";
+import {
+  EmpleadoModales,
+  type EmpleadoModal,
+} from "../modals/EmpleadoModales";
 
 interface EmpleadoDetalleAccionesProps {
   empleado: Empleado;
@@ -33,9 +32,7 @@ export function EmpleadoDetalleAcciones({
 }: EmpleadoDetalleAccionesProps) {
   const [openModal, setOpenModal] = useState<EmpleadoModal | null>(null);
 
-  const closeModal = (open: boolean) => {
-    if (!open) setOpenModal(null);
-  };
+  const closeModal = () => setOpenModal(null);
 
   return (
     <div className="flex items-center gap-2">
@@ -88,20 +85,10 @@ export function EmpleadoDetalleAcciones({
         </TooltipContent>
       </Tooltip>
 
-      <CambiarEstadoModal
+      <EmpleadoModales
         empleado={empleado}
-        open={openModal === "estado"}
-        onOpenChange={closeModal}
-      />
-      <DarDeBajaModal
-        empleado={empleado}
-        open={openModal === "baja"}
-        onOpenChange={closeModal}
-      />
-      <ReactivarModal
-        empleado={empleado}
-        open={openModal === "reactivar"}
-        onOpenChange={closeModal}
+        openModal={openModal}
+        onClose={closeModal}
       />
     </div>
   );

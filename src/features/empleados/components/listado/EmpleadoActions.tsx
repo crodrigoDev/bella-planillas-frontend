@@ -21,11 +21,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import type { Empleado } from "../../types/empleados.types";
 import { getNombreCompleto } from "../../utils/empleados.utils";
-import { CambiarEstadoModal } from "../modals/CambiarEstadoModal";
-import { DarDeBajaModal } from "../modals/DarDeBajaModal";
-import { ReactivarModal } from "../modals/ReactivarModal";
-
-type EmpleadoModal = "estado" | "baja" | "reactivar";
+import {
+  EmpleadoModales,
+  type EmpleadoModal,
+} from "../modals/EmpleadoModales";
 
 interface EmpleadoActionsProps {
   empleado: Empleado;
@@ -41,9 +40,7 @@ interface EmpleadoActionsProps {
 export function EmpleadoActions({ empleado }: EmpleadoActionsProps) {
   const [openModal, setOpenModal] = useState<EmpleadoModal | null>(null);
 
-  const closeModal = (open: boolean) => {
-    if (!open) setOpenModal(null);
-  };
+  const closeModal = () => setOpenModal(null);
 
   return (
     <>
@@ -99,20 +96,10 @@ export function EmpleadoActions({ empleado }: EmpleadoActionsProps) {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <CambiarEstadoModal
+      <EmpleadoModales
         empleado={empleado}
-        open={openModal === "estado"}
-        onOpenChange={closeModal}
-      />
-      <DarDeBajaModal
-        empleado={empleado}
-        open={openModal === "baja"}
-        onOpenChange={closeModal}
-      />
-      <ReactivarModal
-        empleado={empleado}
-        open={openModal === "reactivar"}
-        onOpenChange={closeModal}
+        openModal={openModal}
+        onClose={closeModal}
       />
     </>
   );

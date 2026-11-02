@@ -12,6 +12,7 @@ import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { LoadingButton } from "@/components/form/LoadingButton";
 import { StepperFooter } from "@/components/stepper/StepperFooter";
 import { Button } from "@/components/ui/button";
+import { toDateInput } from "@/lib/date.utils";
 import { zodResolverOptions } from "@/lib/zodMessages.utils";
 import { useEditarEmpleado } from "../../hooks/useEditarEmpleado";
 import type { Empleado } from "../../types/empleados.types";
@@ -20,10 +21,6 @@ import { DatosEmpleadoCampos } from "../registro/DatosEmpleadoCampos";
 const resolver = zodResolver(EditarEmpleadoSchema, zodResolverOptions);
 
 type EditarEmpleadoFormValues = Parameters<typeof resolver>[0];
-
-// Las fechas pueden llegar con hora; el campo de fecha solo acepta AAAA-MM-DD
-const toDateInput = (value: string | null | undefined): string =>
-  value?.slice(0, 10) ?? "";
 
 /** Convierte al empleado de la ficha en los valores iniciales del formulario */
 const toFormValues = (empleado: Empleado): EditarEmpleadoFormValues => ({
