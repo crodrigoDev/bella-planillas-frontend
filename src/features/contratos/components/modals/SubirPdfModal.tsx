@@ -1,6 +1,7 @@
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
+import { FileDropzone } from "@/components/form/FileDropzone";
 import { LoadingButton } from "@/components/form/LoadingButton";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,7 +14,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { PDF_MAX_BYTES } from "../../config/contratos.config";
 import { useSubirContratoPdf } from "../../hooks/useContratoActions";
 import type { Contrato } from "../../types/contratos.types";
@@ -70,10 +70,6 @@ function SubirPdfForm({ contrato, onClose }: SubirPdfFormProps) {
 
   const archivoError = getArchivoError(file);
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setFile(event.target.files?.[0] ?? null);
-  };
-
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -94,12 +90,13 @@ function SubirPdfForm({ contrato, onClose }: SubirPdfFormProps) {
 
       <Field>
         <FieldLabel htmlFor="contrato-pdf">Archivo PDF</FieldLabel>
-        <Input
+        <FileDropzone
           id="contrato-pdf"
-          type="file"
+          file={file}
+          onChange={setFile}
           accept="application/pdf"
-          onChange={handleChange}
-          aria-invalid={Boolean(archivoError)}
+          hint="Únicamente archivos PDF"
+          invalid={Boolean(archivoError)}
           disabled={mutation.isPending}
         />
         {archivoError && <FieldError>{archivoError}</FieldError>}

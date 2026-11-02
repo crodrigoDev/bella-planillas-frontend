@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { LoadingButton } from "@/components/form/LoadingButton";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,7 +15,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { getTodayIsoDate, toDateInput } from "@/lib/date.utils";
+import { formatDate } from "@/lib/format.utils";
 import { zodResolverOptions } from "@/lib/zodMessages.utils";
+import {
+  ESTADO_CONTRATO_LABELS,
+  ESTADO_CONTRATO_STYLES,
+} from "../../config/contratos.config";
 import { useRenovarContrato } from "../../hooks/useContratoActions";
 import { RenovarContratoFormSchema } from "../../schemas/contrato.schema";
 import type { Contrato } from "../../types/contratos.types";
@@ -101,6 +107,25 @@ function RenovarContratoForm({ contrato, onClose }: RenovarContratoFormProps) {
             nuevo contrato queda pendiente de PDF.
           </DialogDescription>
         </DialogHeader>
+
+        <div className="flex items-center justify-between gap-3 rounded-lg border bg-muted/40 px-3 py-2.5">
+          <div>
+            <p className="text-xs text-muted-foreground">
+              Contrato anterior a renovar
+            </p>
+            <p className="text-sm font-medium">
+              {contrato.fecha_fin
+                ? `${formatDate(contrato.fecha_inicio)} - ${formatDate(contrato.fecha_fin)}`
+                : `Desde el ${formatDate(contrato.fecha_inicio)}, sin fecha de fin`}
+            </p>
+          </div>
+          <Badge
+            variant="outline"
+            className={ESTADO_CONTRATO_STYLES[contrato.estado]}
+          >
+            {ESTADO_CONTRATO_LABELS[contrato.estado]}
+          </Badge>
+        </div>
 
         <ContratoCampos />
 
