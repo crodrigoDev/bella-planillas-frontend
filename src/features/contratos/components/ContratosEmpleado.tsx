@@ -1,83 +1,74 @@
-import { Badge } from "@/components/ui/badge";
-import { getOptionLabel } from "@/lib/catalogos.utils";
-import { formatDate } from "@/lib/format.utils";
+import { useState } from "react";
+import { PlusIcon } from "lucide-react";
+
 import { DetalleTabEstado } from "@/components/feedback/DetalleTabEstado";
-import { useModalidadesContrato } from "../hooks/useCatalogos";
+import { Button } from "@/components/ui/button";
 import { useContratosEmpleado } from "../hooks/useContratos";
-import type { Contrato } from "../types/contratos.types";
+import { ContratoItem } from "./ContratoItem";
+import { NuevoContratoModal } from "./modals/NuevoContratoModal";
 
 interface ContratosEmpleadoProps {
   empleadoId: string;
+  /** Si el empleado está de baja, no se puede renovar ni crear contratos */
+  empleadoActivo: boolean;
 }
-
-const ESTADO_CONTRATO_LABELS: Record<Contrato["estado"], string> = {
-  VIGENTE: "Vigente",
-  RENOVADO: "Renovado",
-  VENCIDO: "Vencido",
-  ANULADO: "Anulado",
-  FINALIZADO: "Finalizado",
-};
-
-const ESTADO_CONTRATO_STYLES: Record<Contrato["estado"], string> = {
-  VIGENTE: "border-emerald-200 bg-emerald-50 text-emerald-700",
-  RENOVADO: "border-sky-200 bg-sky-50 text-sky-700",
-  VENCIDO: "border-red-200 bg-red-50 text-red-700",
-  ANULADO: "border-border bg-muted text-muted-foreground",
-  FINALIZADO: "border-border bg-muted text-muted-foreground",
-};
 
 /**
  * Pestaña Contratos de la ficha: el historial de contratos del empleado
+ *
+ * @remarks
+ * Los contratos anulados no aparecen: el backend no los devuelve. El botón
+ * "Nuevo contrato" solo se ofrece si el empleado está activo y no tiene un
+ * contrato vigente; para continuar uno vigente se usa Renovar.
  */
-export function ContratosEmpleado({ empleadoId }: ContratosEmpleadoProps) {
+export function ContratosEmpleado({
+  empleadoId,
+  empleadoActivo,
+}: ContratosEmpleadoProps) {
+  const [nuevoOpen, setNuevoOpen] = useState(false);
   const { data, isLoading, error, refetch } = useContratosEmpleado(empleadoId);
-  const modalidades = useModalidadesContrato();
+
+  const puedeCrear =
+    empleadoActivo &&
+    data !== undefined &&
+    !data.some((contrato) => contrato.estado === "VIGENTE");
 
   return (
-    <DetalleTabEstado
-      isLoading={isLoading}
-      error={error}
-      onRetry={() => refetch()}
-      isEmpty={!data?.length}
-      emptyTitle="Sin contratos"
-      emptyDescription="Este empleado todavía no tiene contratos registrados."
-    >
-      <ul className="divide-y rounded-lg border">
-        {data?.map((contrato) => (
-          <li
-            key={contrato.id}
-            className="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
-          >
-            <div className="space-y-0.5">
-              <p className="text-sm font-medium">
-                {getOptionLabel(modalidades.data, contrato.tipo_modalidad)}
-                {contrato.es_prorroga && (
-                  <span className="font-normal text-muted-foreground">
-                    {" "}
-                    · Prórroga
-                  </span>
-                )}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {formatDate(contrato.fecha_inicio)} al{" "}
-                {contrato.fecha_fin
-                  ? formatDate(contrato.fecha_fin)
-                  : "sin fecha de fin"}
-                {contrato.estado === "VIGENTE" &&
-                  contrato.dias_restantes !== null &&
-                  contrato.dias_restantes >= 0 &&
-                  ` · vence en ${contrato.dias_restantes} días`}
-              </p>
-            </div>
-            <Badge
-              variant="outline"
-              className={ESTADO_CONTRATO_STYLES[contrato.estado]}
-            >
-              {ESTADO_CONTRATO_LABELS[contrato.estado]}
-            </Badge>
-          </li>
-        ))}
-      </ul>
-    </DetalleTabEstado>
+    <div className="space-y-4">
+      {puedeCrear && (
+        <div className="flex justify-end">
+          <Button type="button" onClick={() => setNuevoOpen(true)}>
+            <PlusIcon data-icon="inline-start" />
+            Nuevo contrato
+          </Button>
+        </div>
+      )}
+
+      <DetalleTabEstado
+        isLoading={isLoading}
+        error={error}
+        onRetry={() => refetch()}
+        isEmpty={!data?.length}
+        emptyTitle="Sin contratos"
+        emptyDescription="Este empleado todavía no tiene contratos registrados."
+      >
+        {/* Línea de tiempo: el más reciente arriba; cada renovación continúa al anterior */}
+        <ol className="relative space-y-4 before:absolute before:top-6 before:bottom-6 before:left-1.5 before:w-px before:bg-border">
+          {data?.map((contrato) => (
+            <ContratoItem
+              key={contrato.id}
+              contrato={contrato}
+              empleadoActivo={empleadoActivo}
+            />
+          ))}
+        </ol>
+      </DetalleTabEstado>
+
+      <NuevoContratoModal
+        empleadoId={empleadoId}
+        open={nuevoOpen}
+        onOpenChange={setNuevoOpen}
+      />
+    </div>
   );
 }
