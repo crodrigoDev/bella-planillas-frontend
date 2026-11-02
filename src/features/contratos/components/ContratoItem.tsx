@@ -1,11 +1,9 @@
 import { useState } from "react";
 import {
-  BanIcon,
+  CircleXIcon,
   CornerDownRightIcon,
-  EllipsisVerticalIcon,
-  FileCheckIcon,
-  FileClockIcon,
   FileTextIcon,
+  FileXIcon,
   PencilIcon,
   RefreshCwIcon,
   UploadIcon,
@@ -13,12 +11,6 @@ import {
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { getOptionLabel } from "@/lib/catalogos.utils";
 import { getTodayIsoDate } from "@/lib/date.utils";
 import { formatDate } from "@/lib/format.utils";
@@ -37,6 +29,7 @@ import {
   puedeRenovar,
   puedeSubirPdf,
 } from "../utils/contratos.utils";
+import { ContratoAccionButton } from "./ContratoAccionButton";
 import {
   ContratoModales,
   type ContratoModal,
@@ -67,48 +60,16 @@ export function ContratoItem({ contrato, empleadoActivo }: ContratoItemProps) {
     contrato.fecha_fin,
     hoy,
   );
+  // El backend no cambia el estado al pasar la fecha de fin: un contrato
+  // sigue Vigente aunque ya haya vencido
+  const diasVencido =
+    esVigente && contrato.dias_restantes !== null && contrato.dias_restantes < 0
+      ? Math.abs(contrato.dias_restantes)
+      : null;
   const mostrarVencimiento =
     esVigente &&
     contrato.dias_restantes !== null &&
     contrato.dias_restantes >= 0;
-
-  const acciones = [
-    contrato.tiene_archivo && (
-      <DropdownMenuItem key="verPdf" onClick={() => setOpenModal("verPdf")}>
-        <FileTextIcon />
-        Ver PDF
-      </DropdownMenuItem>
-    ),
-    puedeSubirPdf(contrato) && (
-      <DropdownMenuItem
-        key="subirPdf"
-        onClick={() => setOpenModal("subirPdf")}
-      >
-        <UploadIcon />
-        Adjuntar PDF
-      </DropdownMenuItem>
-    ),
-    puedeEditar(contrato) && (
-      <DropdownMenuItem key="editar" onClick={() => setOpenModal("editar")}>
-        <PencilIcon />
-        Editar
-      </DropdownMenuItem>
-    ),
-    puedeRenovar(contrato, empleadoActivo) && (
-      <DropdownMenuItem key="renovar" onClick={() => setOpenModal("renovar")}>
-        <RefreshCwIcon />
-        Renovar
-      </DropdownMenuItem>
-    ),
-    <DropdownMenuItem
-      key="anular"
-      variant="destructive"
-      onClick={() => setOpenModal("anular")}
-    >
-      <BanIcon />
-      Anular
-    </DropdownMenuItem>,
-  ];
 
   return (
     <li className="relative pl-8">
@@ -139,31 +100,23 @@ export function ContratoItem({ contrato, empleadoActivo }: ContratoItemProps) {
             </p>
           </div>
 
-          <div className="flex shrink-0 items-center gap-1">
+          <div className="shrink-0">
             <Badge
               variant="outline"
               className={ESTADO_CONTRATO_STYLES[contrato.estado]}
             >
               {ESTADO_CONTRATO_LABELS[contrato.estado]}
             </Badge>
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                render={
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    aria-label="Acciones del contrato"
-                  />
-                }
-              >
-                <EllipsisVerticalIcon />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">{acciones}</DropdownMenuContent>
-            </DropdownMenu>
           </div>
         </div>
 
-        {esVigente && progreso !== null && (
+        {diasVencido !== null && (
+          <p className="text-sm text-red-600">
+            Venció hace {diasVencido} {diasVencido === 1 ? "día" : "días"}
+          </p>
+        )}
+
+        {esVigente && progreso !== null && diasVencido === null && (
           <div className="space-y-1.5">
             {aunNoEmpieza ? (
               <p className="text-sm text-muted-foreground">
@@ -199,24 +152,62 @@ export function ContratoItem({ contrato, empleadoActivo }: ContratoItemProps) {
           </div>
         )}
 
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
-          {contrato.tiene_archivo ? (
-            <span className="inline-flex items-center gap-1.5 text-emerald-700">
-              <FileCheckIcon className="size-4" aria-hidden />
-              PDF firmado
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-1.5 text-muted-foreground">
-              <FileClockIcon className="size-4" aria-hidden />
-              Falta adjuntar el PDF firmado
-            </span>
-          )}
-          {contrato.es_prorroga && (
-            <span className="inline-flex items-center gap-1.5 text-muted-foreground">
-              <CornerDownRightIcon className="size-4" aria-hidden />
-              Renovación del contrato anterior
-            </span>
-          )}
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t pt-3">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            {contrato.tiene_archivo ? (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpenModal("verPdf")}
+              >
+                <FileTextIcon data-icon="inline-start" />
+                Ver PDF
+              </Button>
+            ) : (
+              <span className="inline-flex h-9 items-center gap-1.5 rounded-md bg-muted px-3 text-sm text-muted-foreground">
+                <FileXIcon className="size-4" aria-hidden />
+                Sin PDF
+              </span>
+            )}
+            {contrato.es_prorroga && (
+              <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
+                <CornerDownRightIcon className="size-4" aria-hidden />
+                Renovación del contrato anterior
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-center gap-1">
+            {puedeEditar(contrato) && (
+              <ContratoAccionButton
+                label="Editar"
+                icon={PencilIcon}
+                onClick={() => setOpenModal("editar")}
+              />
+            )}
+            {puedeSubirPdf(contrato) && (
+              <ContratoAccionButton
+                label="Adjuntar PDF"
+                icon={UploadIcon}
+                onClick={() => setOpenModal("subirPdf")}
+                className="text-sky-600"
+              />
+            )}
+            {puedeRenovar(contrato, empleadoActivo) && (
+              <ContratoAccionButton
+                label="Renovar"
+                icon={RefreshCwIcon}
+                onClick={() => setOpenModal("renovar")}
+                className="text-emerald-600"
+              />
+            )}
+            <ContratoAccionButton
+              label="Anular"
+              icon={CircleXIcon}
+              onClick={() => setOpenModal("anular")}
+              className="text-red-500"
+            />
+          </div>
         </div>
       </div>
 

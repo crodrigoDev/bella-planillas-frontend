@@ -5,8 +5,23 @@ import type {
   RenovarContratoDto,
 } from "@jyp/shared-contracts";
 
-import { contratosService } from "../services/contratos.service";
+import { contratosService, type NuevoContrato } from "../services/contratos.service";
 import { contratosKey } from "./useContratos";
+
+/** Crea un contrato de un empleado, avisa y refresca los contratos */
+export function useCrearContrato(empleadoId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (dto: NuevoContrato) =>
+      contratosService.crear(empleadoId, dto),
+    onSuccess: () => {
+      toast.success("El contrato se registró correctamente.");
+
+      return queryClient.invalidateQueries({ queryKey: contratosKey.all });
+    },
+  });
+}
 
 /** Edita un contrato, avisa y refresca los contratos */
 export function useEditarContrato(id: string) {

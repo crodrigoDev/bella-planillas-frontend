@@ -1,4 +1,5 @@
 import {
+  CrearContratoSchema,
   EditarContratoSchema,
   RenovarContratoSchema,
 } from "@jyp/shared-contracts";
@@ -13,6 +14,19 @@ const fechaFinError = {
   message: "La fecha de fin no puede ser anterior a la de inicio.",
   path: ["fecha_fin"],
 };
+
+/**
+ * Esquema del formulario de un contrato nuevo
+ *
+ * @remarks
+ * Sin `empleado_id` (lo pone la ficha), estado ni contrato de origen:
+ * el contrato nuevo nace vigente y no es renovación de otro.
+ */
+export const NuevoContratoFormSchema = CrearContratoSchema.omit({
+  empleado_id: true,
+  estado: true,
+  contrato_origen_id: true,
+}).refine(fechaFinValida, fechaFinError);
 
 /**
  * Esquema del formulario de edición de un contrato
