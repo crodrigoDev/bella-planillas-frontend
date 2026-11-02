@@ -30,3 +30,19 @@ export function useContratoDetalle(id: string) {
     queryFn: () => contratosService.getById(id),
   });
 }
+
+/**
+ * PDF de un contrato como URL temporal, para mostrarlo en un visor
+ *
+ * @remarks
+ * No se guarda en caché (`gcTime: 0`): la URL se libera al cerrar el visor.
+ */
+export function useContratoPdf(id: string) {
+  return useQuery({
+    queryKey: [...contratosKey.detail(id), "pdf"],
+    queryFn: async () =>
+      URL.createObjectURL(await contratosService.descargarPdf(id)),
+    gcTime: 0,
+    staleTime: 0,
+  });
+}

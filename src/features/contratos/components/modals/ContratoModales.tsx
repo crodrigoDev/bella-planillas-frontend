@@ -2,9 +2,11 @@ import type { Contrato } from "../../types/contratos.types";
 import { AnularContratoModal } from "./AnularContratoModal";
 import { EditarContratoModal } from "./EditarContratoModal";
 import { RenovarContratoModal } from "./RenovarContratoModal";
+import { SubirPdfModal } from "./SubirPdfModal";
+import { VerPdfModal } from "./VerPdfModal";
 
 /** Modales que se abren desde las acciones de un contrato */
-export type ContratoModal = "editar" | "renovar" | "anular";
+export type ContratoModal = "editar" | "renovar" | "anular" | "subirPdf" | "verPdf";
 
 interface ContratoModalesProps {
   contrato: Contrato;
@@ -44,6 +46,16 @@ export function ContratoModales({
       <AnularContratoModal
         contrato={contrato}
         open={openModal === "anular"}
+        onOpenChange={handleOpenChange}
+      />
+      <SubirPdfModal
+        contrato={contrato}
+        open={openModal === "subirPdf"}
+        onOpenChange={handleOpenChange}
+      />
+      <VerPdfModal
+        contrato={contrato}
+        open={openModal === "verPdf"}
         onOpenChange={handleOpenChange}
       />
     </>

@@ -2,8 +2,10 @@ import { useState } from "react";
 import {
   BanIcon,
   EllipsisVerticalIcon,
+  FileTextIcon,
   PencilIcon,
   RefreshCwIcon,
+  UploadIcon,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -22,7 +24,7 @@ import {
 } from "../config/contratos.config";
 import { useModalidadesContrato } from "../hooks/useCatalogos";
 import type { Contrato } from "../types/contratos.types";
-import { puedeEditar, puedeRenovar } from "../utils/contratos.utils";
+import { puedeEditar, puedeRenovar, puedeSubirPdf } from "../utils/contratos.utils";
 import {
   ContratoModales,
   type ContratoModal,
@@ -45,6 +47,21 @@ export function ContratoItem({
   const modalidades = useModalidadesContrato();
 
   const acciones = [
+    contrato.tiene_archivo && (
+      <DropdownMenuItem key="verPdf" onClick={() => setOpenModal("verPdf")}>
+        <FileTextIcon />
+        Ver PDF
+      </DropdownMenuItem>
+    ),
+    puedeSubirPdf(contrato) && (
+      <DropdownMenuItem
+        key="subirPdf"
+        onClick={() => setOpenModal("subirPdf")}
+      >
+        <UploadIcon />
+        Adjuntar PDF
+      </DropdownMenuItem>
+    ),
     puedeEditar(contrato) && (
       <DropdownMenuItem key="editar" onClick={() => setOpenModal("editar")}>
         <PencilIcon />
