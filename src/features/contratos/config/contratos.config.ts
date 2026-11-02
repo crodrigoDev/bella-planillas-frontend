@@ -18,6 +18,23 @@ export const ESTADO_CONTRATO_STYLES: Record<EstadoContrato, string> = {
   FINALIZADO: "border-border bg-muted text-muted-foreground",
 };
 
+/** Color del punto de cada contrato en la línea de tiempo */
+export const ESTADO_CONTRATO_DOT: Record<EstadoContrato, string> = {
+  VIGENTE: "bg-emerald-500",
+  RENOVADO: "bg-sky-400",
+  VENCIDO: "bg-red-500",
+  ANULADO: "bg-muted-foreground/40",
+  FINALIZADO: "bg-muted-foreground/40",
+};
+
+/** Color del aviso de vencimiento según qué tan cerca está el fin */
+export const ALERTA_VENCIMIENTO_STYLES = {
+  VENCIDO: "text-red-600",
+  CRITICO: "text-red-600",
+  PREVENTIVO: "text-amber-600",
+  REGULAR: "text-muted-foreground",
+} as const;
+
 /** Modalidad que no lleva fecha de fin */
 export const MODALIDAD_INDETERMINADA = "INDETERMINADO";
 

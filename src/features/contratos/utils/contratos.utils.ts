@@ -38,3 +38,31 @@ export const getDiaSiguiente = (isoDate: string): string => {
 
   return next.toISOString().slice(0, 10);
 };
+
+const toUtcMs = (isoDate: string): number => {
+  const [year, month, day] = isoDate.slice(0, 10).split("-").map(Number);
+
+  return Date.UTC(year, month - 1, day);
+};
+
+/**
+ * Qué parte de un contrato ya transcurrió, de 0 a 100
+ *
+ * @returns El porcentaje, o null si el contrato no tiene fecha de fin
+ */
+export const getProgresoContrato = (
+  fechaInicio: string,
+  fechaFin: string | null,
+  hoy: string,
+): number | null => {
+  if (!fechaFin) return null;
+
+  const inicio = toUtcMs(fechaInicio);
+  const total = toUtcMs(fechaFin) - inicio;
+
+  if (total <= 0) return 100;
+
+  const avance = ((toUtcMs(hoy) - inicio) / total) * 100;
+
+  return Math.min(100, Math.max(0, avance));
+};

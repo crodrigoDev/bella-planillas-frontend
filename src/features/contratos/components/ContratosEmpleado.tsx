@@ -29,7 +29,8 @@ export function ContratosEmpleado({
       emptyTitle="Sin contratos"
       emptyDescription="Este empleado todavía no tiene contratos registrados."
     >
-      <ul className="divide-y rounded-lg border">
+      {/* Línea de tiempo: el más reciente arriba; cada renovación continúa al anterior */}
+      <ol className="relative space-y-4 before:absolute before:top-6 before:bottom-6 before:left-[6px] before:w-px before:bg-border">
         {data?.map((contrato) => (
           <ContratoItem
             key={contrato.id}
@@ -37,7 +38,7 @@ export function ContratosEmpleado({
             empleadoActivo={empleadoActivo}
           />
         ))}
-      </ul>
+      </ol>
     </DetalleTabEstado>
   );
 }
