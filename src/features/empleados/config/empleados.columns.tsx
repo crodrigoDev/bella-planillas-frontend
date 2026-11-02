@@ -74,9 +74,11 @@ export const empleadosColumns = columnHelper.columns([
       return (
         <div className="flex flex-col">
           <span>{jornada.nombre}</span>
-          <span className="text-xs text-muted-foreground">
-            {formatTurno(jornada.turno)}
-          </span>
+          {jornada.turno && (
+            <span className="text-xs text-muted-foreground">
+              {formatTurno(jornada.turno)}
+            </span>
+          )}
         </div>
       );
     },

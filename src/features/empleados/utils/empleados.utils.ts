@@ -27,20 +27,27 @@ export const formatTurno = (turno: string): string =>
  * El backend guarda los nombres en mayúsculas; aquí se muestran como nombre propio.
  */
 export const getNombreCompleto = ({
-  nombre,
-  apellido,
-}: Pick<Empleado, "nombre" | "apellido">): string =>
-  toTitleCase(`${nombre} ${apellido}`);
+  nombre_completo,
+}: Pick<Empleado, "nombre_completo">): string => toTitleCase(nombre_completo);
 
 /**
- * Obtiene las iniciales de un empleado: la del primer nombre y la del primer apellido
+ * Obtiene las iniciales de un empleado
  *
  * @example "CM" para "Carlos Andrés" y "Méndez Ruiz"
+ *
+ * @remarks
+ * El listado solo trae el nombre completo, así que se toma la primera letra de la
+ * primera y de la última palabra. Si el backend envía nombre y apellido por
+ * separado (la ficha), se usan esos.
  */
 export const getIniciales = ({
   nombre,
   apellido,
-}: Pick<Empleado, "nombre" | "apellido">): string =>
-  `${nombre.trim().charAt(0)}${apellido.trim().charAt(0)}`.toLocaleUpperCase(
-    "es-PE",
-  );
+  nombre_completo,
+}: Pick<Empleado, "nombre" | "apellido" | "nombre_completo">): string => {
+  const palabras = nombre_completo.trim().split(/\s+/);
+  const primera = nombre?.trim() || palabras[0] || "";
+  const segunda = apellido?.trim() || (palabras.length > 1 ? palabras.at(-1)! : "");
+
+  return `${primera.charAt(0)}${segunda.charAt(0)}`.toLocaleUpperCase("es-PE");
+};

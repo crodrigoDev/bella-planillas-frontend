@@ -10,7 +10,7 @@ import {
 
 import { Link } from "react-router-dom";
 
-import { buildEmpleadoPath } from "@/app/routes/path";
+import { buildEditarEmpleadoPath, buildEmpleadoPath } from "@/app/routes/path";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -37,8 +37,6 @@ interface EmpleadoActionsProps {
  * @remarks
  * Un empleado activo puede cambiar de estado o darse de baja; uno inactivo
  * solo puede reactivarse, porque el backend rechaza las demás operaciones.
- * "Editar" aparece como en el diseño, pero sigue deshabilitada hasta que
- * exista la edición.
  */
 export function EmpleadoActions({ empleado }: EmpleadoActionsProps) {
   const [openModal, setOpenModal] = useState<EmpleadoModal | null>(null);
@@ -69,7 +67,9 @@ export function EmpleadoActions({ empleado }: EmpleadoActionsProps) {
             <IdCardIcon />
             Ver ficha
           </DropdownMenuItem>
-          <DropdownMenuItem disabled>
+          <DropdownMenuItem
+            render={<Link to={buildEditarEmpleadoPath(empleado.id)} />}
+          >
             <PencilIcon />
             Editar
           </DropdownMenuItem>

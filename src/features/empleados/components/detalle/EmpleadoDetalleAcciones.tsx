@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { PencilIcon, RefreshCwIcon, UserCheckIcon, UserXIcon } from "lucide-react";
 
+import { buildEditarEmpleadoPath } from "@/app/routes/path";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -24,7 +26,7 @@ interface EmpleadoDetalleAccionesProps {
  * @remarks
  * Un empleado activo puede cambiar de estado o darse de baja; uno inactivo
  * solo puede reactivarse, porque el backend rechaza las demás operaciones.
- * "Editar" sigue deshabilitado hasta que exista la edición.
+ * "Editar" abre la página de edición.
  */
 export function EmpleadoDetalleAcciones({
   empleado,
@@ -37,7 +39,12 @@ export function EmpleadoDetalleAcciones({
 
   return (
     <div className="flex items-center gap-2">
-      <Button variant="outline" size="lg" disabled>
+      <Button
+        variant="outline"
+        size="lg"
+        nativeButton={false}
+        render={<Link to={buildEditarEmpleadoPath(empleado.id)} />}
+      >
         <PencilIcon data-icon="inline-start" />
         Editar
       </Button>

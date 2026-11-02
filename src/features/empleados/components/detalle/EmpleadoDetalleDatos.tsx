@@ -94,7 +94,9 @@ export function EmpleadoDetalleDatos({ empleado }: EmpleadoDetalleDatosProps) {
           label="Jornada"
           value={
             empleado.jornada
-              ? `${empleado.jornada.nombre} (${formatTurno(empleado.jornada.turno)})`
+              ? empleado.jornada.turno
+                ? `${empleado.jornada.nombre} (${formatTurno(empleado.jornada.turno)})`
+                : empleado.jornada.nombre
               : "Sin jornada"
           }
         />
