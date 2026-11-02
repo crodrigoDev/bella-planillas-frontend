@@ -48,6 +48,8 @@ export interface Empleado {
   email: string | null;
   telefono: string | null;
   documento_id?: string;
+  /** Solo lo envía el detalle: el tipo con su nombre ("DNI") */
+  tipo_documento?: { id: string; tipo_documento: string };
   sexo?: string | null;
   estado_civil?: string | null;
   nacionalidad?: string | null;

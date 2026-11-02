@@ -5,7 +5,6 @@ import {
   ESTADO_CIVIL_OPTIONS,
   SEXO_OPTIONS,
 } from "../../config/empleados.config";
-import { useTiposDocumento } from "../../hooks/useCatalogos";
 import type { Empleado } from "../../types/empleados.types";
 import { formatJornada, getNombreCompleto } from "../../utils/empleados.utils";
 import { ResumenCampo } from "@/components/form/ResumenCampo";
@@ -21,8 +20,6 @@ interface EmpleadoDetalleDatosProps {
  * Solo lectura. Usa los mismos bloques que el resumen del registro.
  */
 export function EmpleadoDetalleDatos({ empleado }: EmpleadoDetalleDatosProps) {
-  const tiposDocumento = useTiposDocumento();
-
   return (
     <div className="space-y-6">
       <FormSection
@@ -31,7 +28,7 @@ export function EmpleadoDetalleDatos({ empleado }: EmpleadoDetalleDatosProps) {
       >
         <ResumenCampo
           label="Tipo de documento"
-          value={getOptionLabel(tiposDocumento.data, empleado.documento_id)}
+          value={orDash(empleado.tipo_documento?.tipo_documento)}
         />
         <ResumenCampo label="Nº de documento" value={empleado.nro_documento} />
         <ResumenCampo

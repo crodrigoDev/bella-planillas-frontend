@@ -17,7 +17,7 @@ import type { SelectOption } from "@/lib/types/options.types";
 
 /** Tipos de documento, tal como están en la tabla `tipo_documento` */
 export const TIPOS_DOCUMENTO_MOCK: SelectOption[] = [
-  { value: "01a17fb7-a2cd-760f-91fb-f9754617fb43", label: "DNI" },
-  { value: "01a17fb7-a2d6-7754-9ddd-2fe38719a9b3", label: "CE" },
-  { value: "01a17fb7-a2da-73a9-9649-f2ae3087b4be", label: "PASAPORTE" },
+  { value: "01a19cb2-9609-7ecf-8f86-36bcd177a419", label: "DNI" },
+  { value: "01a19cb2-9611-7d93-a061-a2101355c4b4", label: "CE" },
+  { value: "01a19cb2-9613-782a-a983-27ba7613eebe", label: "PASAPORTE" },
 ];
