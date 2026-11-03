@@ -2,11 +2,8 @@ import { FormProvider } from "react-hook-form";
 import { PlusIcon, SaveIcon } from "lucide-react";
 
 import { FormSection } from "@/components/form/FormSection";
-import { SelectField } from "@/components/form/SelectField";
-import { TextField } from "@/components/form/TextField";
 import { Button } from "@/components/ui/button";
-import { VINCULO_OPTIONS } from "@/features/derechohabientes/config/derechohabientes.config";
-import { ESTADO_CIVIL_OPTIONS, SEXO_OPTIONS } from "../../config/empleados.config";
+import { DerechohabienteCampos } from "@/features/derechohabientes/components/DerechohabienteCampos";
 import { useDerechohabientesForm } from "../../hooks/useDerechohabientesForm";
 import { useTiposDocumento } from "../../hooks/useCatalogos";
 import { useNuevoEmpleadoStore } from "../../store/nuevoEmpleado.store";
@@ -66,48 +63,9 @@ export function DatosDerechohabientesForm() {
                 : "Completa los datos del familiar y agrégalo a la lista."
             }
           >
-            <SelectField
-              name="vinculo"
-              label="Vínculo"
-              required
-              options={VINCULO_OPTIONS}
-              placeholder="Selecciona un vínculo"
-            />
-            <SelectField
-              name="documento_id"
-              label="Tipo de documento"
-              required
-              options={tiposDocumento.data}
-              placeholder="Selecciona un tipo"
-              isLoading={tiposDocumento.isLoading}
-            />
-            <TextField
-              name="nro_documento"
-              label="Nº de documento"
-              required
-              placeholder="8 a 20 caracteres"
-            />
-            <TextField name="nombres" label="Nombres" required />
-            <TextField name="apellidos" label="Apellidos" required />
-            <SelectField
-              name="sexo"
-              label="Sexo"
-              required
-              options={SEXO_OPTIONS}
-              placeholder="Selecciona el sexo"
-            />
-            <SelectField
-              name="estado_civil"
-              label="Estado civil"
-              required
-              options={ESTADO_CIVIL_OPTIONS}
-              placeholder="Selecciona un estado civil"
-            />
-            <TextField
-              name="fecha_nacimiento"
-              label="Fecha de nacimiento"
-              required
-              type="date"
+            <DerechohabienteCampos
+              tiposDocumento={tiposDocumento.data}
+              isLoadingTiposDocumento={tiposDocumento.isLoading}
             />
 
             <div className="flex justify-start gap-2 col-span-full">

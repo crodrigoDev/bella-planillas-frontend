@@ -12,10 +12,7 @@ import {
   FieldTitle,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import {
-  ESTADO_CIVIL_OPTIONS,
-  SEXO_OPTIONS,
-} from "../../config/empleados.config";
+import { ESTADO_CIVIL_OPTIONS, SEXO_OPTIONS } from "@/lib/personas.config";
 import { useEmpleadosCatalogos, useTiposDocumento } from "../../hooks/useCatalogos";
 
 interface DatosEmpleadoCamposProps {

@@ -1,10 +1,7 @@
 import { FormSection } from "@/components/form/FormSection";
 import { getOptionLabel } from "@/lib/catalogos.utils";
 import { formatDate, orDash } from "@/lib/format.utils";
-import {
-  ESTADO_CIVIL_OPTIONS,
-  SEXO_OPTIONS,
-} from "../../config/empleados.config";
+import { ESTADO_CIVIL_OPTIONS, SEXO_OPTIONS } from "@/lib/personas.config";
 import type { Empleado } from "../../types/empleados.types";
 import { formatJornada, getNombreCompleto } from "../../utils/empleados.utils";
 import { ResumenCampo } from "@/components/form/ResumenCampo";

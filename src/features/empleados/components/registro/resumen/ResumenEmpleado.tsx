@@ -3,7 +3,7 @@ import type { CrearEmpleadoDto } from "@jyp/shared-contracts";
 import { FormSection } from "@/components/form/FormSection";
 import { getOptionLabel } from "@/lib/catalogos.utils";
 import { formatDate, orDash } from "@/lib/format.utils";
-import { ESTADO_CIVIL_OPTIONS, SEXO_OPTIONS } from "../../../config/empleados.config";
+import { ESTADO_CIVIL_OPTIONS, SEXO_OPTIONS } from "@/lib/personas.config";
 import { useEmpleadosCatalogos, useTiposDocumento } from "../../../hooks/useCatalogos";
 import { ResumenCampo } from "@/components/form/ResumenCampo";
 

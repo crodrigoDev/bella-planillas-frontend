@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import type { CrearEmpleadoDto } from "@jyp/shared-contracts";
-import type { DerechohabienteDraft } from "../schemas/datosDerechohabiente.schema";
+import type { DerechohabienteDraft } from "@/features/derechohabientes/schemas/datosDerechohabiente.schema";
 import type { DatosContratoDraft } from "../schemas/datosContrato.schema";
 import type { DatosFinancierosDraft } from "../schemas/datosFinancieros.schema";
 
