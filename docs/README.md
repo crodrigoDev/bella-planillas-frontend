@@ -1,0 +1,65 @@
+# Catálogo de lo reutilizable
+
+Lo que ya existe y se debe reutilizar **antes de escribir algo nuevo**. Cada pieza
+tiene para qué sirve, sus props o firma principal y un ejemplo tomado de un uso real,
+con el archivo al que se puede saltar. Para el detalle completo, abre el archivo de
+código: todos tienen TSDoc.
+
+[← Volver al README del proyecto](../README.md)
+
+## Reglas
+
+- **`src/components/ui/` no se edita.** Son las piezas de shadcn/ui. Si hace falta otro
+  comportamiento, se compone desde `src/components/<área>/`.
+- **Un componente compartido va en `src/components/<área>/` cuando el patrón se repite
+  3 veces o más.** Mientras se use en una sola feature, vive en esa feature.
+- **Si agregas o cambias una pieza compartida, actualiza su documento en el mismo
+  commit.**
+
+### Cómo documentar una pieza nueva
+
+Cada pieza es una subsección `##` de su archivo, con este formato:
+
+1. Una línea de para qué sirve.
+2. Tabla de props o de la firma (`Prop | Tipo | Notas`).
+3. Un ejemplo real de 3 a 8 líneas, con la ruta del archivo de donde sale.
+
+## Índice
+
+### Componentes
+
+| Archivo | Piezas |
+| --- | --- |
+| [componentes/form.md](componentes/form.md) | [FormField](componentes/form.md#formfield) · [TextField](componentes/form.md#textfield) · [SelectField](componentes/form.md#selectfield) · [OptionSelect](componentes/form.md#optionselect) · [FormSection](componentes/form.md#formsection) · [RequiredMark](componentes/form.md#requiredmark) · [LoadingButton](componentes/form.md#loadingbutton) · [FileDropzone](componentes/form.md#filedropzone) · [ResumenCampo](componentes/form.md#resumencampo) |
+| [componentes/feedback.md](componentes/feedback.md) | [ErrorAlert](componentes/feedback.md#erroralert) · [DetalleTabEstado](componentes/feedback.md#detalletabestado) |
+| [componentes/page.md](componentes/page.md) | [AccionButton](componentes/page.md#accionbutton) · [PageHeader](componentes/page.md#pageheader) · [PageTabs](componentes/page.md#pagetabs) |
+| [componentes/filters.md](componentes/filters.md) | [SearchInput](componentes/filters.md#searchinput) · [FilterSelect](componentes/filters.md#filterselect) · [FilterChip](componentes/filters.md#filterchip) · [filters.config.ts](componentes/filters.md#filtersconfigts) |
+| [componentes/data-table.md](componentes/data-table.md) | [DataTable](componentes/data-table.md#datatable) · [dataTable.config.ts](componentes/data-table.md#datatableconfigts) |
+| [componentes/stepper.md](componentes/stepper.md) | [Stepper](componentes/stepper.md#stepper) · [StepperFooter](componentes/stepper.md#stepperfooter) |
+
+### Hooks y utilidades
+
+| Archivo | Piezas |
+| --- | --- |
+| [hooks.md](hooks.md) | [useCatalogo](hooks.md#usecatalogo) · [useDebouncedCallback](hooks.md#usedebouncedcallback) · [use-mobile.ts](hooks.md#use-mobilets) |
+| [lib.md](lib.md) | [format.utils.ts](lib.md#formatutilsts) · [date.utils.ts](lib.md#dateutilsts) · [catalogos.utils.ts](lib.md#catalogosutilsts) · [pagination.utils.ts](lib.md#paginationutilsts) · [urlParams.utils.ts](lib.md#urlparamsutilsts) · [zodMessages.utils.ts](lib.md#zodmessagesutilsts) · [personas.config.ts](lib.md#personasconfigts) · [get-api-error-message.ts](lib.md#get-api-error-messagets) · [Clientes HTTP](lib.md#clientes-http) · [utils.ts](lib.md#utilsts) |
+
+## ¿Qué uso para...?
+
+| Necesito... | Uso |
+| --- | --- |
+| Un campo de texto, fecha o número en un formulario | [TextField](componentes/form.md#textfield) |
+| Un selector en un formulario | [SelectField](componentes/form.md#selectfield) |
+| Agrupar campos de un formulario en bloques | [FormSection](componentes/form.md#formsection) |
+| Un botón que espera una petición | [LoadingButton](componentes/form.md#loadingbutton) |
+| Subir un archivo | [FileDropzone](componentes/form.md#filedropzone) |
+| Mostrar el error de una petición | [ErrorAlert](componentes/feedback.md#erroralert) |
+| Resolver carga, error y vacío de una pestaña de la ficha | [DetalleTabEstado](componentes/feedback.md#detalletabestado) |
+| Un botón de icono con tooltip en una fila | [AccionButton](componentes/page.md#accionbutton) |
+| El encabezado de una página | [PageHeader](componentes/page.md#pageheader) |
+| Un listado con filtros en la URL | [SearchInput](componentes/filters.md#searchinput), [FilterSelect](componentes/filters.md#filterselect), [urlParams.utils.ts](lib.md#urlparamsutilsts) |
+| Una tabla con paginación del servidor | [DataTable](componentes/data-table.md#datatable) |
+| Un proceso por pasos | [Stepper](componentes/stepper.md#stepper) y [StepperFooter](componentes/stepper.md#stepperfooter) |
+| Opciones de un catálogo del backend | [useCatalogo](hooks.md#usecatalogo) y [catalogos.utils.ts](lib.md#catalogosutilsts) |
+| Mostrar fechas, montos o datos vacíos | [format.utils.ts](lib.md#formatutilsts) |
+| Llamar al backend | [Clientes HTTP](lib.md#clientes-http) |
