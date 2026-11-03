@@ -119,7 +119,7 @@ leen con `useAuth()`; al cargar la página, `AuthProvider` restaura la sesión c
 
 ## Convenciones
 
-Las reglas completas están en [CLAUDE.md](CLAUDE.md). Las principales:
+Las principales reglas del proyecto:
 
 - **Archivos:** componentes en `PascalCase`; el resto en `camelCase` con sufijo de rol
   (`*.service.ts`, `use*.ts`, `*.types.ts`, `*.utils.ts`).
@@ -140,4 +140,3 @@ Las reglas completas están en [CLAUDE.md](CLAUDE.md). Las principales:
 | [docs/componentes/](docs/componentes) | Formularios, avisos, página, filtros, tablas y pasos               |
 | [docs/hooks.md](docs/hooks.md)        | Hooks compartidos                                                  |
 | [docs/lib.md](docs/lib.md)            | Utilidades de formato, fechas, catálogos, URL, zod y clientes HTTP |
-| [CLAUDE.md](CLAUDE.md)                | Reglas del proyecto para el desarrollo                             |
