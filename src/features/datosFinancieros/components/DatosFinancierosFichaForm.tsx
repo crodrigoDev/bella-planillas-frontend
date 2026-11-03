@@ -12,8 +12,8 @@ import { SaveIcon } from "lucide-react";
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { LoadingButton } from "@/components/form/LoadingButton";
 import { StepperFooter } from "@/components/stepper/StepperFooter";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { toDateInput } from "@/lib/date.utils";
 import { zodResolverOptions } from "@/lib/zodMessages.utils";
 import {
   REGIMENES_SALUD_CON_EPS,
@@ -109,10 +109,10 @@ interface DatosFinancierosFichaFormProps {
   datos: DatosFinancieros | null;
   /** A dónde se vuelve al guardar o cancelar */
   fichaPath: string;
-  /** Ruta de la edición del empleado, donde se registra la fecha de filiación a la AFP */
-  editarEmpleadoPath: string;
-  /** El empleado tiene fecha de filiación a la AFP; sin ella el backend rechaza el régimen AFP */
-  tieneFiliacionAfp: boolean;
+  /** Fecha de filiación a la AFP que ya tiene el empleado; null si no tiene */
+  afpFechaFiliacion: string | null;
+  /** Guarda la fecha de filiación en el empleado; la compone la página, que conoce a `empleados` */
+  guardarFiliacion: (fecha: string) => Promise<void>;
 }
 
 /**
@@ -120,14 +120,16 @@ interface DatosFinancierosFichaFormProps {
  *
  * @remarks
  * Registrar no pide contraseña. Editar sí: al guardar se abre un modal que la
- * pide y recién entonces se envía el cambio.
+ * pide y recién entonces se envía el cambio. Con régimen AFP se pide también la
+ * fecha de filiación, que vive en el empleado: si cambió, se guarda primero
+ * (el backend la exige para aceptar los datos financieros) y luego el resto.
  */
 export function DatosFinancierosFichaForm({
   empleadoId,
   datos,
   fichaPath,
-  editarEmpleadoPath,
-  tieneFiliacionAfp,
+  afpFechaFiliacion,
+  guardarFiliacion,
 }: DatosFinancierosFichaFormProps) {
   const navigate = useNavigate();
   const crear = useCrearDatosFinancieros(empleadoId);
@@ -135,9 +137,10 @@ export function DatosFinancierosFichaForm({
   const { regimenes } = useDatosFinancierosCatalogos();
 
   // Cambios a la espera de que el usuario confirme con su contraseña
-  const [pendientes, setPendientes] = useState<ReturnType<
-    typeof toCambios
-  > | null>(null);
+  const [pendientes, setPendientes] = useState<{
+    cambios: ReturnType<typeof toCambios>;
+    guardarFiliacion?: () => Promise<void>;
+  } | null>(null);
 
   const regimenesData = regimenes.data;
   const cusppRegistrado = Boolean(datos?.cuspp);
@@ -153,7 +156,10 @@ export function DatosFinancierosFichaForm({
 
   const methods = useForm<FormValues, unknown, DatosFinancierosFichaDatos>({
     resolver,
-    defaultValues: toFormValues(datos),
+    defaultValues: {
+      ...toFormValues(datos),
+      afp_fecha_filiacion: toDateInput(afpFechaFiliacion) || undefined,
+    },
     // Los campos que se ocultan (AFP o EPS) dejan de validarse y de enviarse
     shouldUnregister: true,
   });
@@ -162,23 +168,44 @@ export function DatosFinancierosFichaForm({
   const esAfp = isRegimenAfp(regimenesData, idRegimen);
   const mutation = datos ? editar : crear;
 
-  const onSubmit = (values: DatosFinancierosFichaDatos) => {
+  const onSubmit = ({
+    afp_fecha_filiacion,
+    ...values
+  }: DatosFinancierosFichaDatos) => {
+    // Solo se guarda en el empleado si es AFP y la fecha es nueva o cambió
+    const filiacionCambio =
+      esAfp &&
+      Boolean(afp_fecha_filiacion) &&
+      afp_fecha_filiacion !== toDateInput(afpFechaFiliacion);
+    const guardar = filiacionCambio
+      ? () => guardarFiliacion(afp_fecha_filiacion as string)
+      : undefined;
+
     if (!datos) {
-      crear.mutate(values, { onSuccess: () => navigate(fichaPath) });
+      crear.mutate(
+        { dto: values, guardarFiliacion: guardar },
+        { onSuccess: () => navigate(fichaPath) },
+      );
 
       return;
     }
 
     const conEps = REGIMENES_SALUD_CON_EPS.includes(values.regimen_salud);
 
-    setPendientes(toCambios(values, esAfp, conEps));
+    setPendientes({
+      cambios: toCambios(values, esAfp, conEps),
+      guardarFiliacion: guardar,
+    });
   };
 
   const handleConfirm = (password: string) => {
     if (!pendientes) return;
 
     editar.mutate(
-      { ...pendientes, password_confirmacion: password },
+      {
+        dto: { ...pendientes.cambios, password_confirmacion: password },
+        guardarFiliacion: pendientes.guardarFiliacion,
+      },
       { onSuccess: () => navigate(fichaPath) },
     );
   };
@@ -197,20 +224,7 @@ export function DatosFinancierosFichaForm({
         noValidate
         className="space-y-6"
       >
-        <DatosFinancierosCampos guardados={datos} />
-
-        {esAfp && !tieneFiliacionAfp && (
-          <Alert>
-            <AlertDescription>
-              Este empleado no tiene fecha de filiación a la AFP, y el sistema
-              la exige para el régimen AFP. Regístrala primero en{" "}
-              <Link to={editarEmpleadoPath} className="font-medium underline">
-                Editar empleado
-              </Link>
-              .
-            </AlertDescription>
-          </Alert>
-        )}
+        <DatosFinancierosCampos guardados={datos} incluirFiliacion />
 
         {/* Al registrar, el error se muestra aquí; al editar, dentro del modal de contraseña */}
         <ErrorAlert

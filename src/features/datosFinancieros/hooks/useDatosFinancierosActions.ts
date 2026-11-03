@@ -8,13 +8,25 @@ import type {
 import { datosFinancierosService } from "../services/datosFinancieros.service";
 import { datosFinancierosKey } from "./useDatosFinancieros";
 
+/** Datos que se envían y, antes, el guardado de la fecha de filiación si cambió */
+interface Guardado<T> {
+  dto: T;
+  /** Guarda en el empleado la fecha de filiación a la AFP; el backend la exige antes */
+  guardarFiliacion?: () => Promise<void>;
+}
+
 /** Registra los datos financieros de un empleado, avisa y refresca la ficha */
 export function useCrearDatosFinancieros(empleadoId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (dto: Omit<CrearDatoFinancieroDto, "empleado_id">) =>
-      datosFinancierosService.crear(empleadoId, dto),
+    mutationFn: async ({
+      dto,
+      guardarFiliacion,
+    }: Guardado<Omit<CrearDatoFinancieroDto, "empleado_id">>) => {
+      await guardarFiliacion?.();
+      await datosFinancierosService.crear(empleadoId, dto);
+    },
     onSuccess: () => {
       toast.success("Los datos financieros se registraron correctamente.");
 
@@ -36,8 +48,13 @@ export function useEditarDatosFinancieros(empleadoId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (dto: ActualizarDatoFinancieroDto) =>
-      datosFinancierosService.editar(empleadoId, dto),
+    mutationFn: async ({
+      dto,
+      guardarFiliacion,
+    }: Guardado<ActualizarDatoFinancieroDto>) => {
+      await guardarFiliacion?.();
+      await datosFinancierosService.editar(empleadoId, dto);
+    },
     onSuccess: () => {
       toast.success("Los datos financieros se actualizaron correctamente.");
 

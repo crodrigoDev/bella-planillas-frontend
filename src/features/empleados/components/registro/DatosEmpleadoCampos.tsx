@@ -216,7 +216,7 @@ export function DatosEmpleadoCampos({
             label="Fecha de filiación a la AFP"
             optional
             type="date"
-            description="Solo si el empleado está en una AFP. Se pide al registrar sus datos financieros con ese régimen."
+            description="Solo si el empleado está en una AFP. También se puede registrar al elegir el régimen AFP en sus datos financieros."
           />
         )}
 
