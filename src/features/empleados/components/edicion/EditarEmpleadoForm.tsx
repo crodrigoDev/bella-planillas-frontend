@@ -45,6 +45,8 @@ const toFormValues = (empleado: Empleado): EditarEmpleadoFormValues => ({
   cargo_id: empleado.cargo.id,
   jornada_id: empleado.jornada?.id,
   fecha_inicio: toDateInput(empleado.fecha_inicio),
+  // Vacío se envía como undefined: el backend deja la fecha que ya tenía
+  afp_fecha_filiacion: toDateInput(empleado.afp_fecha_filiacion) || undefined,
   asig_familiar: empleado.asig_familiar ?? false,
 });
 

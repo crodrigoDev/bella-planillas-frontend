@@ -210,6 +210,16 @@ export function DatosEmpleadoCampos({
           type="date"
         />
 
+        {isEdicion && (
+          <TextField
+            name="afp_fecha_filiacion"
+            label="Fecha de filiación a la AFP"
+            optional
+            type="date"
+            description="Solo si el empleado está en una AFP. Se pide al registrar sus datos financieros con ese régimen."
+          />
+        )}
+
         <Field className="sm:col-span-2">
           <FieldTitle>Asignación familiar</FieldTitle>
           <label className="flex items-start gap-2 text-sm">
