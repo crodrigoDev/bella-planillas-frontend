@@ -52,16 +52,17 @@ export const ResolverResumenFormSchema = ResolverIncidenciaSchema.pick({
   motivo: true,
 });
 
-/** Formulario para asignar una jornada, sin el empleado (lo pone la ficha) */
+/**
+ * Formulario para asignar una jornada
+ *
+ * @remarks
+ * Sin el empleado (lo pone la ficha) y sin `hasta`: el backend lo acepta pero
+ * lo ignora, porque una jornada rige desde su fecha hasta que se asigna otra.
+ */
 export const AsignarJornadaFormSchema = AsignarJornadaAsistenciaSchema.omit({
   empleado_id: true,
-}).refine(
-  ({ desde, hasta }) => !hasta || desde <= hasta,
-  {
-    message: "La fecha final no puede ser anterior a la inicial",
-    path: ["hasta"],
-  },
-);
+  hasta: true,
+});
 
 const horaOpcional = z.string().regex(REGEX_HORA, "Escribe la hora como HH:mm").optional();
 

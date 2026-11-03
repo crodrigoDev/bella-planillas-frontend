@@ -1,10 +1,11 @@
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { LoadingButton } from "@/components/form/LoadingButton";
 import { SelectField } from "@/components/form/SelectField";
 import { TextField } from "@/components/form/TextField";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,7 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { toDateInput } from "@/lib/date.utils";
+import { getTodayIsoDate, toDateInput } from "@/lib/date.utils";
 import type { SelectOption } from "@/lib/types/options.types";
 import { zodResolverOptions } from "@/lib/zodMessages.utils";
 import { POLITICA_TOLERANCIA_OPTIONS } from "../../config/asistencia.config";
@@ -46,8 +47,10 @@ interface AsignarJornadaModalProps {
  * @remarks
  * El backend solo admite jornadas fijas diurnas, y no deja empezar antes del
  * ingreso ni repetir la fecha de inicio de otra asignación. Cuando el empleado
- * ya tiene historial de asistencia, la jornada se cambia solo desde aquí. El
- * formulario está dentro del contenido: al cerrarse se desmonta.
+ * ya tiene historial de asistencia, la jornada se cambia solo desde aquí. Una
+ * jornada rige desde su fecha hasta que se asigna otra. Con una fecha pasada se
+ * avisa, porque se recalculan los días desde entonces. El formulario está dentro
+ * del contenido: al cerrarse se desmonta.
  */
 export function AsignarJornadaModal({
   empleadoId,
@@ -98,6 +101,9 @@ function AsignarJornadaForm({
     defaultValues: { politica_tolerancia: "COMPLETA" },
   });
 
+  const desde = useWatch({ control: methods.control, name: "desde" });
+  const esFechaPasada = Boolean(desde) && desde < getTodayIsoDate();
+
   const onSubmit = (values: AsignarJornadaDatos) =>
     mutation.mutate(
       { ...values, empleado_id: empleadoId },
@@ -135,8 +141,8 @@ function AsignarJornadaForm({
             required
             type="date"
             min={toDateInput(fechaInicioLabores) || undefined}
+            description="Rige desde esta fecha hasta que se asigne otra."
           />
-          <TextField name="hasta" label="Hasta" optional type="date" />
           <SelectField
             name="politica_tolerancia"
             label="Tardanza que supera la tolerancia"
@@ -145,6 +151,17 @@ function AsignarJornadaForm({
           />
           <MotivoField placeholder="Por qué cambia la jornada" />
         </div>
+
+        {esFechaPasada && (
+          <Alert>
+            <AlertDescription>
+              Esta fecha ya pasó: los días desde entonces se recalculan con la
+              jornada nueva. Solo se actualiza el resumen del mes que estás
+              viendo; los meses anteriores hay que actualizarlos a mano, y un
+              mes aprobado tendrá que reabrirse y aprobarse de nuevo.
+            </AlertDescription>
+          </Alert>
+        )}
 
         <ErrorAlert error={mutation.error} />
 
