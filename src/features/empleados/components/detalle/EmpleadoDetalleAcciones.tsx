@@ -1,14 +1,30 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { PencilIcon, RefreshCwIcon, UserCheckIcon, UserXIcon } from "lucide-react";
+import {
+  ChevronDownIcon,
+  PencilIcon,
+  RefreshCwIcon,
+  UserCheckIcon,
+  UserXIcon,
+} from "lucide-react";
 
-import { buildEditarEmpleadoPath } from "@/app/routes/path";
+import {
+  buildEditarDatosFinancierosPath,
+  buildEditarEmpleadoPath,
+} from "@/app/routes/path";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useDatosFinancierosEmpleado } from "@/features/datosFinancieros/hooks/useDatosFinancieros";
 import type { Empleado } from "../../types/empleados.types";
 import {
   EmpleadoModales,
@@ -25,7 +41,8 @@ interface EmpleadoDetalleAccionesProps {
  * @remarks
  * Un empleado activo puede cambiar de estado o darse de baja; uno inactivo
  * solo puede reactivarse, porque el backend rechaza las demás operaciones.
- * "Editar" abre la página de edición.
+ * "Editar" es un acceso directo a la edición del empleado mientras no tenga
+ * datos financieros; cuando los tiene, es un menú con las dos ediciones.
  */
 export function EmpleadoDetalleAcciones({
   empleado,
@@ -34,17 +51,44 @@ export function EmpleadoDetalleAcciones({
 
   const closeModal = () => setOpenModal(null);
 
+  // Mientras carga o si no hay datos, "Editar" va directo a los datos personales
+  const { data: datosFinancieros } = useDatosFinancierosEmpleado(empleado.id);
+
   return (
     <div className="flex items-center gap-2">
-      <Button
-        variant="outline"
-        size="lg"
-        nativeButton={false}
-        render={<Link to={buildEditarEmpleadoPath(empleado.id)} />}
-      >
-        <PencilIcon data-icon="inline-start" />
-        Editar
-      </Button>
+      {datosFinancieros ? (
+        <DropdownMenu>
+          <DropdownMenuTrigger render={<Button variant="outline" size="lg" />}>
+            <PencilIcon data-icon="inline-start" />
+            Editar
+            <ChevronDownIcon data-icon="inline-end" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              render={<Link to={buildEditarEmpleadoPath(empleado.id)} />}
+            >
+              Personal y laboral
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              render={
+                <Link to={buildEditarDatosFinancierosPath(empleado.id)} />
+              }
+            >
+              Financiero
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ) : (
+        <Button
+          variant="outline"
+          size="lg"
+          nativeButton={false}
+          render={<Link to={buildEditarEmpleadoPath(empleado.id)} />}
+        >
+          <PencilIcon data-icon="inline-start" />
+          Editar
+        </Button>
+      )}
 
       <Tooltip>
         {/* El span deja que el tooltip funcione aunque el botón esté deshabilitado */}

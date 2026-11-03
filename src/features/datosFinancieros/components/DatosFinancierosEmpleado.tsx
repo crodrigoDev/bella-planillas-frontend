@@ -1,4 +1,4 @@
-import { PencilIcon, PlusIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { buildEditarDatosFinancierosPath } from "@/app/routes/path";
@@ -25,7 +25,7 @@ interface DatosFinancierosEmpleadoProps {
  * Pestaña Datos financieros de la ficha: pensiones, sueldo, cuentas y salud
  *
  * @remarks
- * Desde aquí se va a registrar o editar los datos. El backend ya envía los números de cuenta, CCI y CUSPP enmascarados; aquí
+ * Si todavía no hay datos, ofrece registrarlos. El backend ya envía los números de cuenta, CCI y CUSPP enmascarados; aquí
  * solo se muestran con `maskEnd`, nunca completos.
  */
 export function DatosFinancierosEmpleado({
@@ -33,26 +33,6 @@ export function DatosFinancierosEmpleado({
 }: DatosFinancierosEmpleadoProps) {
   const { data, isLoading, error, refetch } =
     useDatosFinancierosEmpleado(empleadoId);
-
-  const accion = (
-    <Button
-      variant="outline"
-      nativeButton={false}
-      render={<Link to={buildEditarDatosFinancierosPath(empleadoId)} />}
-    >
-      {data ? (
-        <>
-          <PencilIcon data-icon="inline-start" />
-          Editar datos financieros
-        </>
-      ) : (
-        <>
-          <PlusIcon data-icon="inline-start" />
-          Registrar datos financieros
-        </>
-      )}
-    </Button>
-  );
 
   return (
     <>
@@ -68,8 +48,7 @@ export function DatosFinancierosEmpleado({
           <FormSection
             title="Datos financieros"
             description="Previsión social, remuneración, cuentas y salud."
-            action={accion}
-          >
+            >
             <ResumenCampo
               label="Régimen previsional"
               value={
@@ -143,9 +122,18 @@ export function DatosFinancierosEmpleado({
         )}
       </DetalleTabEstado>
 
-      {/* Sin datos no hay sección donde poner el botón: va bajo el aviso */}
+      {/* Editar está en el menú Editar de la cabecera; aquí solo se ofrece el primer registro */}
       {!isLoading && !error && !data && (
-        <div className="flex justify-center">{accion}</div>
+        <div className="flex justify-center">
+          <Button
+            variant="outline"
+            nativeButton={false}
+            render={<Link to={buildEditarDatosFinancierosPath(empleadoId)} />}
+          >
+            <PlusIcon data-icon="inline-start" />
+            Registrar datos financieros
+          </Button>
+        </div>
       )}
     </>
   );

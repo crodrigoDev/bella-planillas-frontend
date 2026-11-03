@@ -3,8 +3,6 @@ import type { ReactNode } from "react";
 interface FormSectionProps {
   title: string;
   description: string;
-  /** Botón u otro elemento que se muestra bajo la descripción, por ejemplo "Editar" */
-  action?: ReactNode;
   children: ReactNode;
 }
 
@@ -19,7 +17,6 @@ interface FormSectionProps {
 export function FormSection({
   title,
   description,
-  action,
   children,
 }: FormSectionProps) {
   return (
@@ -27,7 +24,6 @@ export function FormSection({
       <header>
         <h2 className="text-base font-semibold">{title}</h2>
         <p className="mt-1 text-sm text-muted-foreground">{description}</p>
-        {action && <div className="mt-3">{action}</div>}
       </header>
 
       <div className="grid content-start gap-4 sm:grid-cols-2 xl:grid-cols-3">
