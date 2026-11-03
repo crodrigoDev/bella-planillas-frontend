@@ -1,13 +1,13 @@
+import { HistorialEmpleado } from "@/features/historial/components/HistorialEmpleado";
+import { HISTORIAL_EMPLEADO_MOCK } from "@/features/historial/data/historial.mock";
+
 /**
- * Pestaña Historial de la ficha (pendiente)
+ * Pestaña Historial de la ficha
+ *
+ * @remarks
+ * TEMPORAL: usa datos de ejemplo. Cuando el backend entregue el historial por
+ * empleado, aquí se consulta con el id de la ficha.
  */
 export default function EmpleadoHistorialPage() {
-  return (
-    <div className="space-y-1 py-12 text-center">
-      <p className="font-medium">Historial</p>
-      <p className="text-sm text-muted-foreground">
-        Esta sección estará disponible próximamente.
-      </p>
-    </div>
-  );
+  return <HistorialEmpleado eventos={HISTORIAL_EMPLEADO_MOCK} />;
 }
