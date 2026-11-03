@@ -37,22 +37,3 @@ export const MOTIVO_BAJA_OPTIONS: SelectOption[] = [
     label: "Término de la relación durante el periodo de prueba",
   },
 ];
-
-/**
- * Opciones de sexo del formulario, con los valores que acepta el contrato
- */
-export const SEXO_OPTIONS: SelectOption[] = [
-  { value: "MASCULINO", label: "Masculino" },
-  { value: "FEMENINO", label: "Femenino" },
-];
-
-/**
- * Opciones de estado civil del formulario, con los valores que acepta el contrato
- */
-export const ESTADO_CIVIL_OPTIONS: SelectOption[] = [
-  { value: "SOLTERO", label: "Soltero(a)" },
-  { value: "CASADO", label: "Casado(a)" },
-  { value: "CONVIVIENTE", label: "Conviviente" },
-  { value: "DIVORCIADO", label: "Divorciado(a)" },
-  { value: "VIUDO", label: "Viudo(a)" },
-];

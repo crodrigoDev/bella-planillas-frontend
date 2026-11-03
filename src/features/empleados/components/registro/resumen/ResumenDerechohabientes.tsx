@@ -2,7 +2,7 @@ import { FormSection } from "@/components/form/FormSection";
 import { getOptionLabel } from "@/lib/catalogos.utils";
 import { formatDate } from "@/lib/format.utils";
 import { VINCULO_OPTIONS } from "@/features/derechohabientes/config/derechohabientes.config";
-import type { DerechohabienteDraft } from "../../../schemas/datosDerechohabiente.schema";
+import type { DerechohabienteDraft } from "@/features/derechohabientes/schemas/datosDerechohabiente.schema";
 
 interface ResumenDerechohabientesProps {
   derechohabientes: DerechohabienteDraft[];

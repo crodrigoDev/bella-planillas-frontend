@@ -6,7 +6,7 @@ import { zodResolverOptions } from "@/lib/zodMessages.utils";
 import {
   DatosDerechohabienteSchema,
   type DerechohabienteDraft,
-} from "../schemas/datosDerechohabiente.schema";
+} from "@/features/derechohabientes/schemas/datosDerechohabiente.schema";
 import { useNuevoEmpleadoStore } from "../store/nuevoEmpleado.store";
 
 const resolver = zodResolver(DatosDerechohabienteSchema, zodResolverOptions);

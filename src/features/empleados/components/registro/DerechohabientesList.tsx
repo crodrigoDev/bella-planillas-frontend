@@ -3,7 +3,7 @@ import { PencilIcon, Trash2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getOptionLabel } from "@/lib/catalogos.utils";
 import { VINCULO_OPTIONS } from "@/features/derechohabientes/config/derechohabientes.config";
-import type { DerechohabienteDraft } from "../../schemas/datosDerechohabiente.schema";
+import type { DerechohabienteDraft } from "@/features/derechohabientes/schemas/datosDerechohabiente.schema";
 
 interface DerechohabientesListProps {
   derechohabientes: DerechohabienteDraft[];
