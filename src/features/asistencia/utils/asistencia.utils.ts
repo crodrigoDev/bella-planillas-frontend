@@ -56,6 +56,20 @@ export const formatDia = (fecha: string): string => {
 };
 
 /**
+ * Fecha para la tabla del mes: día de la semana y fecha completa
+ *
+ * @example formatFechaCompleta("2026-10-01") // "Jue 01/10/2026"
+ */
+export const formatFechaCompleta = (fecha: string): string => {
+  const [year, month, day] = fecha.split("-").map(Number);
+  const dia = new Date(Date.UTC(year, month - 1, day))
+    .toLocaleDateString("es-PE", { weekday: "short", timeZone: "UTC" })
+    .replace(".", "");
+
+  return `${dia.charAt(0).toUpperCase()}${dia.slice(1)} ${String(day).padStart(2, "0")}/${String(month).padStart(2, "0")}/${year}`;
+};
+
+/**
  * Minutos como horas y minutos
  *
  * @example formatMinutos(80) // "1 h 20 min"

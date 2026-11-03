@@ -18,7 +18,7 @@ interface Dato {
 }
 
 /**
- * Totales de un mes: estado del resumen, días trabajados, faltas, tardanza y extras
+ * Totales de un mes: estado del resumen, días, faltas, tardanza, extras y sin goce
  *
  * @remarks
  * Muestra también por qué no se puede aprobar todavía: días por resolver o
@@ -30,12 +30,23 @@ export function ResumenMesCards({ resumen }: ResumenMesCardsProps) {
     { label: "Faltas", value: String(resumen.faltas) },
     { label: "Tardanza", value: formatMinutos(resumen.minutos_tardanza) },
     {
+      label: "Salida anticipada",
+      value: formatMinutos(resumen.minutos_salida_anticipada),
+    },
+    {
       label: "Extras al 25%",
       value: formatMinutos(resumen.minutos_extras_25),
     },
     {
       label: "Extras al 35%",
       value: formatMinutos(resumen.minutos_extras_35),
+    },
+    {
+      label: "Sin goce",
+      value:
+        resumen.dias_sin_goce > 0
+          ? `${resumen.dias_sin_goce} ${resumen.dias_sin_goce === 1 ? "día" : "días"}`
+          : formatMinutos(resumen.minutos_sin_goce),
     },
     { label: "Días por resolver", value: String(resumen.pendientes) },
   ];
@@ -63,7 +74,7 @@ export function ResumenMesCards({ resumen }: ResumenMesCardsProps) {
         )}
       </div>
 
-      <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border bg-border sm:grid-cols-3 lg:grid-cols-6">
+      <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border bg-border sm:grid-cols-4">
         {datos.map(({ label, value }) => (
           <div key={label} className="space-y-1 bg-card px-4 py-3">
             <dt className="text-sm text-muted-foreground">{label}</dt>

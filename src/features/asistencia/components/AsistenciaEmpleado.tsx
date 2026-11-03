@@ -41,6 +41,8 @@ interface AsistenciaEmpleadoProps {
   nroDocumento: string;
   /** Inicio de labores del empleado: la jornada no puede empezar antes */
   fechaInicioLabores: string | null;
+  /** Jornada vigente del empleado, para el subtítulo del detalle */
+  jornadaActual: string;
   /** Jornadas activas; las trae la página, porque el catálogo vive en `empleados` */
   jornadas: SelectOption[] | undefined;
   isLoadingJornadas: boolean;
@@ -59,6 +61,7 @@ export function AsistenciaEmpleado({
   empleadoId,
   nroDocumento,
   fechaInicioLabores,
+  jornadaActual,
   jornadas,
   isLoadingJornadas,
 }: AsistenciaEmpleadoProps) {
@@ -170,6 +173,7 @@ export function AsistenciaEmpleado({
             <ResumenMesCards resumen={data} />
             <DetalleDiarioTabla
               dias={data.detalle?.dias ?? []}
+              jornada={jornadaActual}
               puedeResolver={!aprobado}
               onResolver={(fecha) => setModal({ tipo: "dia", fecha })}
             />

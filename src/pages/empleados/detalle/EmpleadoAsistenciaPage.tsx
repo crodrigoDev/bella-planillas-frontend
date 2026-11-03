@@ -4,6 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { AsistenciaEmpleado } from "@/features/asistencia/components/AsistenciaEmpleado";
 import { useEmpleadosCatalogos } from "@/features/empleados/hooks/useCatalogos";
 import { useEmpleado } from "@/features/empleados/hooks/useEmpleado";
+import { formatJornada } from "@/features/empleados/utils/empleados.utils";
 
 /**
  * Pestaña Asistencia de la ficha
@@ -25,6 +26,7 @@ export default function EmpleadoAsistenciaPage() {
       empleadoId={empleado.id}
       nroDocumento={empleado.nro_documento}
       fechaInicioLabores={empleado.fecha_inicio}
+      jornadaActual={formatJornada(empleado.jornada)}
       jornadas={jornadas.data}
       isLoadingJornadas={jornadas.isLoading}
     />
