@@ -17,6 +17,7 @@ export const ROUTE_PATHS = {
     nuevoEmpleado: "/empleados/nuevo",
     detalleEmpleado: "/empleados/:id",
     editarEmpleado: "/empleados/:id/editar",
+    editarDatosFinancieros: "/empleados/:id/editar-datos-financieros",
     detalleEmpleadoContratos: "/empleados/:id/contratos",
     detalleEmpleadoDerechohabientes: "/empleados/:id/derechohabientes",
     detalleEmpleadoAsistencia: "/empleados/:id/asistencia",
@@ -52,3 +53,9 @@ export const buildEmpleadoPath = (id: string, section?: string): string =>
  */
 export const buildEditarEmpleadoPath = (id: string): string =>
   buildEmpleadoPath(id, "editar");
+
+/**
+ * Arma la ruta de los datos financieros de un empleado (registro o edición)
+ */
+export const buildEditarDatosFinancierosPath = (id: string): string =>
+  buildEmpleadoPath(id, "editar-datos-financieros");

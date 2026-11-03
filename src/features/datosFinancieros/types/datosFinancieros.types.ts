@@ -14,6 +14,10 @@ export interface RegimenPension {
  * no llevan el sufijo `_mascara` que declara `DatoFinancieroResponseSchema`.
  */
 export interface DatosFinancieros {
+  id_regimen: string;
+  id_tipo_afp: string | null;
+  id_banco_sueldo: string | null;
+  id_banco_cts: string | null;
   regimen_nombre: string | null;
   afp_nombre: string | null;
   cuspp: string | null;
