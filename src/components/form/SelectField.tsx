@@ -57,7 +57,9 @@ export function SelectField({
           control={control}
           render={({ field }) => {
             const handleChange = (next: string | undefined) => {
-              field.onChange(next);
+              // Al vaciar se guarda null y no undefined: con undefined, react-hook-form
+              // vuelve a mostrar el valor inicial del formulario (en una edición, el que ya tenía)
+              field.onChange(next === undefined ? null : next);
               onValueChange?.(next);
             };
 
