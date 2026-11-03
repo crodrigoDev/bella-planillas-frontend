@@ -14,7 +14,11 @@ interface FormSectionProps {
  * acomodan en 1, 2 o 3 columnas según el ancho; un campo que necesite más
  * ancho puede usar `sm:col-span-2`, o `col-span-full` para ocupar toda la fila.
  */
-export function FormSection({ title, description, children }: FormSectionProps) {
+export function FormSection({
+  title,
+  description,
+  children,
+}: FormSectionProps) {
   return (
     <section className="grid gap-4 border-t pt-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,3fr)] lg:gap-8">
       <header>

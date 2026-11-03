@@ -1,4 +1,7 @@
-import type { CrearDatoFinancieroDto } from "@jyp/shared-contracts";
+import type {
+  ActualizarDatoFinancieroDto,
+  CrearDatoFinancieroDto,
+} from "@jyp/shared-contracts";
 import { isAxiosError } from "axios";
 import { protectedHttpClient } from "@/lib/api/protected-http-client";
 import type { ApiResponse } from "@/lib/api/types/api.types";
@@ -43,5 +46,25 @@ export const datosFinancierosService = {
       ...datos,
       empleado_id: empleadoId,
     });
+  },
+
+  /**
+   * Edita los datos financieros de un empleado
+   *
+   * @param dto - Campos a cambiar y la contraseña del usuario: el backend la
+   * exige para cualquier cambio financiero
+   *
+   * @remarks
+   * Un campo sin enviar queda como estaba. El backend no devuelve las cuentas
+   * completas, así que solo se envía una cuenta o un CCI cuando se escribe uno nuevo.
+   */
+  editar: async (
+    empleadoId: string,
+    dto: ActualizarDatoFinancieroDto,
+  ): Promise<void> => {
+    await protectedHttpClient.put(
+      `/payroll/dato-financiero/empleado/${empleadoId}`,
+      dto,
+    );
   },
 };

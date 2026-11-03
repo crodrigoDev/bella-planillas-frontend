@@ -21,6 +21,7 @@ import EmpleadoAsistenciaPage from "@/pages/empleados/detalle/EmpleadoAsistencia
 import EmpleadoHistorialPage from "@/pages/empleados/detalle/EmpleadoHistorialPage";
 import NuevoEmpleadoPage from "@/pages/empleados/NuevoEmpleadoPage";
 import EditarEmpleadoPage from "@/pages/empleados/EditarEmpleadoPage";
+import EditarDatosFinancierosPage from "@/pages/empleados/EditarDatosFinancierosPage";
 
 const DETALLE_EMPLEADO_TABS = [
   {
@@ -118,6 +119,19 @@ export const router = createBrowserRouter([
               {
                 path: ROUTE_PATHS.gestionPersonal.editarEmpleado,
                 element: <EditarEmpleadoPage />,
+              },
+            ],
+          },
+          {
+            element: (
+              <RoleRoute
+                path={ROUTE_PATHS.gestionPersonal.editarDatosFinancieros}
+              />
+            ),
+            children: [
+              {
+                path: ROUTE_PATHS.gestionPersonal.editarDatosFinancieros,
+                element: <EditarDatosFinancierosPage />,
               },
             ],
           },

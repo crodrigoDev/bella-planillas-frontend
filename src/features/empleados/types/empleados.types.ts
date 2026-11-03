@@ -61,6 +61,8 @@ export interface Empleado {
   distrito?: string | null;
   ubigeo?: string | null;
   asig_familiar?: boolean;
+  /** Solo lo envía el detalle; se necesita para registrar datos financieros con AFP */
+  afp_fecha_filiacion?: string | null;
   fecha_inicio: string | null;
   fecha_cese: string | null;
   activo: boolean;

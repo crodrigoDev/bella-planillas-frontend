@@ -1,4 +1,5 @@
 import type { SelectOption } from "@/lib/types/options.types";
+import type { RegimenPension } from "../types/datosFinancieros.types";
 
 /**
  * Descripciones de los regímenes de pensión, por el nombre que guarda el backend
@@ -16,6 +17,15 @@ export const REGIMEN_PENSION_LABELS: Record<string, string> = {
  */
 export const esRegimenAfp = (nombre: string | undefined): boolean =>
   /AFP|SPP/i.test(nombre ?? "");
+
+/**
+ * Indica si el régimen elegido (por su id) es el de las AFP según el catálogo
+ */
+export const isRegimenAfp = (
+  regimenes: RegimenPension[] | undefined,
+  idRegimen: string | undefined,
+): boolean =>
+  esRegimenAfp(regimenes?.find((regimen) => regimen.id === idRegimen)?.nombre);
 
 /**
  * Tipos de comisión de la AFP, con los valores que acepta el contrato
