@@ -21,7 +21,7 @@ export interface MarcaDia {
  *
  * @remarks
  * El `estado` es un código (`ASISTENCIA_REGISTRADA`, `FALTA_INJUSTIFICADA`...):
- * se muestra con `ESTADO_DIA_LABELS`. Las `alertas` son códigos que piden revisión.
+ * se muestra con `ESTADO_DIA`. Las `alertas` son códigos que piden revisión.
  */
 export interface DiaAsistencia {
   /** Fecha como YYYY-MM-DD */

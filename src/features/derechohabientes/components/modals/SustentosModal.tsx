@@ -3,11 +3,11 @@ import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
+import { StatusBadge } from "@/components/feedback/StatusBadge";
 import { FileDropzone } from "@/components/form/FileDropzone";
 import { LoadingButton } from "@/components/form/LoadingButton";
 import { SelectField } from "@/components/form/SelectField";
 import { TextField } from "@/components/form/TextField";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -120,12 +120,9 @@ function SustentosContent({ derechohabiente, onClose }: SustentosContentProps) {
                   {getOptionLabel(TIPO_SUSTENTO_OPTIONS, sustento.tipo_documento)}
                 </p>
                 {sustento.vigente && (
-                  <Badge
-                    variant="outline"
-                    className="shrink-0 border-emerald-200 bg-emerald-50 text-emerald-700"
-                  >
+                  <StatusBadge tone="success" className="shrink-0">
                     Vigente
-                  </Badge>
+                  </StatusBadge>
                 )}
               </div>
               {/* Siempre dos líneas: el nombre se corta y las fechas, si hay, van al lado */}

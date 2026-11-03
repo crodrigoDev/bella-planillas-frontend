@@ -10,7 +10,8 @@ import {
 } from "lucide-react";
 
 import { AccionButton } from "@/components/page/AccionButton";
-import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/feedback/StatusBadge";
+import { TONE_DOT } from "@/components/feedback/statusTone.config";
 import { Button } from "@/components/ui/button";
 import { getOptionLabel } from "@/lib/catalogos.utils";
 import { getTodayIsoDate } from "@/lib/date.utils";
@@ -18,9 +19,7 @@ import { formatDate } from "@/lib/format.utils";
 import { cn } from "@/lib/utils";
 import {
   ALERTA_VENCIMIENTO_STYLES,
-  ESTADO_CONTRATO_DOT,
-  ESTADO_CONTRATO_LABELS,
-  ESTADO_CONTRATO_STYLES,
+  ESTADO_CONTRATO,
 } from "../config/contratos.config";
 import { useModalidadesContrato } from "../hooks/useCatalogos";
 import type { Contrato } from "../types/contratos.types";
@@ -53,6 +52,7 @@ export function ContratoItem({ contrato, empleadoActivo }: ContratoItemProps) {
   const modalidades = useModalidadesContrato();
 
   const esVigente = contrato.estado === "VIGENTE";
+  const estado = ESTADO_CONTRATO[contrato.estado];
   const hoy = getTodayIsoDate();
   const aunNoEmpieza = contrato.fecha_inicio.slice(0, 10) > hoy;
   const progreso = getProgresoContrato(
@@ -78,7 +78,9 @@ export function ContratoItem({ contrato, empleadoActivo }: ContratoItemProps) {
         aria-hidden
         className={cn(
           "absolute top-5 left-0 size-3.5 rounded-full ring-4 ring-background",
-          ESTADO_CONTRATO_DOT[contrato.estado],
+          TONE_DOT[estado.tone],
+          // Los contratos sin vigencia llevan el punto gris más suave
+          estado.tone === "neutral" && "bg-muted-foreground/40",
         )}
       />
 
@@ -101,12 +103,7 @@ export function ContratoItem({ contrato, empleadoActivo }: ContratoItemProps) {
           </div>
 
           <div className="shrink-0">
-            <Badge
-              variant="outline"
-              className={ESTADO_CONTRATO_STYLES[contrato.estado]}
-            >
-              {ESTADO_CONTRATO_LABELS[contrato.estado]}
-            </Badge>
+            <StatusBadge tone={estado.tone}>{estado.label}</StatusBadge>
           </div>
         </div>
 

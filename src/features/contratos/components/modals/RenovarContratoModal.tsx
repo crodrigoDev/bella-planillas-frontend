@@ -2,8 +2,8 @@ import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
+import { StatusBadge } from "@/components/feedback/StatusBadge";
 import { LoadingButton } from "@/components/form/LoadingButton";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,10 +17,7 @@ import {
 import { getTodayIsoDate, toDateInput } from "@/lib/date.utils";
 import { formatDate } from "@/lib/format.utils";
 import { zodResolverOptions } from "@/lib/zodMessages.utils";
-import {
-  ESTADO_CONTRATO_LABELS,
-  ESTADO_CONTRATO_STYLES,
-} from "../../config/contratos.config";
+import { ESTADO_CONTRATO } from "../../config/contratos.config";
 import { useRenovarContrato } from "../../hooks/useContratoActions";
 import { RenovarContratoFormSchema } from "../../schemas/contrato.schema";
 import type { Contrato } from "../../types/contratos.types";
@@ -119,12 +116,9 @@ function RenovarContratoForm({ contrato, onClose }: RenovarContratoFormProps) {
                 : `Desde el ${formatDate(contrato.fecha_inicio)}, sin fecha de fin`}
             </p>
           </div>
-          <Badge
-            variant="outline"
-            className={ESTADO_CONTRATO_STYLES[contrato.estado]}
-          >
-            {ESTADO_CONTRATO_LABELS[contrato.estado]}
-          </Badge>
+          <StatusBadge tone={ESTADO_CONTRATO[contrato.estado].tone}>
+            {ESTADO_CONTRATO[contrato.estado].label}
+          </StatusBadge>
         </div>
 
         <ContratoCampos />

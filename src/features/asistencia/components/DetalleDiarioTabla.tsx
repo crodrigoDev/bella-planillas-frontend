@@ -7,7 +7,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/feedback/StatusBadge";
+import type { StatusTone } from "@/components/feedback/statusTone.config";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -22,9 +23,7 @@ import { cn } from "@/lib/utils";
 import {
   ALERTA_LABELS,
   ESTADOS_DIA_SIN_RESOLVER,
-  ESTADO_DIA_LABELS,
-  ESTADO_DIA_NEUTRO,
-  ESTADO_DIA_STYLES,
+  ESTADO_DIA,
   TIPO_MARCA_LABELS,
 } from "../config/asistencia.config";
 import type { DiaAsistencia, TipoMarca } from "../types/asistencia.types";
@@ -65,16 +64,20 @@ const minutosOGuion = (minutos: number): string =>
   minutos > 0 ? formatMinutos(minutos) : "--";
 
 /** Nombre del estado de un día: "Puntual" o "Tardanza" cuando asistió */
-const getEstadoDia = (dia: DiaAsistencia): { label: string; style: string } => {
+const getEstadoDia = (
+  dia: DiaAsistencia,
+): { label: string; tone: StatusTone } => {
   if (dia.estado === "ASISTENCIA_REGISTRADA")
     return dia.minutos_tardanza > 0
-      ? { label: "Tardanza", style: ESTADO_DIA_STYLES.PENDIENTE }
-      : { label: "Puntual", style: ESTADO_DIA_STYLES.ASISTENCIA_REGISTRADA };
+      ? { label: "Tardanza", tone: "warning" }
+      : { label: "Puntual", tone: "success" };
 
-  return {
-    label: ESTADO_DIA_LABELS[dia.estado] ?? humanizarCodigo(dia.estado),
-    style: ESTADO_DIA_STYLES[dia.estado] ?? ESTADO_DIA_NEUTRO,
-  };
+  return (
+    ESTADO_DIA[dia.estado] ?? {
+      label: humanizarCodigo(dia.estado),
+      tone: "neutral",
+    }
+  );
 };
 
 interface Decision {
@@ -251,9 +254,7 @@ export function DetalleDiarioTabla({
                 </TableCell>
 
                 <TableCell>
-                  <Badge variant="outline" className={estado.style}>
-                    {estado.label}
-                  </Badge>
+                  <StatusBadge tone={estado.tone}>{estado.label}</StatusBadge>
                 </TableCell>
 
                 <TableCell className="text-sm whitespace-nowrap tabular-nums">

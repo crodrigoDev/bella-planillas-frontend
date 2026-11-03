@@ -31,7 +31,7 @@ Cada pieza es una subsección `##` de su archivo, con este formato:
 | Archivo | Piezas |
 | --- | --- |
 | [componentes/form.md](componentes/form.md) | [FormField](componentes/form.md#formfield) · [TextField](componentes/form.md#textfield) · [SelectField](componentes/form.md#selectfield) · [OptionSelect](componentes/form.md#optionselect) · [FormSection](componentes/form.md#formsection) · [RequiredMark](componentes/form.md#requiredmark) · [LoadingButton](componentes/form.md#loadingbutton) · [FileDropzone](componentes/form.md#filedropzone) · [ResumenCampo](componentes/form.md#resumencampo) |
-| [componentes/feedback.md](componentes/feedback.md) | [ErrorAlert](componentes/feedback.md#erroralert) · [DetalleTabEstado](componentes/feedback.md#detalletabestado) |
+| [componentes/feedback.md](componentes/feedback.md) | [ErrorAlert](componentes/feedback.md#erroralert) · [DetalleTabEstado](componentes/feedback.md#detalletabestado) · [StatusBadge](componentes/feedback.md#statusbadge) · [statusTone.config.ts](componentes/feedback.md#statustoneconfigts) |
 | [componentes/page.md](componentes/page.md) | [AccionButton](componentes/page.md#accionbutton) · [PageHeader](componentes/page.md#pageheader) · [PageTabs](componentes/page.md#pagetabs) |
 | [componentes/filters.md](componentes/filters.md) | [SearchInput](componentes/filters.md#searchinput) · [FilterSelect](componentes/filters.md#filterselect) · [FilterChip](componentes/filters.md#filterchip) · [filters.config.ts](componentes/filters.md#filtersconfigts) |
 | [componentes/data-table.md](componentes/data-table.md) | [DataTable](componentes/data-table.md#datatable) · [dataTable.config.ts](componentes/data-table.md#datatableconfigts) |
@@ -55,6 +55,7 @@ Cada pieza es una subsección `##` de su archivo, con este formato:
 | Subir un archivo | [FileDropzone](componentes/form.md#filedropzone) |
 | Mostrar el error de una petición | [ErrorAlert](componentes/feedback.md#erroralert) |
 | Resolver carga, error y vacío de una pestaña de la ficha | [DetalleTabEstado](componentes/feedback.md#detalletabestado) |
+| Una insignia con el estado de algo (activo, vencido, aprobado...) | [StatusBadge](componentes/feedback.md#statusbadge) |
 | Un botón de icono con tooltip en una fila | [AccionButton](componentes/page.md#accionbutton) |
 | El encabezado de una página | [PageHeader](componentes/page.md#pageheader) |
 | Un listado con filtros en la URL | [SearchInput](componentes/filters.md#searchinput), [FilterSelect](componentes/filters.md#filterselect), [urlParams.utils.ts](lib.md#urlparamsutilsts) |

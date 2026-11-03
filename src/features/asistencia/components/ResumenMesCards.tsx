@@ -1,10 +1,7 @@
 import { TriangleAlertIcon } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
-import {
-  ESTADO_RESUMEN_LABELS,
-  ESTADO_RESUMEN_STYLES,
-} from "../config/asistencia.config";
+import { StatusBadge } from "@/components/feedback/StatusBadge";
+import { ESTADO_RESUMEN } from "../config/asistencia.config";
 import type { ResumenMes } from "../types/asistencia.types";
 import { cn } from "@/lib/utils";
 import { formatMinutos, getMotivoNoAprobable } from "../utils/asistencia.utils";
@@ -83,12 +80,9 @@ export function ResumenMesCards({ resumen }: ResumenMesCardsProps) {
   return (
     <section aria-label="Resumen del mes" className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
-        <Badge
-          variant="outline"
-          className={ESTADO_RESUMEN_STYLES[resumen.estado]}
-        >
-          {ESTADO_RESUMEN_LABELS[resumen.estado]}
-        </Badge>
+        <StatusBadge tone={ESTADO_RESUMEN[resumen.estado].tone}>
+          {ESTADO_RESUMEN[resumen.estado].label}
+        </StatusBadge>
         {resumen.estado === "RECHAZADO" && resumen.motivo_revision && (
           <p className="text-sm text-muted-foreground">
             Motivo: {resumen.motivo_revision}
