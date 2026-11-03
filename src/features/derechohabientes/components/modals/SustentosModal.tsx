@@ -31,7 +31,10 @@ import {
 import { useSubirSustento } from "../../hooks/useDerechohabienteActions";
 import { useDerechohabienteSustentos } from "../../hooks/useDerechohabientes";
 import { SustentoFormSchema } from "../../schemas/sustento.schema";
-import type { Derechohabiente } from "../../types/derechohabientes.types";
+import type {
+  Derechohabiente,
+  Sustento,
+} from "../../types/derechohabientes.types";
 
 const resolver = zodResolver(SustentoFormSchema, zodResolverOptions);
 
@@ -59,7 +62,10 @@ export function SustentosModal({
 }: SustentosModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent showCloseButton={false} className="sm:max-w-xl">
+      <DialogContent
+        showCloseButton={false}
+        className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-xl"
+      >
         <SustentosContent
           derechohabiente={derechohabiente}
           onClose={() => onOpenChange(false)}
@@ -68,6 +74,18 @@ export function SustentosModal({
     </Dialog>
   );
 }
+
+/** Fechas del sustento en una línea: "02/11/2026 - 02/11/2027", solo la emisión o solo el vencimiento */
+const getFechasSustento = (sustento: Sustento): string => {
+  const { fecha_emision, fecha_vencimiento } = sustento;
+
+  if (fecha_emision && fecha_vencimiento)
+    return `${formatDate(fecha_emision)} - ${formatDate(fecha_vencimiento)}`;
+  if (fecha_emision) return `Emitido ${formatDate(fecha_emision)}`;
+  if (fecha_vencimiento) return `Vence ${formatDate(fecha_vencimiento)}`;
+
+  return "";
+};
 
 interface SustentosContentProps {
   derechohabiente: Derechohabiente;
@@ -94,39 +112,27 @@ function SustentosContent({ derechohabiente, onClose }: SustentosContentProps) {
       ) : error ? (
         <ErrorAlert error={error} />
       ) : data?.documentos.length ? (
-        <ul className="divide-y rounded-lg border">
+        <ul className="max-h-52 divide-y overflow-y-auto rounded-lg border">
           {data.documentos.map((sustento) => (
-            <li
-              key={sustento.id}
-              className="flex items-start justify-between gap-3 px-3 py-2.5"
-            >
-              <div className="min-w-0 space-y-0.5">
+            <li key={sustento.id} className="space-y-0.5 px-3 py-2.5">
+              <div className="flex items-center justify-between gap-3">
                 <p className="text-sm font-medium">
                   {getOptionLabel(TIPO_SUSTENTO_OPTIONS, sustento.tipo_documento)}
                 </p>
-                <p className="truncate text-sm text-muted-foreground">
-                  {sustento.nombre_archivo}
-                </p>
-                {(sustento.fecha_emision || sustento.fecha_vencimiento) && (
-                  <p className="text-xs text-muted-foreground">
-                    {sustento.fecha_emision &&
-                      `Emitido el ${formatDate(sustento.fecha_emision)}`}
-                    {sustento.fecha_emision &&
-                      sustento.fecha_vencimiento &&
-                      ", "}
-                    {sustento.fecha_vencimiento &&
-                      `vence el ${formatDate(sustento.fecha_vencimiento)}`}
-                  </p>
+                {sustento.vigente && (
+                  <Badge
+                    variant="outline"
+                    className="shrink-0 border-emerald-200 bg-emerald-50 text-emerald-700"
+                  >
+                    Vigente
+                  </Badge>
                 )}
               </div>
-              {sustento.vigente && (
-                <Badge
-                  variant="outline"
-                  className="border-emerald-200 bg-emerald-50 text-emerald-700"
-                >
-                  Vigente
-                </Badge>
-              )}
+              {/* Siempre dos líneas: el nombre se corta y las fechas, si hay, van al lado */}
+              <div className="flex items-center justify-between gap-3 text-sm text-muted-foreground">
+                <p className="min-w-0 truncate">{sustento.nombre_archivo}</p>
+                <p className="shrink-0 text-xs">{getFechasSustento(sustento)}</p>
+              </div>
             </li>
           ))}
         </ul>
