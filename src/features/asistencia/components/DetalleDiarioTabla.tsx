@@ -225,19 +225,29 @@ export function DetalleDiarioTabla({
                 dia.minutos_tardanza > 0);
             const esFalta = dia.estado === "FALTA_INJUSTIFICADA";
             const resoluble = puedeResolver && dia.fecha <= hoy && !sinTrabajo;
+            const esFuturo = dia.fecha > hoy;
+            const esHoy = dia.fecha === hoy;
 
             return (
               <TableRow
                 key={dia.fecha}
                 className={cn(
                   sinTrabajo && "bg-muted/30 text-muted-foreground",
+                  esFuturo && "text-muted-foreground",
                   esFalta
                     ? "bg-red-50/60"
-                    : conProblema && "bg-amber-50/50",
+                    : conProblema
+                      ? "bg-amber-50/50"
+                      : esHoy && "bg-primary/5",
                 )}
               >
                 <TableCell className="font-medium whitespace-nowrap tabular-nums">
                   {formatFechaCompleta(dia.fecha)}
+                  {esHoy && (
+                    <span className="ml-2 text-xs font-semibold text-primary">
+                      Hoy
+                    </span>
+                  )}
                 </TableCell>
 
                 <TableCell>
@@ -246,7 +256,7 @@ export function DetalleDiarioTabla({
                   </Badge>
                 </TableCell>
 
-                <TableCell className="text-xs whitespace-nowrap tabular-nums">
+                <TableCell className="text-sm whitespace-nowrap tabular-nums">
                   {esFalta && !dia.marcas.length ? (
                     <span className="text-red-600">
                       Sin marcas registradas

@@ -1,5 +1,25 @@
 import { getTodayIsoDate } from "@/lib/date.utils";
+import type { ResumenMes } from "../types/asistencia.types";
 import { ZONA_LIMA } from "../config/asistencia.config";
+
+/**
+ * Por qué no se puede aprobar un resumen pendiente, o null si se puede
+ *
+ * @remarks
+ * Son las mismas condiciones que exige el backend: resumen vigente, completo
+ * y sin días por resolver.
+ */
+export const getMotivoNoAprobable = (resumen: ResumenMes): string | null => {
+  if (resumen.estado !== "PENDIENTE") return null;
+  if (!resumen.vigente)
+    return "El resumen está desactualizado: actualízalo para poder aprobarlo.";
+  if (resumen.pendientes > 0)
+    return `Hay ${resumen.pendientes} ${resumen.pendientes === 1 ? "día" : "días"} por resolver antes de aprobar.`;
+  if (!resumen.completo)
+    return "Todavía hay días sin evaluar: se podrá aprobar cuando el mes esté completo.";
+
+  return null;
+};
 
 /** Mes de hoy como YYYY-MM */
 export const getPeriodoActual = (): string => getTodayIsoDate().slice(0, 7);

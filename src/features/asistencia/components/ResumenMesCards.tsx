@@ -6,7 +6,8 @@ import {
   ESTADO_RESUMEN_STYLES,
 } from "../config/asistencia.config";
 import type { ResumenMes } from "../types/asistencia.types";
-import { formatMinutos } from "../utils/asistencia.utils";
+import { cn } from "@/lib/utils";
+import { formatMinutos, getMotivoNoAprobable } from "../utils/asistencia.utils";
 
 interface ResumenMesCardsProps {
   resumen: ResumenMes;
@@ -15,6 +16,10 @@ interface ResumenMesCardsProps {
 interface Dato {
   label: string;
   value: string;
+  /** Si el valor es cero: se muestra tenue para que resalte lo que no lo es */
+  esCero: boolean;
+  /** Color del valor cuando no es cero: faltas en rojo, por resolver en ámbar */
+  tono?: "alerta" | "aviso";
 }
 
 /**
@@ -26,20 +31,36 @@ interface Dato {
  */
 export function ResumenMesCards({ resumen }: ResumenMesCardsProps) {
   const datos: Dato[] = [
-    { label: "Días trabajados", value: String(resumen.dias_trabajados) },
-    { label: "Faltas", value: String(resumen.faltas) },
-    { label: "Tardanza", value: formatMinutos(resumen.minutos_tardanza) },
+    {
+      label: "Días trabajados",
+      value: String(resumen.dias_trabajados),
+      esCero: resumen.dias_trabajados === 0,
+    },
+    {
+      label: "Faltas",
+      value: String(resumen.faltas),
+      esCero: resumen.faltas === 0,
+      tono: "alerta",
+    },
+    {
+      label: "Tardanza",
+      value: formatMinutos(resumen.minutos_tardanza),
+      esCero: resumen.minutos_tardanza === 0,
+    },
     {
       label: "Salida anticipada",
       value: formatMinutos(resumen.minutos_salida_anticipada),
+      esCero: resumen.minutos_salida_anticipada === 0,
     },
     {
       label: "Extras al 25%",
       value: formatMinutos(resumen.minutos_extras_25),
+      esCero: resumen.minutos_extras_25 === 0,
     },
     {
       label: "Extras al 35%",
       value: formatMinutos(resumen.minutos_extras_35),
+      esCero: resumen.minutos_extras_35 === 0,
     },
     {
       label: "Sin goce",
@@ -47,16 +68,17 @@ export function ResumenMesCards({ resumen }: ResumenMesCardsProps) {
         resumen.dias_sin_goce > 0
           ? `${resumen.dias_sin_goce} ${resumen.dias_sin_goce === 1 ? "día" : "días"}`
           : formatMinutos(resumen.minutos_sin_goce),
+      esCero: resumen.dias_sin_goce === 0 && resumen.minutos_sin_goce === 0,
     },
-    { label: "Días por resolver", value: String(resumen.pendientes) },
+    {
+      label: "Días por resolver",
+      value: String(resumen.pendientes),
+      esCero: resumen.pendientes === 0,
+      tono: "aviso",
+    },
   ];
 
-  const avisos = [
-    resumen.pendientes > 0 &&
-      `Hay ${resumen.pendientes} ${resumen.pendientes === 1 ? "día" : "días"} por resolver antes de aprobar.`,
-    !resumen.vigente &&
-      "El resumen está desactualizado: actualízalo para poder aprobarlo.",
-  ].filter(Boolean);
+  const aviso = getMotivoNoAprobable(resumen);
 
   return (
     <section aria-label="Resumen del mes" className="space-y-3">
@@ -75,23 +97,29 @@ export function ResumenMesCards({ resumen }: ResumenMesCardsProps) {
       </div>
 
       <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border bg-border sm:grid-cols-4">
-        {datos.map(({ label, value }) => (
+        {datos.map(({ label, value, esCero, tono }) => (
           <div key={label} className="space-y-1 bg-card px-4 py-3">
             <dt className="text-sm text-muted-foreground">{label}</dt>
-            <dd className="text-xl font-semibold tabular-nums">{value}</dd>
+            <dd
+              className={cn(
+                "text-xl font-semibold tabular-nums",
+                esCero && "font-normal text-muted-foreground",
+                !esCero && tono === "alerta" && "text-red-600",
+                !esCero && tono === "aviso" && "text-amber-700",
+              )}
+            >
+              {value}
+            </dd>
           </div>
         ))}
       </dl>
 
-      {avisos.map((aviso) => (
-        <p
-          key={String(aviso)}
-          className="flex items-center gap-2 text-sm text-amber-700"
-        >
+      {aviso && (
+        <p className="flex items-center gap-2 text-sm text-amber-700">
           <TriangleAlertIcon className="size-4 shrink-0" aria-hidden />
           {aviso}
         </p>
-      ))}
+      )}
     </section>
   );
 }

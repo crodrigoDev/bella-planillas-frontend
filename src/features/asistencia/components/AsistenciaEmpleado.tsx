@@ -1,20 +1,29 @@
 import { useState } from "react";
-import {
-  CalendarClockIcon,
-  CheckIcon,
-  ClockPlusIcon,
-  RefreshCwIcon,
-} from "lucide-react";
+import { CheckIcon, ChevronDownIcon, RefreshCwIcon } from "lucide-react";
 
 import { DetalleTabEstado } from "@/components/feedback/DetalleTabEstado";
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { LoadingButton } from "@/components/form/LoadingButton";
-import { AccionButton } from "@/components/page/AccionButton";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { SelectOption } from "@/lib/types/options.types";
 import { useGenerarResumen } from "../hooks/useAsistenciaActions";
 import { useResumenMes } from "../hooks/useAsistencia";
-import { getPeriodoActual, formatPeriodo } from "../utils/asistencia.utils";
+import {
+  formatPeriodo,
+  getMotivoNoAprobable,
+  getPeriodoActual,
+} from "../utils/asistencia.utils";
 import { DetalleDiarioTabla } from "./DetalleDiarioTabla";
 import { AprobarResumenModal } from "./modals/AprobarResumenModal";
 import { AsignarJornadaModal } from "./modals/AsignarJornadaModal";
@@ -80,11 +89,8 @@ export function AsistenciaEmpleado({
   };
 
   const aprobado = data?.estado === "APROBADO";
-  const puedeAprobar =
-    data?.estado === "PENDIENTE" &&
-    data.vigente &&
-    data.completo &&
-    data.pendientes === 0;
+  const motivoNoAprobable = data ? getMotivoNoAprobable(data) : null;
+  const puedeAprobar = data?.estado === "PENDIENTE" && !motivoNoAprobable;
 
   return (
     <div className="space-y-4">
@@ -96,20 +102,24 @@ export function AsistenciaEmpleado({
         />
 
         <div className="flex flex-wrap items-center gap-2">
-          {!aprobado && (
-            <AccionButton
-              label="Registrar marcación"
-              icon={ClockPlusIcon}
-              onClick={() => setModal({ tipo: "marcacion" })}
-              className="text-sky-600"
-            />
-          )}
-          <AccionButton
-            label="Asignar jornada"
-            icon={CalendarClockIcon}
-            onClick={() => setModal({ tipo: "jornada" })}
-            className="text-sky-600"
-          />
+          <DropdownMenu>
+            <DropdownMenuTrigger render={<Button variant="outline" />}>
+              Registrar
+              <ChevronDownIcon data-icon="inline-end" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {!aprobado && (
+                <DropdownMenuItem
+                  onClick={() => setModal({ tipo: "marcacion" })}
+                >
+                  Marcación manual
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuItem onClick={() => setModal({ tipo: "jornada" })}>
+                Asignar jornada
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           {data && !aprobado && (
             <LoadingButton
@@ -144,13 +154,21 @@ export function AsistenciaEmpleado({
             </Button>
           )}
           {data?.estado === "PENDIENTE" && (
-            <Button
-              disabled={!puedeAprobar}
-              onClick={() => setModal({ tipo: "aprobar" })}
-            >
-              <CheckIcon data-icon="inline-start" />
-              Aprobar
-            </Button>
+            <Tooltip>
+              {/* El span deja que el tooltip funcione aunque el botón esté deshabilitado */}
+              <TooltipTrigger render={<span />}>
+                <Button
+                  disabled={!puedeAprobar}
+                  onClick={() => setModal({ tipo: "aprobar" })}
+                >
+                  <CheckIcon data-icon="inline-start" />
+                  Aprobar
+                </Button>
+              </TooltipTrigger>
+              {motivoNoAprobable && (
+                <TooltipContent>{motivoNoAprobable}</TooltipContent>
+              )}
+            </Tooltip>
           )}
         </div>
       </div>

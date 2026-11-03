@@ -45,7 +45,7 @@ export function SelectorMes({
 
       <p
         aria-live="polite"
-        className="min-w-40 px-2 text-center text-base font-semibold capitalize"
+        className="min-w-40 px-2 text-center text-base font-semibold first-letter:uppercase"
       >
         {formatPeriodo(periodo)}
       </p>
