@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
-interface ContratoAccionButtonProps {
+interface AccionButtonProps {
   label: string;
   icon: LucideIcon;
   onClick: () => void;
@@ -17,14 +17,14 @@ interface ContratoAccionButtonProps {
 }
 
 /**
- * Botón de icono de una acción de contrato, con su nombre en un tooltip
+ * Botón de icono de una acción (editar, quitar, adjuntar...), con su nombre en un tooltip
  */
-export function ContratoAccionButton({
+export function AccionButton({
   label,
   icon: Icon,
   onClick,
   className,
-}: ContratoAccionButtonProps) {
+}: AccionButtonProps) {
   return (
     <Tooltip>
       <TooltipTrigger

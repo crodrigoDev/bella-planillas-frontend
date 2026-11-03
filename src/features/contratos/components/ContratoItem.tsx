@@ -9,6 +9,7 @@ import {
   UploadIcon,
 } from "lucide-react";
 
+import { AccionButton } from "@/components/page/AccionButton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getOptionLabel } from "@/lib/catalogos.utils";
@@ -29,7 +30,6 @@ import {
   puedeRenovar,
   puedeSubirPdf,
 } from "../utils/contratos.utils";
-import { ContratoAccionButton } from "./ContratoAccionButton";
 import {
   ContratoModales,
   type ContratoModal,
@@ -179,14 +179,14 @@ export function ContratoItem({ contrato, empleadoActivo }: ContratoItemProps) {
 
           <div className="flex items-center gap-1">
             {puedeEditar(contrato) && (
-              <ContratoAccionButton
+              <AccionButton
                 label="Editar"
                 icon={PencilIcon}
                 onClick={() => setOpenModal("editar")}
               />
             )}
             {puedeSubirPdf(contrato) && (
-              <ContratoAccionButton
+              <AccionButton
                 label="Adjuntar PDF"
                 icon={UploadIcon}
                 onClick={() => setOpenModal("subirPdf")}
@@ -194,14 +194,14 @@ export function ContratoItem({ contrato, empleadoActivo }: ContratoItemProps) {
               />
             )}
             {puedeRenovar(contrato, empleadoActivo) && (
-              <ContratoAccionButton
+              <AccionButton
                 label="Renovar"
                 icon={RefreshCwIcon}
                 onClick={() => setOpenModal("renovar")}
                 className="text-emerald-600"
               />
             )}
-            <ContratoAccionButton
+            <AccionButton
               label="Anular"
               icon={CircleXIcon}
               onClick={() => setOpenModal("anular")}
