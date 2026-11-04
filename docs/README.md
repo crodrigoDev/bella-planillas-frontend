@@ -15,6 +15,10 @@ código: todos tienen TSDoc.
   3 veces o más.** Mientras se use en una sola feature, vive en esa feature.
 - **Si agregas o cambias una pieza compartida, actualiza su documento en el mismo
   commit.**
+- **Los colores salen de los tokens del tema** (`success`, `warning`, `info`,
+  `destructive`, `category-N`, `muted`...), nunca de la paleta de Tailwind (`red-600`,
+  `emerald-50`, `bg-white`...). ESLint lo impide fuera de `src/components/ui/`. Para estados
+  usa [StatusBadge](componentes/feedback.md#statusbadge).
 
 ### Cómo documentar una pieza nueva
 
