@@ -32,6 +32,15 @@ export const ESTADO_DIA: Record<string, { label: string; tone: StatusTone }> = {
   FUERA_DE_VINCULO: { label: "Fuera del vínculo", tone: "neutral" },
 };
 
+/** Estados de un día que hay que revisar o corregir */
+export const ESTADOS_DIA_CON_PROBLEMA = [
+  "FALTA_INJUSTIFICADA",
+  "MARCACION_INCOMPLETA",
+  "AUSENCIA_PENDIENTE",
+  "AUSENCIA_SIN_GOCE",
+  "PENDIENTE",
+];
+
 /** Días en los que no hay nada que resolver porque no se trabaja o no hay vínculo */
 export const ESTADOS_DIA_SIN_RESOLVER = [
   "FUERA_DE_VINCULO",
