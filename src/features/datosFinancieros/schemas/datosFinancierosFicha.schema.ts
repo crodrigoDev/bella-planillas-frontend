@@ -1,7 +1,10 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   CrearDatoFinancieroSchema,
   CrearEmpleadoSchema,
 } from "@jyp/shared-contracts";
+
+import { zodResolverOptions } from "@/lib/zodMessages.utils";
 
 interface Opciones {
   /** Indica si un régimen de pensión (por su id) es el de las AFP */
@@ -52,7 +55,21 @@ export const createDatosFinancierosFichaSchema = ({
       },
     );
 
+/** Resolver de react-hook-form para el esquema del formulario, con los mensajes en español */
+export const createDatosFinancierosFichaResolver = (opciones: Opciones) =>
+  zodResolver(createDatosFinancierosFichaSchema(opciones), zodResolverOptions);
+
 /** Datos del formulario ya validados */
 export type DatosFinancierosFichaDatos = ReturnType<
   typeof createDatosFinancierosFichaSchema
 >["_output"];
+
+/**
+ * Valores del formulario antes de validar
+ *
+ * @remarks
+ * Los campos que tienen un valor por defecto en el contrato todavía son opcionales.
+ */
+export type DatosFinancierosFichaFormValues = Parameters<
+  ReturnType<typeof createDatosFinancierosFichaResolver>
+>[0];
