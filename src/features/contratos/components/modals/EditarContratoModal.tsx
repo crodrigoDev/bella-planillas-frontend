@@ -2,7 +2,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
-import { LoadingButton } from "@/components/form/LoadingButton";
+import { ModalFormFooter } from "@/components/form/ModalFormFooter";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -141,21 +141,10 @@ function EditarContratoForm({ contrato, onClose }: EditarContratoFormProps) {
 
         <ErrorAlert error={mutation.error} />
 
-        <DialogFooter>
-          <DialogClose
-            render={<Button type="button" variant="outline" />}
-            disabled={mutation.isPending}
-          >
-            Cancelar
-          </DialogClose>
-          <LoadingButton
-            type="submit"
-            isLoading={mutation.isPending}
-            loadingText="Guardando…"
-          >
-            Guardar cambios
-          </LoadingButton>
-        </DialogFooter>
+        <ModalFormFooter
+          isPending={mutation.isPending}
+          submitLabel="Guardar cambios"
+        />
       </form>
     </FormProvider>
   );

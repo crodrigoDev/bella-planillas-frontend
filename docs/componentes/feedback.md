@@ -65,6 +65,53 @@ Resuelve lo que se ve en una pestaña de la ficha: esqueleto mientras carga,
 
 [`src/features/contratos/components/ContratosEmpleado.tsx`](../../src/features/contratos/components/ContratosEmpleado.tsx)
 
+## ConfirmModal
+
+Modal de confirmación (anular, quitar, reactivar, aprobar...). Son dos piezas: `ConfirmModal`
+es el cascarón (`AlertDialog`) y `ConfirmModalBody` pinta título, descripción, error y los
+botones. El cuerpo va como hijo para que se desmonte al cerrar: la mutación que crea y el
+error de un intento anterior se descartan solos, igual que en los demás modales.
+
+`ConfirmModal`:
+
+| Prop | Tipo | Notas |
+| --- | --- | --- |
+| `open`, `onOpenChange` | | Estado del modal |
+| `children` | `ReactNode` | Un `ConfirmModalBody` |
+
+`ConfirmModalBody`:
+
+| Prop | Tipo | Notas |
+| --- | --- | --- |
+| `title`, `description` | `ReactNode` | |
+| `confirmLabel` | `string` | Texto del botón principal |
+| `cancelLabel` | `string?` | Por defecto "Cancelar" |
+| `variant` | `"default" \| "destructive"?` | `"destructive"` para anular, quitar, dar de baja |
+| `isPending` | `boolean?` | Bloquea los botones y muestra el spinner |
+| `error` | `unknown?` | Se muestra con `ErrorAlert` |
+| `onConfirm` | `() => void` | |
+
+```tsx
+<ConfirmModal open={open} onOpenChange={onOpenChange}>
+  <AnularContratoContent contrato={contrato} onClose={() => onOpenChange(false)} />
+</ConfirmModal>
+
+// AnularContratoContent crea la mutación y devuelve:
+<ConfirmModalBody
+  title="Anular contrato"
+  description="Se anulará el contrato y dejará de verse en la lista."
+  confirmLabel="Anular"
+  variant="destructive"
+  isPending={mutation.isPending}
+  error={mutation.error}
+  onConfirm={handleConfirm}
+/>
+```
+
+[`src/features/contratos/components/modals/AnularContratoModal.tsx`](../../src/features/contratos/components/modals/AnularContratoModal.tsx)
+
+Sin mutación (por ejemplo `SalirRegistroModal`), se usa solo con `onConfirm`.
+
 ## StatusBadge
 
 Insignia de estado con el color de su tono. Los colores salen de los tokens del tema

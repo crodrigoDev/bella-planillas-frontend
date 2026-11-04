@@ -1,14 +1,11 @@
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
-import { LoadingButton } from "@/components/form/LoadingButton";
+import { ModalFormFooter } from "@/components/form/ModalFormFooter";
 import { useState, type FormEvent } from "react";
 
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -160,22 +157,12 @@ function DarDeBajaForm({ empleado, onClose }: DarDeBajaFormProps) {
 
       <ErrorAlert error={mutation.error} />
 
-      <DialogFooter>
-        <DialogClose
-          render={<Button type="button" variant="outline" />}
-          disabled={mutation.isPending}
-        >
-          Cancelar
-        </DialogClose>
-        <LoadingButton
-          type="submit"
-          variant="destructive"
-          isLoading={mutation.isPending}
-          disabled={!fechaCese || !motivo || fechaFueraDeRango}
-        >
-          Dar de baja
-        </LoadingButton>
-      </DialogFooter>
+      <ModalFormFooter
+        isPending={mutation.isPending}
+        submitLabel="Dar de baja"
+        variant="destructive"
+        disabled={!fechaCese || !motivo || fechaFueraDeRango}
+      />
     </form>
   );
 }

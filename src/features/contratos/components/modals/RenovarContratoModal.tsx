@@ -3,14 +3,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { StatusBadge } from "@/components/feedback/StatusBadge";
-import { LoadingButton } from "@/components/form/LoadingButton";
-import { Button } from "@/components/ui/button";
+import { ModalFormFooter } from "@/components/form/ModalFormFooter";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -125,21 +122,11 @@ function RenovarContratoForm({ contrato, onClose }: RenovarContratoFormProps) {
 
         <ErrorAlert error={mutation.error} />
 
-        <DialogFooter>
-          <DialogClose
-            render={<Button type="button" variant="outline" />}
-            disabled={mutation.isPending}
-          >
-            Cancelar
-          </DialogClose>
-          <LoadingButton
-            type="submit"
-            isLoading={mutation.isPending}
-            loadingText="Renovando…"
-          >
-            Renovar
-          </LoadingButton>
-        </DialogFooter>
+        <ModalFormFooter
+          isPending={mutation.isPending}
+          submitLabel="Renovar"
+          loadingText="Renovando…"
+        />
       </form>
     </FormProvider>
   );

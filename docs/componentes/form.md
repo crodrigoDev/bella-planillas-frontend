@@ -183,6 +183,31 @@ props de `Button`.
 
 [`src/features/asistencia/components/AsistenciaEmpleado.tsx`](../../src/features/asistencia/components/AsistenciaEmpleado.tsx)
 
+## ModalFormFooter
+
+Pie de un formulario en un modal: botón "Cancelar" (cierra el modal) y botón de envío con
+spinner. Va dentro del `<form>`, junto a un `ErrorAlert` justo arriba.
+
+| Prop | Tipo | Notas |
+| --- | --- | --- |
+| `isPending` | `boolean` | Bloquea los botones y muestra la espera |
+| `submitLabel` | `string` | Texto del botón de envío |
+| `loadingText` | `string?` | Por defecto "Guardando…" |
+| `variant` | `"default" \| "destructive"?` | `"destructive"` para acciones como dar de baja |
+| `disabled` | `boolean?` | Bloquea el envío, por ejemplo si falta un dato |
+| `cancelLabel` | `string?` | Por defecto "Cancelar" |
+
+```tsx
+<ErrorAlert error={mutation.error} />
+
+<ModalFormFooter
+  isPending={mutation.isPending}
+  submitLabel="Registrar contrato"
+/>
+```
+
+[`src/features/contratos/components/modals/NuevoContratoModal.tsx`](../../src/features/contratos/components/modals/NuevoContratoModal.tsx)
+
 ## FileDropzone
 
 Zona para elegir un archivo con un clic o arrastrándolo. Solo guarda el archivo: quien

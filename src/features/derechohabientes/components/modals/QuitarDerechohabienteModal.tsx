@@ -1,15 +1,7 @@
-import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Spinner } from "@/components/ui/spinner";
+  ConfirmModal,
+  ConfirmModalBody,
+} from "@/components/feedback/ConfirmModal";
 import { useDesactivarDerechohabiente } from "../../hooks/useDerechohabienteActions";
 import type { Derechohabiente } from "../../types/derechohabientes.types";
 
@@ -32,14 +24,12 @@ export function QuitarDerechohabienteModal({
   onOpenChange,
 }: QuitarDerechohabienteModalProps) {
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
-        <QuitarDerechohabienteContent
-          derechohabiente={derechohabiente}
-          onClose={() => onOpenChange(false)}
-        />
-      </AlertDialogContent>
-    </AlertDialog>
+    <ConfirmModal open={open} onOpenChange={onOpenChange}>
+      <QuitarDerechohabienteContent
+        derechohabiente={derechohabiente}
+        onClose={() => onOpenChange(false)}
+      />
+    </ConfirmModal>
   );
 }
 
@@ -59,31 +49,20 @@ function QuitarDerechohabienteContent({
   };
 
   return (
-    <>
-      <AlertDialogHeader>
-        <AlertDialogTitle>Quitar derechohabiente</AlertDialogTitle>
-        <AlertDialogDescription>
+    <ConfirmModalBody
+      title="Quitar derechohabiente"
+      description={
+        <>
           {derechohabiente.nombres} {derechohabiente.apellidos} dejará de verse
           en la lista. La asignación familiar del empleado no cambia sola:
           revísala si era el único hijo que la generaba.
-        </AlertDialogDescription>
-      </AlertDialogHeader>
-
-      <ErrorAlert error={mutation.error} />
-
-      <AlertDialogFooter>
-        <AlertDialogCancel disabled={mutation.isPending}>
-          Cancelar
-        </AlertDialogCancel>
-        <AlertDialogAction
-          variant="destructive"
-          onClick={handleConfirm}
-          disabled={mutation.isPending}
-        >
-          {mutation.isPending && <Spinner data-icon="inline-start" />}
-          Quitar
-        </AlertDialogAction>
-      </AlertDialogFooter>
-    </>
+        </>
+      }
+      confirmLabel="Quitar"
+      variant="destructive"
+      isPending={mutation.isPending}
+      error={mutation.error}
+      onConfirm={handleConfirm}
+    />
   );
 }

@@ -5,16 +5,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { StatusBadge } from "@/components/feedback/StatusBadge";
 import { FileDropzone } from "@/components/form/FileDropzone";
-import { LoadingButton } from "@/components/form/LoadingButton";
+import { ModalFormFooter } from "@/components/form/ModalFormFooter";
 import { SelectField } from "@/components/form/SelectField";
 import { TextField } from "@/components/form/TextField";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -227,22 +224,13 @@ function SustentoForm({ derechohabienteId, onClose }: SustentoFormProps) {
 
         <ErrorAlert error={mutation.error} />
 
-        <DialogFooter>
-          <DialogClose
-            render={<Button type="button" variant="outline" />}
-            disabled={mutation.isPending}
-          >
-            Cerrar
-          </DialogClose>
-          <LoadingButton
-            type="submit"
-            isLoading={mutation.isPending}
-            loadingText="Subiendo…"
-            disabled={!file || Boolean(archivoError)}
-          >
-            Adjuntar
-          </LoadingButton>
-        </DialogFooter>
+        <ModalFormFooter
+          isPending={mutation.isPending}
+          submitLabel="Adjuntar"
+          loadingText="Subiendo…"
+          disabled={!file || Boolean(archivoError)}
+          cancelLabel="Cerrar"
+        />
       </form>
     </FormProvider>
   );

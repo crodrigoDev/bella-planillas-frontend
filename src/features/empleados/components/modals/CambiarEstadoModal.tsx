@@ -1,14 +1,11 @@
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
-import { LoadingButton } from "@/components/form/LoadingButton";
+import { ModalFormFooter } from "@/components/form/ModalFormFooter";
 import { useState, type FormEvent } from "react";
 
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -132,21 +129,11 @@ function CambiarEstadoForm({ empleado, onClose }: CambiarEstadoFormProps) {
 
       <ErrorAlert error={mutation.error} />
 
-      <DialogFooter>
-        <DialogClose
-          render={<Button type="button" variant="outline" />}
-          disabled={mutation.isPending}
-        >
-          Cancelar
-        </DialogClose>
-        <LoadingButton
-          type="submit"
-          isLoading={mutation.isPending}
-          disabled={!estado}
-        >
-          Guardar cambio
-        </LoadingButton>
-      </DialogFooter>
+      <ModalFormFooter
+        isPending={mutation.isPending}
+        submitLabel="Guardar cambio"
+        disabled={!estado}
+      />
     </form>
   );
 }

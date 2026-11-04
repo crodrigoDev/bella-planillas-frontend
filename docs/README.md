@@ -34,8 +34,8 @@ Cada pieza es una subsección `##` de su archivo, con este formato:
 
 | Archivo | Piezas |
 | --- | --- |
-| [componentes/form.md](componentes/form.md) | [FormField](componentes/form.md#formfield) · [TextField](componentes/form.md#textfield) · [SelectField](componentes/form.md#selectfield) · [OptionSelect](componentes/form.md#optionselect) · [FormSection](componentes/form.md#formsection) · [RequiredMark](componentes/form.md#requiredmark) · [LoadingButton](componentes/form.md#loadingbutton) · [FileDropzone](componentes/form.md#filedropzone) · [ResumenCampo](componentes/form.md#resumencampo) |
-| [componentes/feedback.md](componentes/feedback.md) | [ErrorAlert](componentes/feedback.md#erroralert) · [DetalleTabEstado](componentes/feedback.md#detalletabestado) · [StatusBadge](componentes/feedback.md#statusbadge) · [statusTone.config.ts](componentes/feedback.md#statustoneconfigts) |
+| [componentes/form.md](componentes/form.md) | [FormField](componentes/form.md#formfield) · [TextField](componentes/form.md#textfield) · [SelectField](componentes/form.md#selectfield) · [OptionSelect](componentes/form.md#optionselect) · [FormSection](componentes/form.md#formsection) · [RequiredMark](componentes/form.md#requiredmark) · [LoadingButton](componentes/form.md#loadingbutton) · [ModalFormFooter](componentes/form.md#modalformfooter) · [FileDropzone](componentes/form.md#filedropzone) · [ResumenCampo](componentes/form.md#resumencampo) |
+| [componentes/feedback.md](componentes/feedback.md) | [ErrorAlert](componentes/feedback.md#erroralert) · [DetalleTabEstado](componentes/feedback.md#detalletabestado) · [ConfirmModal](componentes/feedback.md#confirmmodal) · [StatusBadge](componentes/feedback.md#statusbadge) · [statusTone.config.ts](componentes/feedback.md#statustoneconfigts) |
 | [componentes/page.md](componentes/page.md) | [AccionButton](componentes/page.md#accionbutton) · [PageHeader](componentes/page.md#pageheader) · [PageTabs](componentes/page.md#pagetabs) |
 | [componentes/filters.md](componentes/filters.md) | [SearchInput](componentes/filters.md#searchinput) · [FilterSelect](componentes/filters.md#filterselect) · [FilterChip](componentes/filters.md#filterchip) · [filters.config.ts](componentes/filters.md#filtersconfigts) |
 | [componentes/data-table.md](componentes/data-table.md) | [DataTable](componentes/data-table.md#datatable) · [dataTable.config.ts](componentes/data-table.md#datatableconfigts) |
@@ -56,7 +56,9 @@ Cada pieza es una subsección `##` de su archivo, con este formato:
 | Un selector en un formulario | [SelectField](componentes/form.md#selectfield) |
 | Agrupar campos de un formulario en bloques | [FormSection](componentes/form.md#formsection) |
 | Un botón que espera una petición | [LoadingButton](componentes/form.md#loadingbutton) |
+| Los botones de un formulario en un modal (cancelar y enviar) | [ModalFormFooter](componentes/form.md#modalformfooter) |
 | Subir un archivo | [FileDropzone](componentes/form.md#filedropzone) |
+| Un modal para confirmar una acción (anular, quitar, aprobar...) | [ConfirmModal](componentes/feedback.md#confirmmodal) |
 | Mostrar el error de una petición | [ErrorAlert](componentes/feedback.md#erroralert) |
 | Resolver carga, error y vacío de una pestaña de la ficha | [DetalleTabEstado](componentes/feedback.md#detalletabestado) |
 | Una insignia con el estado de algo (activo, vencido, aprobado...) | [StatusBadge](componentes/feedback.md#statusbadge) |
