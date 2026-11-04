@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
 import { cn } from "@/lib/utils";
 
@@ -10,7 +11,9 @@ interface ErrorAlertProps {
   title?: string;
   /** Texto que se agrega después del mensaje del error */
   children?: ReactNode;
-  /** Botón u otro elemento a la derecha, por ejemplo "Reintentar" */
+  /** Si se indica, muestra a la derecha un botón "Reintentar" que lo llama */
+  onRetry?: () => void;
+  /** Otro elemento a la derecha; se ignora si hay `onRetry` */
   action?: ReactNode;
 }
 
@@ -25,21 +28,30 @@ export function ErrorAlert({
   error,
   title,
   children,
+  onRetry,
   action,
 }: ErrorAlertProps) {
   if (!error) return null;
+
+  const accion = onRetry ? (
+    <Button variant="outline" size="sm" onClick={onRetry}>
+      Reintentar
+    </Button>
+  ) : (
+    action
+  );
 
   return (
     <Alert variant="destructive">
       {title && <AlertTitle>{title}</AlertTitle>}
       <AlertDescription
-        className={cn(action && "flex items-center justify-between gap-2")}
+        className={cn(accion && "flex items-center justify-between gap-2")}
       >
         <span>
           {getApiErrorMessage(error)}
           {children}
         </span>
-        {action}
+        {accion}
       </AlertDescription>
     </Alert>
   );

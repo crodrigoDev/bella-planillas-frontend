@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Empleado } from "../../types/empleados.types";
 
@@ -43,11 +42,7 @@ export function EmpleadoCargaEstado({
       <ErrorAlert
         error={error}
         title="No se pudo cargar al empleado"
-        action={
-          <Button variant="outline" size="sm" onClick={onRetry}>
-            Reintentar
-          </Button>
-        }
+        onRetry={onRetry}
       />
     );
 

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { EmptyState } from "@/components/feedback/EmptyState";
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { StatusBadge } from "@/components/feedback/StatusBadge";
 import { FileDropzone } from "@/components/form/FileDropzone";
@@ -131,9 +132,7 @@ function SustentosContent({ derechohabiente, onClose }: SustentosContentProps) {
           ))}
         </ul>
       ) : (
-        <p className="rounded-lg border border-dashed px-3 py-4 text-center text-sm text-muted-foreground">
-          Todavía no hay sustentos adjuntos.
-        </p>
+        <EmptyState title="Todavía no hay sustentos adjuntos." variant="dashed" />
       )}
 
       <SustentoForm derechohabienteId={derechohabiente.id} onClose={onClose} />

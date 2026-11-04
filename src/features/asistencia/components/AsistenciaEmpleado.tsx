@@ -185,6 +185,16 @@ export function AsistenciaEmpleado({
         isEmpty={!data}
         emptyTitle={`Sin resumen de ${formatPeriodo(periodo)}`}
         emptyDescription="Genera el resumen para ver el detalle de cada día del mes."
+        // Sin resumen no hay detalle: el primer cálculo se pide desde aquí
+        emptyAction={
+          <LoadingButton
+            isLoading={generar.isPending}
+            loadingText="Generando…"
+            onClick={() => generar.mutate()}
+          >
+            Generar resumen
+          </LoadingButton>
+        }
       >
         {data && (
           <div className="space-y-4">
@@ -198,19 +208,6 @@ export function AsistenciaEmpleado({
           </div>
         )}
       </DetalleTabEstado>
-
-      {/* Sin resumen no hay detalle: el primer cálculo se pide desde aquí */}
-      {!isLoading && !error && !data && (
-        <div className="flex justify-center">
-          <LoadingButton
-            isLoading={generar.isPending}
-            loadingText="Generando…"
-            onClick={() => generar.mutate()}
-          >
-            Generar resumen
-          </LoadingButton>
-        </div>
-      )}
 
       <AprobarResumenModal
         empleadoId={empleadoId}

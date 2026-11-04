@@ -12,7 +12,8 @@ muestra nada si `error` es `null`, así que no hace falta un `isError &&` alrede
 | `error` | `unknown` | Error de la consulta o mutación |
 | `title` | `string?` | |
 | `children` | `ReactNode?` | Texto que se agrega tras el mensaje |
-| `action` | `ReactNode?` | Elemento a la derecha, por ejemplo "Reintentar" |
+| `onRetry` | `() => void?` | Muestra a la derecha un botón "Reintentar" que lo llama |
+| `action` | `ReactNode?` | Otro elemento a la derecha; se ignora si hay `onRetry` |
 
 ```tsx
 <ErrorAlert error={logoutMutation.error} title="No se pudo cerrar sesión" />
@@ -26,11 +27,7 @@ Con botón de reintento:
 <ErrorAlert
   error={error}
   title="No se pudo cargar la lista de empleados"
-  action={
-    <Button variant="outline" size="sm" onClick={() => refetch()}>
-      Reintentar
-    </Button>
-  }
+  onRetry={() => refetch()}
 />
 ```
 
@@ -48,6 +45,7 @@ Resuelve lo que se ve en una pestaña de la ficha: esqueleto mientras carga,
 | `onRetry` | `() => void` | |
 | `isEmpty` | `boolean` | |
 | `emptyTitle`, `emptyDescription` | `string` | |
+| `emptyAction` | `ReactNode?` | Botón bajo el mensaje vacío |
 | `children` | `ReactNode` | |
 
 ```tsx
@@ -64,6 +62,24 @@ Resuelve lo que se ve en una pestaña de la ficha: esqueleto mientras carga,
 ```
 
 [`src/features/contratos/components/ContratosEmpleado.tsx`](../../src/features/contratos/components/ContratosEmpleado.tsx)
+
+## EmptyState
+
+Mensaje para cuando no hay nada que mostrar, con una acción opcional.
+`DetalleTabEstado` lo usa por dentro.
+
+| Prop | Tipo | Notas |
+| --- | --- | --- |
+| `title` | `string` | |
+| `description` | `string?` | |
+| `action` | `ReactNode?` | Botón bajo el texto |
+| `variant` | `"plain" \| "dashed"?` | `"plain"` ocupa la sección; `"dashed"` es una caja punteada para dentro de un modal |
+
+```tsx
+<EmptyState title="Todavía no hay sustentos adjuntos." variant="dashed" />
+```
+
+[`src/features/derechohabientes/components/modals/SustentosModal.tsx`](../../src/features/derechohabientes/components/modals/SustentosModal.tsx)
 
 ## ConfirmModal
 
