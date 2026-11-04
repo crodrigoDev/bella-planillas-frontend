@@ -8,7 +8,10 @@ import {
 } from "lucide-react";
 
 import { StatusBadge } from "@/components/feedback/StatusBadge";
-import type { StatusTone } from "@/components/feedback/statusTone.config";
+import {
+  TONE_TEXT,
+  type StatusTone,
+} from "@/components/feedback/statusTone.config";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -83,7 +86,7 @@ const getEstadoDia = (
 interface Decision {
   icon: LucideIcon;
   texto: string;
-  style: string;
+  tone: StatusTone;
 }
 
 /**
@@ -97,27 +100,27 @@ const getDecisiones = (dia: DiaAsistencia): Decision[] => {
   const decisiones: Decision[] = dia.alertas.map((alerta) => ({
     icon: TriangleAlertIcon,
     texto: ALERTA_LABELS[alerta] ?? humanizarCodigo(alerta),
-    style: "text-amber-700",
+    tone: "warning",
   }));
 
   if (dia.estado === "FALTA_INJUSTIFICADA")
     decisiones.push({
       icon: CircleAlertIcon,
       texto: "Falta injustificada",
-      style: "text-red-600",
+      tone: "danger",
     });
   else if (dia.estado === "MARCACION_INCOMPLETA")
     decisiones.push({
       icon: TriangleAlertIcon,
       texto: "Marcación incompleta",
-      style: "text-amber-700",
+      tone: "warning",
     });
 
   if (dia.estado === "ASISTENCIA_REGISTRADA" && dia.minutos_tardanza > 0)
     decisiones.push({
       icon: TriangleAlertIcon,
       texto: "Tardanza",
-      style: "text-amber-700",
+      tone: "warning",
     });
 
   const extras = [
@@ -129,28 +132,28 @@ const getDecisiones = (dia: DiaAsistencia): Decision[] => {
     decisiones.push({
       icon: ClockIcon,
       texto: `Sobretiempo ${extras.join(" y ")}`,
-      style: "text-emerald-700",
+      tone: "success",
     });
 
   if (dia.minutos_salida_anticipada > 0)
     decisiones.push({
       icon: TriangleAlertIcon,
       texto: `Salida anticipada de ${formatMinutos(dia.minutos_salida_anticipada)}`,
-      style: "text-amber-700",
+      tone: "warning",
     });
 
   if (dia.minutos_sin_goce > 0)
     decisiones.push({
       icon: CircleAlertIcon,
       texto: `Sin goce de ${formatMinutos(dia.minutos_sin_goce)}`,
-      style: "text-amber-700",
+      tone: "warning",
     });
 
   if (!decisiones.length && dia.estado === "ASISTENCIA_REGISTRADA")
     decisiones.push({
       icon: CheckCircle2Icon,
       texto: "OK",
-      style: "text-emerald-700",
+      tone: "success",
     });
 
   return decisiones;
@@ -238,9 +241,9 @@ export function DetalleDiarioTabla({
                   sinTrabajo && "bg-muted/30 text-muted-foreground",
                   esFuturo && "text-muted-foreground",
                   esFalta
-                    ? "bg-red-50/60"
+                    ? "bg-destructive-soft/60"
                     : conProblema
-                      ? "bg-amber-50/50"
+                      ? "bg-warning-soft/50"
                       : esHoy && "bg-primary/5",
                 )}
               >
@@ -259,7 +262,7 @@ export function DetalleDiarioTabla({
 
                 <TableCell className="text-sm whitespace-nowrap tabular-nums">
                   {esFalta && !dia.marcas.length ? (
-                    <span className="text-red-600">
+                    <span className="text-destructive">
                       Sin marcas registradas
                     </span>
                   ) : (
@@ -293,12 +296,12 @@ export function DetalleDiarioTabla({
                 <TableCell>
                   {decisiones.length ? (
                     <ul className="space-y-0.5">
-                      {decisiones.map(({ icon: Icon, texto, style }) => (
+                      {decisiones.map(({ icon: Icon, texto, tone }) => (
                         <li
                           key={texto}
                           className={cn(
                             "flex items-center gap-1.5 text-xs",
-                            style,
+                            TONE_TEXT[tone],
                           )}
                         >
                           <Icon className="size-3.5 shrink-0" aria-hidden />
@@ -319,7 +322,7 @@ export function DetalleDiarioTabla({
                       type="button"
                       variant="link"
                       size="sm"
-                      className={cn(esFalta && "text-red-600")}
+                      className={cn(esFalta && "text-destructive")}
                       onClick={() => onResolver(dia.fecha)}
                     >
                       {esFalta

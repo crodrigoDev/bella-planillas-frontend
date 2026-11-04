@@ -22,3 +22,27 @@ export const TONE_DOT: Record<StatusTone, string> = {
   info: "bg-info",
   neutral: "bg-muted-foreground",
 };
+
+/**
+ * Color de un texto suelto de cada tono
+ *
+ * @remarks
+ * Usa los colores de alto contraste: los sólidos (`text-success`...) no llegan a 4,5:1
+ * sobre fondo claro y solo sirven para iconos y puntos.
+ */
+export const TONE_TEXT: Record<StatusTone, string> = {
+  success: "text-success-soft-foreground",
+  warning: "text-warning-soft-foreground",
+  danger: "text-destructive",
+  info: "text-info-soft-foreground",
+  neutral: "text-muted-foreground",
+};
+
+/** Color de un icono de cada tono (los iconos piden menos contraste que el texto) */
+export const TONE_ICON: Record<StatusTone, string> = {
+  success: "text-success",
+  warning: "text-warning",
+  danger: "text-destructive",
+  info: "text-info",
+  neutral: "text-muted-foreground",
+};

@@ -8,7 +8,7 @@ export default function AuthBrandPanel() {
   return (
     <aside className="flex flex-col bg-primary p-6 text-primary-foreground lg:p-10">
       <header className="flex items-center gap-3">
-        <span className="flex size-10 items-center justify-center rounded-lg bg-white/15">
+        <span className="flex size-10 items-center justify-center rounded-lg bg-primary-foreground/15">
           <Building className="size-5" aria-hidden="true" />
         </span>
 
@@ -20,7 +20,7 @@ export default function AuthBrandPanel() {
 
       <div className="hidden flex-1 items-center py-12 lg:flex">
         <div className="max-w-md space-y-4">
-          <Badge className="bg-white/15 text-primary-foreground">
+          <Badge className="bg-primary-foreground/15 text-primary-foreground">
             <ShieldCheck aria-hidden="true" />
             Entorno Corporativo Seguro
           </Badge>

@@ -12,13 +12,19 @@ su nombre en un tooltip y como `aria-label`.
 | `label` | `string` | Tooltip y `aria-label` |
 | `icon` | `LucideIcon` | |
 | `onClick` | `() => void` | |
-| `className` | `string?` | Color del icono; por defecto `text-muted-foreground` |
+| `tone` | `StatusTone?` | Color del icono: `"info"`, `"success"`, `"danger"`...; por defecto `"neutral"` (gris) |
 
 ```tsx
 <AccionButton
   label="Editar"
   icon={PencilIcon}
   onClick={() => setOpenModal("editar")}
+/>
+<AccionButton
+  label="Anular"
+  icon={CircleXIcon}
+  onClick={() => setOpenModal("anular")}
+  tone="danger"
 />
 ```
 

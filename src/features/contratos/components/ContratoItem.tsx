@@ -11,14 +11,14 @@ import {
 
 import { AccionButton } from "@/components/page/AccionButton";
 import { StatusBadge } from "@/components/feedback/StatusBadge";
-import { TONE_DOT } from "@/components/feedback/statusTone.config";
+import { TONE_DOT, TONE_TEXT } from "@/components/feedback/statusTone.config";
 import { Button } from "@/components/ui/button";
 import { getOptionLabel } from "@/lib/catalogos.utils";
 import { getTodayIsoDate } from "@/lib/date.utils";
 import { formatDate } from "@/lib/format.utils";
 import { cn } from "@/lib/utils";
 import {
-  ALERTA_VENCIMIENTO_STYLES,
+  ALERTA_VENCIMIENTO_TONE,
   ESTADO_CONTRATO,
 } from "../config/contratos.config";
 import { useModalidadesContrato } from "../hooks/useCatalogos";
@@ -87,7 +87,7 @@ export function ContratoItem({ contrato, empleadoActivo }: ContratoItemProps) {
       <div
         className={cn(
           "space-y-3 rounded-lg border bg-card p-4",
-          esVigente && "border-emerald-200 shadow-xs",
+          esVigente && "border-success-border shadow-xs",
         )}
       >
         <div className="flex items-start justify-between gap-3">
@@ -108,7 +108,7 @@ export function ContratoItem({ contrato, empleadoActivo }: ContratoItemProps) {
         </div>
 
         {diasVencido !== null && (
-          <p className="text-sm text-red-600">
+          <p className={cn("text-sm", TONE_TEXT.danger)}>
             Venció hace {diasVencido} {diasVencido === 1 ? "día" : "días"}
           </p>
         )}
@@ -129,7 +129,7 @@ export function ContratoItem({ contrato, empleadoActivo }: ContratoItemProps) {
                 className="h-1.5 overflow-hidden rounded-full bg-muted"
               >
                 <div
-                  className="h-full rounded-full bg-emerald-500"
+                  className="h-full rounded-full bg-success"
                   style={{ width: `${progreso}%` }}
                 />
               </div>
@@ -139,7 +139,9 @@ export function ContratoItem({ contrato, empleadoActivo }: ContratoItemProps) {
                 className={cn(
                   "text-sm",
                   contrato.alerta_vencimiento
-                    ? ALERTA_VENCIMIENTO_STYLES[contrato.alerta_vencimiento]
+                    ? TONE_TEXT[
+                        ALERTA_VENCIMIENTO_TONE[contrato.alerta_vencimiento]
+                      ]
                     : "text-muted-foreground",
                 )}
               >
@@ -187,7 +189,7 @@ export function ContratoItem({ contrato, empleadoActivo }: ContratoItemProps) {
                 label="Adjuntar PDF"
                 icon={UploadIcon}
                 onClick={() => setOpenModal("subirPdf")}
-                className="text-sky-600"
+                tone="info"
               />
             )}
             {puedeRenovar(contrato, empleadoActivo) && (
@@ -195,14 +197,14 @@ export function ContratoItem({ contrato, empleadoActivo }: ContratoItemProps) {
                 label="Renovar"
                 icon={RefreshCwIcon}
                 onClick={() => setOpenModal("renovar")}
-                className="text-emerald-600"
+                tone="success"
               />
             )}
             <AccionButton
               label="Anular"
               icon={CircleXIcon}
               onClick={() => setOpenModal("anular")}
-              className="text-red-500"
+              tone="danger"
             />
           </div>
         </div>

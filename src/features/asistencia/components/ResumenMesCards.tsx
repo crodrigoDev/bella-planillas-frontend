@@ -1,6 +1,10 @@
 import { TriangleAlertIcon } from "lucide-react";
 
 import { StatusBadge } from "@/components/feedback/StatusBadge";
+import {
+  TONE_TEXT,
+  type StatusTone,
+} from "@/components/feedback/statusTone.config";
 import { ESTADO_RESUMEN } from "../config/asistencia.config";
 import type { ResumenMes } from "../types/asistencia.types";
 import { cn } from "@/lib/utils";
@@ -16,7 +20,7 @@ interface Dato {
   /** Si el valor es cero: se muestra tenue para que resalte lo que no lo es */
   esCero: boolean;
   /** Color del valor cuando no es cero: faltas en rojo, por resolver en ámbar */
-  tono?: "alerta" | "aviso";
+  tono?: StatusTone;
 }
 
 /**
@@ -37,7 +41,7 @@ export function ResumenMesCards({ resumen }: ResumenMesCardsProps) {
       label: "Faltas",
       value: String(resumen.faltas),
       esCero: resumen.faltas === 0,
-      tono: "alerta",
+      tono: "danger",
     },
     {
       label: "Tardanza",
@@ -71,7 +75,7 @@ export function ResumenMesCards({ resumen }: ResumenMesCardsProps) {
       label: "Días por resolver",
       value: String(resumen.pendientes),
       esCero: resumen.pendientes === 0,
-      tono: "aviso",
+      tono: "warning",
     },
   ];
 
@@ -98,8 +102,7 @@ export function ResumenMesCards({ resumen }: ResumenMesCardsProps) {
               className={cn(
                 "text-xl font-semibold tabular-nums",
                 esCero && "font-normal text-muted-foreground",
-                !esCero && tono === "alerta" && "text-red-600",
-                !esCero && tono === "aviso" && "text-amber-700",
+                !esCero && tono && TONE_TEXT[tono],
               )}
             >
               {value}
@@ -109,7 +112,9 @@ export function ResumenMesCards({ resumen }: ResumenMesCardsProps) {
       </dl>
 
       {aviso && (
-        <p className="flex items-center gap-2 text-sm text-amber-700">
+        <p
+          className={cn("flex items-center gap-2 text-sm", TONE_TEXT.warning)}
+        >
           <TriangleAlertIcon className="size-4 shrink-0" aria-hidden />
           {aviso}
         </p>

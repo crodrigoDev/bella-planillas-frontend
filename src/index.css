@@ -37,6 +37,13 @@
   --destructive-soft: oklch(0.971 0.013 17.38);
   --destructive-soft-foreground: oklch(0.505 0.213 27.518);
   --destructive-border: oklch(0.885 0.062 18.334);
+  /* Categorías sin significado de estado (círculos del historial) */
+  --category-1: oklch(0.588 0.158 241.966);
+  --category-2: oklch(0.596 0.145 163.225);
+  --category-3: oklch(0.666 0.179 58.318);
+  --category-4: oklch(0.6 0.118 184.704);
+  --category-5: oklch(0.446 0.043 257.281);
+  --category-foreground: oklch(1 0 0);
   --border: oklch(0.929 0.013 255.5);
   --input: oklch(0.929 0.013 255.5);
   --ring: oklch(0.52 0.2 268);
@@ -87,6 +94,12 @@
   --destructive-soft: oklch(0.3 0.07 25);
   --destructive-soft-foreground: oklch(0.85 0.1 25);
   --destructive-border: oklch(0.45 0.1 25);
+  --category-1: oklch(0.588 0.158 241.966);
+  --category-2: oklch(0.596 0.145 163.225);
+  --category-3: oklch(0.666 0.179 58.318);
+  --category-4: oklch(0.6 0.118 184.704);
+  --category-5: oklch(0.554 0.046 257.417);
+  --category-foreground: oklch(1 0 0);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.56 0.021 213.5);
@@ -140,6 +153,12 @@
   --color-info-soft: var(--info-soft);
   --color-info-soft-foreground: var(--info-soft-foreground);
   --color-info-border: var(--info-border);
+  --color-category-1: var(--category-1);
+  --color-category-2: var(--category-2);
+  --color-category-3: var(--category-3);
+  --color-category-4: var(--category-4);
+  --color-category-5: var(--category-5);
+  --color-category-foreground: var(--category-foreground);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);

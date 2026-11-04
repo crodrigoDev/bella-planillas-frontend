@@ -101,13 +101,21 @@ es editar este archivo.
 | `StatusTone` | `"success" \| "warning" \| "danger" \| "info" \| "neutral"` | |
 | `TONE_BADGE` | `Record<StatusTone, string>` | Fondo suave, borde y texto de la insignia |
 | `TONE_DOT` | `Record<StatusTone, string>` | Fondo del punto de color |
+| `TONE_TEXT` | `Record<StatusTone, string>` | Color de un texto suelto (alto contraste) |
+| `TONE_ICON` | `Record<StatusTone, string>` | Color de un icono |
 
 ```tsx
 <span className={cn("size-3.5 rounded-full", TONE_DOT[estado.tone])} />
+<p className={cn("text-sm", TONE_TEXT.danger)}>Venció hace {diasVencido} días</p>
 ```
 
 [`src/features/contratos/components/ContratoItem.tsx`](../../src/features/contratos/components/ContratoItem.tsx)
 
 Los colores sólidos (`bg-success`, `text-success`...) son para puntos, iconos, barras y
-bordes. Para texto sobre fondo claro usa `text-*-soft-foreground` o `text-destructive`:
-los sólidos no llegan a 4,5:1 de contraste.
+bordes. Para texto sobre fondo claro usa `TONE_TEXT` (`text-*-soft-foreground` o
+`text-destructive`): los sólidos no llegan a 4,5:1 de contraste.
+
+Las filas resaltadas usan el fondo suave del tono, por ejemplo `bg-destructive-soft/60`.
+Las categorías sin significado de estado (círculos del historial) usan
+`bg-category-1` a `bg-category-5` con `text-category-foreground`. Las features no escriben
+colores de la paleta de Tailwind (`red-600`, `emerald-50`...).

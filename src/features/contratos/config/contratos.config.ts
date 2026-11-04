@@ -18,13 +18,13 @@ export const ESTADO_CONTRATO: Record<
   FINALIZADO: { label: "Finalizado", tone: "neutral" },
 };
 
-/** Color del aviso de vencimiento según qué tan cerca está el fin */
-export const ALERTA_VENCIMIENTO_STYLES = {
-  VENCIDO: "text-red-600",
-  CRITICO: "text-red-600",
-  PREVENTIVO: "text-amber-600",
-  REGULAR: "text-muted-foreground",
-} as const;
+/** Tono del aviso de vencimiento según qué tan cerca está el fin */
+export const ALERTA_VENCIMIENTO_TONE = {
+  VENCIDO: "danger",
+  CRITICO: "danger",
+  PREVENTIVO: "warning",
+  REGULAR: "neutral",
+} as const satisfies Record<string, StatusTone>;
 
 /** Modalidad que no lleva fecha de fin */
 export const MODALIDAD_INDETERMINADA = "INDETERMINADO";

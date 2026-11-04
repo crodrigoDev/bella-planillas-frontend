@@ -63,13 +63,13 @@ export function DerechohabienteItem({
             label="Sustentos"
             icon={PaperclipIcon}
             onClick={() => setOpenModal("sustentos")}
-            className="text-sky-600"
+            tone="info"
           />
           <AccionButton
             label="Quitar"
             icon={UserMinusIcon}
             onClick={() => setOpenModal("quitar")}
-            className="text-red-500"
+            tone="danger"
           />
         </div>
       </div>
