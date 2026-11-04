@@ -23,7 +23,7 @@ export function useEmpleado(id: string | undefined) {
     enabled: Boolean(id),
     placeholderData: (): Empleado | undefined => {
       const pages = queryClient.getQueriesData<EmpleadosPage>({
-        queryKey: ["empleados", "list"],
+        queryKey: [...empleadosKey.all, "list"],
       });
 
       for (const [, page] of pages) {

@@ -45,8 +45,8 @@ Cada pieza es una subsección `##` de su archivo, con este formato:
 
 | Archivo | Piezas |
 | --- | --- |
-| [hooks.md](hooks.md) | [useCatalogo](hooks.md#usecatalogo) · [useDebouncedCallback](hooks.md#usedebouncedcallback) · [use-mobile.ts](hooks.md#use-mobilets) |
-| [lib.md](lib.md) | [format.utils.ts](lib.md#formatutilsts) · [date.utils.ts](lib.md#dateutilsts) · [catalogos.utils.ts](lib.md#catalogosutilsts) · [pagination.utils.ts](lib.md#paginationutilsts) · [urlParams.utils.ts](lib.md#urlparamsutilsts) · [zodMessages.utils.ts](lib.md#zodmessagesutilsts) · [personas.config.ts](lib.md#personasconfigts) · [get-api-error-message.ts](lib.md#get-api-error-messagets) · [Clientes HTTP](lib.md#clientes-http) · [utils.ts](lib.md#utilsts) |
+| [hooks.md](hooks.md) | [useCatalogo](hooks.md#usecatalogo) · [useDebouncedCallback](hooks.md#usedebouncedcallback) · [useMutationConAviso](hooks.md#usemutationconaviso) · [use-mobile.ts](hooks.md#use-mobilets) |
+| [lib.md](lib.md) | [format.utils.ts](lib.md#formatutilsts) · [date.utils.ts](lib.md#dateutilsts) · [catalogos.utils.ts](lib.md#catalogosutilsts) · [pagination.utils.ts](lib.md#paginationutilsts) · [urlParams.utils.ts](lib.md#urlparamsutilsts) · [zodMessages.utils.ts](lib.md#zodmessagesutilsts) · [personas.config.ts](lib.md#personasconfigts) · [queryKeys.config.ts](lib.md#querykeysconfigts) · [get-api-error-message.ts](lib.md#get-api-error-messagets) · [Clientes HTTP](lib.md#clientes-http) · [utils.ts](lib.md#utilsts) |
 
 ## ¿Qué uso para...?
 
@@ -70,4 +70,6 @@ Cada pieza es una subsección `##` de su archivo, con este formato:
 | Un proceso por pasos | [Stepper](componentes/stepper.md#stepper) y [StepperFooter](componentes/stepper.md#stepperfooter) |
 | Opciones de un catálogo del backend | [useCatalogo](hooks.md#usecatalogo) y [catalogos.utils.ts](lib.md#catalogosutilsts) |
 | Mostrar fechas, montos o datos vacíos | [format.utils.ts](lib.md#formatutilsts) |
+| Una mutación que avisa con un toast y refresca la caché | [useMutationConAviso](hooks.md#usemutationconaviso) |
+| Invalidar desde una feature la caché de otra (empleados) | [queryKeys.config.ts](lib.md#querykeysconfigts) |
 | Llamar al backend | [Clientes HTTP](lib.md#clientes-http) |

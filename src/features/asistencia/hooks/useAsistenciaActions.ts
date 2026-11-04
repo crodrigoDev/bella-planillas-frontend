@@ -1,4 +1,3 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type {
   AsignarJornadaAsistenciaDto,
@@ -6,6 +5,8 @@ import type {
   ResolverIncidenciaDto,
 } from "@jyp/shared-contracts";
 
+import { useMutationConAviso } from "@/hooks/useMutationConAviso";
+import { ROOT_KEYS } from "@/lib/queryKeys.config";
 import {
   asistenciaService,
   type MarcacionManualDto,
@@ -32,79 +33,53 @@ const regenerarResumen = async (empleadoId: string, periodo: string) => {
 
 /** Calcula o actualiza el resumen del mes, avisa y refresca la pestaña */
 export function useGenerarResumen(empleadoId: string, periodo: string) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  return useMutationConAviso({
     mutationFn: () => asistenciaService.generar(empleadoId, periodo),
-    onSuccess: () => {
-      toast.success("El resumen del mes se actualizó.");
-
-      return queryClient.invalidateQueries({ queryKey: asistenciaKey.all });
-    },
+    successMessage: "El resumen del mes se actualizó.",
+    invalidate: [asistenciaKey.all],
   });
 }
 
 /** Aprueba el resumen del mes, avisa y refresca la pestaña */
 export function useAprobarResumen(empleadoId: string, periodo: string) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  return useMutationConAviso({
     mutationFn: () => asistenciaService.aprobar(empleadoId, periodo),
-    onSuccess: () => {
-      toast.success("El resumen del mes se aprobó.");
-
-      return queryClient.invalidateQueries({ queryKey: asistenciaKey.all });
-    },
+    successMessage: "El resumen del mes se aprobó.",
+    invalidate: [asistenciaKey.all],
   });
 }
 
 /** Rechaza o reabre el resumen del mes, avisa y refresca la pestaña */
 export function useResolverResumen() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  return useMutationConAviso({
     mutationFn: (dto: ResolverIncidenciaDto) =>
       asistenciaService.resolverResumen(dto),
-    onSuccess: (_, { accion }) => {
-      toast.success(
-        accion === "RECHAZAR"
-          ? "El resumen del mes se rechazó."
-          : "El resumen del mes se reabrió.",
-      );
-
-      return queryClient.invalidateQueries({ queryKey: asistenciaKey.all });
-    },
+    successMessage: (_, { accion }) =>
+      accion === "RECHAZAR"
+        ? "El resumen del mes se rechazó."
+        : "El resumen del mes se reabrió.",
+    invalidate: [asistenciaKey.all],
   });
 }
 
 /** Registra una marcación manual, actualiza el resumen del mes y refresca la pestaña */
 export function useMarcacionManual(empleadoId: string, periodo: string) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  return useMutationConAviso({
     mutationFn: (dto: MarcacionManualDto) => asistenciaService.marcar(dto),
-    onSuccess: async () => {
-      toast.success("La marcación se registró correctamente.");
-      await regenerarResumen(empleadoId, periodo);
-
-      return queryClient.invalidateQueries({ queryKey: asistenciaKey.all });
-    },
+    successMessage: "La marcación se registró correctamente.",
+    afterSuccess: () => regenerarResumen(empleadoId, periodo),
+    invalidate: [asistenciaKey.all],
   });
 }
 
 /** Resuelve un día, actualiza el resumen del mes y refresca la pestaña */
 export function useResolverDia(empleadoId: string, periodo: string) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  return useMutationConAviso({
     mutationFn: (dto: ResolverDiaAsistenciaDto) =>
       asistenciaService.resolverDia(dto),
-    onSuccess: async () => {
-      toast.success("El día se resolvió correctamente.");
-      await regenerarResumen(empleadoId, periodo);
-
-      return queryClient.invalidateQueries({ queryKey: asistenciaKey.all });
-    },
+    successMessage: "El día se resolvió correctamente.",
+    afterSuccess: () => regenerarResumen(empleadoId, periodo),
+    invalidate: [asistenciaKey.all],
   });
 }
 
@@ -113,23 +88,14 @@ export function useResolverDia(empleadoId: string, periodo: string) {
  *
  * @remarks
  * La jornada del empleado se muestra en la ficha: también se refresca la
- * consulta `["empleados"]` de la feature `empleados`; se repite aquí su clave
- * porque una feature no importa de otra.
+ * consulta de empleados.
  */
 export function useAsignarJornada(empleadoId: string, periodo: string) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  return useMutationConAviso({
     mutationFn: (dto: AsignarJornadaAsistenciaDto) =>
       asistenciaService.asignarJornada(dto),
-    onSuccess: async () => {
-      toast.success("La jornada se asignó correctamente.");
-      await regenerarResumen(empleadoId, periodo);
-
-      return Promise.all([
-        queryClient.invalidateQueries({ queryKey: asistenciaKey.all }),
-        queryClient.invalidateQueries({ queryKey: ["empleados"] }),
-      ]);
-    },
+    successMessage: "La jornada se asignó correctamente.",
+    afterSuccess: () => regenerarResumen(empleadoId, periodo),
+    invalidate: [asistenciaKey.all, ROOT_KEYS.empleados],
   });
 }

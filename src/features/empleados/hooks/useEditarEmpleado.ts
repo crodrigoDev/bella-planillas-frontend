@@ -1,7 +1,6 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 import type { EditarEmpleadoDto } from "@jyp/shared-contracts";
 
+import { useMutationConAviso } from "@/hooks/useMutationConAviso";
 import { empleadosService } from "../services/empleados.service";
 import { empleadosKey } from "./useEmpleados";
 
@@ -13,14 +12,9 @@ import { empleadosKey } from "./useEmpleados";
  * página de edición se cierra cuando la ficha ya muestra los datos nuevos.
  */
 export function useEditarEmpleado(id: string) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  return useMutationConAviso({
     mutationFn: (dto: EditarEmpleadoDto) => empleadosService.editar(id, dto),
-    onSuccess: () => {
-      toast.success("Los datos del empleado se actualizaron correctamente.");
-
-      return queryClient.invalidateQueries({ queryKey: empleadosKey.all });
-    },
+    successMessage: "Los datos del empleado se actualizaron correctamente.",
+    invalidate: [empleadosKey.all],
   });
 }

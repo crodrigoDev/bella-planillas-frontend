@@ -130,6 +130,24 @@ value={getOptionLabel(SEXO_OPTIONS, empleado.sexo)}
 [`src/features/empleados/components/detalle/EmpleadoDetalleDatos.tsx`](../src/features/empleados/components/detalle/EmpleadoDetalleDatos.tsx). Como opciones de
 un selector: `options={SEXO_OPTIONS}` en `DerechohabienteCampos.tsx`.
 
+## queryKeys.config.ts
+
+`ROOT_KEYS`: las raíces de caché que más de una feature necesita invalidar
+(`empleados`, `catalogos`). Una feature no importa de otra, así que estas claves viven
+aquí y no se escriben como texto en cada uso. Cada feature arma sus claves completas desde
+su raíz (`empleadosKey.all = ROOT_KEYS.empleados`).
+
+| Clave | Valor | La usan |
+| --- | --- | --- |
+| `ROOT_KEYS.empleados` | `["empleados"]` | `empleadosKey`; asistencia y derechohabientes la invalidan |
+| `ROOT_KEYS.catalogos` | `["catalogos"]` | `useCatalogo` |
+
+```ts
+invalidate: [derechohabientesKey.all, ROOT_KEYS.empleados],
+```
+
+[`src/features/derechohabientes/hooks/useDerechohabienteActions.ts`](../src/features/derechohabientes/hooks/useDerechohabienteActions.ts)
+
 ## get-api-error-message.ts
 
 `getApiErrorMessage(error: unknown): string` convierte un error de axios en un mensaje

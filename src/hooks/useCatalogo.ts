@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { ROOT_KEYS } from "@/lib/queryKeys.config";
+
 // Los catálogos casi no cambian: se reutilizan por 30 minutos
 const CATALOGO_STALE_TIME = 30 * 60_000;
 
@@ -16,7 +18,7 @@ export function useCatalogo<T>(
   staleTime = CATALOGO_STALE_TIME,
 ) {
   return useQuery({
-    queryKey: ["catalogos", ...key],
+    queryKey: [...ROOT_KEYS.catalogos, ...key],
     queryFn,
     staleTime,
   });

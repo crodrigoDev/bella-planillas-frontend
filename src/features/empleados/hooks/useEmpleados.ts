@@ -1,4 +1,5 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { ROOT_KEYS } from "@/lib/queryKeys.config";
 import type { EmpleadoFilters } from "../types/empleados.types";
 import { empleadosService } from "../services/empleados.service";
 
@@ -9,9 +10,10 @@ import { empleadosService } from "../services/empleados.service";
  * Invalida `all` refresca la lista sin importar los filtros que tenga
  */
 export const empleadosKey = {
-  all: ["empleados"] as const,
-  list: (filters: EmpleadoFilters) => ["empleados", "list", filters] as const,
-  detail: (id: string) => ["empleados", "detail", id] as const,
+  all: ROOT_KEYS.empleados,
+  list: (filters: EmpleadoFilters) =>
+    [...ROOT_KEYS.empleados, "list", filters] as const,
+  detail: (id: string) => [...ROOT_KEYS.empleados, "detail", id] as const,
 };
 
 /**
