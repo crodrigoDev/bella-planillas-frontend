@@ -16,7 +16,7 @@ type PasswordInputProps = Omit<ComponentProps<typeof InputGroupInput>, "type">;
  * Transmite las propiedades al input interno para permitir su conexion
  * con React Hook Form. El tipo de input se controla desde el componente
  */
-export default function PasswordInput(props: PasswordInputProps) {
+export function PasswordInput(props: PasswordInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (

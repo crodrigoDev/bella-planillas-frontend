@@ -10,7 +10,7 @@ import {
 import { FieldError } from "@/components/ui/field";
 import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import LoginForm from "@/features/auth/components/LoginForm";
+import { LoginForm } from "@/features/auth/components/LoginForm";
 
 /**
  * Presenta la Card de acceso a la aplicación

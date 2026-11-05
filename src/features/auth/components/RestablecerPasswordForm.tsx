@@ -1,95 +1,67 @@
-import { LoadingButton } from "@/components/form/LoadingButton";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
+import { KeyRound } from "lucide-react";
+
+import { LoadingButton } from "@/components/form/LoadingButton";
+import { FieldGroup } from "@/components/ui/field";
+import { PasswordField } from "@/features/auth/components/PasswordField";
 import {
   RestablecerFormSchema,
   type RestablecerFormValues,
 } from "@/features/auth/schemas/auth.schema";
-import PasswordInput from "@/features/auth/components/PasswordInput";
-import { KeyRound } from "lucide-react";
+import { zodResolverOptions } from "@/lib/zodMessages.utils";
 
 interface RestablecerPasswordFormProps {
   onSubmit: (values: RestablecerFormValues) => Promise<void>;
 }
 
 /** Valida la nueva contraseña y su confirmación, y las entrega a la página */
-export default function RestablecerPasswordForm({
+export function RestablecerPasswordForm({
   onSubmit,
 }: RestablecerPasswordFormProps) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<RestablecerFormValues>({
-    resolver: zodResolver(RestablecerFormSchema),
+  const methods = useForm<RestablecerFormValues>({
+    resolver: zodResolver(RestablecerFormSchema, zodResolverOptions),
     defaultValues: { nueva_password: "", confirmar_password: "" },
     mode: "onTouched",
   });
+  const { isSubmitting } = methods.formState;
 
   // Espera la peticion para mantener deshabilitado el formulario mientras envia
-  const submit = handleSubmit(async (values) => {
+  const submit = methods.handleSubmit(async (values) => {
     await onSubmit(values);
   });
 
   return (
-    <form noValidate onSubmit={submit}>
-      <FieldGroup>
-        <Field data-invalid={Boolean(errors.nueva_password)}>
-          <FieldLabel htmlFor="restablecer-password" className="text-xs">
-            Nueva Contraseña
-          </FieldLabel>
-
-          <PasswordInput
-            {...register("nueva_password")}
-            id="restablecer-password"
+    <FormProvider {...methods}>
+      <form noValidate onSubmit={submit}>
+        <FieldGroup>
+          <PasswordField
+            name="nueva_password"
+            label="Nueva Contraseña"
             autoComplete="new-password"
             placeholder="Mínimo 12 caracteres"
             disabled={isSubmitting}
-            aria-invalid={Boolean(errors.nueva_password)}
           />
 
-          <FieldError
-            id="restablecer-password-error"
-            errors={[errors.nueva_password]}
-          />
-        </Field>
-
-        <Field data-invalid={Boolean(errors.confirmar_password)}>
-          <FieldLabel htmlFor="restablecer-confirmar" className="text-xs">
-            Confirmar contraseña
-          </FieldLabel>
-
-          <PasswordInput
-            {...register("confirmar_password")}
-            id="restablecer-confirmar"
+          <PasswordField
+            name="confirmar_password"
+            label="Confirmar contraseña"
             autoComplete="new-password"
             placeholder="Repite la contraseña"
             disabled={isSubmitting}
-            aria-invalid={Boolean(errors.confirmar_password)}
           />
 
-          <FieldError
-            id="restablecer-confirmar-error"
-            errors={[errors.confirmar_password]}
-          />
-        </Field>
-
-        <LoadingButton
-          type="submit"
-          isLoading={isSubmitting}
-          loadingText="Guardando…"
-          icon={KeyRound}
-          className="h-10 w-full"
-        >
-          Cambiar contraseña
-        </LoadingButton>
-      </FieldGroup>
-    </form>
+          <LoadingButton
+            type="submit"
+            isLoading={isSubmitting}
+            loadingText="Guardando…"
+            icon={KeyRound}
+            className="h-10 w-full"
+          >
+            Cambiar contraseña
+          </LoadingButton>
+        </FieldGroup>
+      </form>
+    </FormProvider>
   );
 }

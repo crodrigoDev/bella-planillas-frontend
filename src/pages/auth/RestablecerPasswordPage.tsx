@@ -13,7 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { authService } from "@/features/auth/services/auth.service";
-import RestablecerPasswordForm from "@/features/auth/components/RestablecerPasswordForm";
+import { RestablecerPasswordForm } from "@/features/auth/components/RestablecerPasswordForm";
 import type { RestablecerFormValues } from "@/features/auth/schemas/auth.schema";
 
 const linkClassName =
