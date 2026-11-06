@@ -3,7 +3,7 @@ import type { PaginationApiResponse } from "@/lib/api/types/api.types";
 import { CATALOGO_LIMIT, toOptions } from "@/lib/catalogos.utils";
 import type { SelectOption } from "@/lib/types/options.types";
 import { TIPOS_DOCUMENTO_MOCK } from "../data/catalogos.mock";
-import type { EmpleadoRelacion } from "../types/empleados.types";
+import type { Empleado, EmpleadoRelacion } from "../types/empleados.types";
 
 /**
  * Obtiene las listas de opciones que usan el listado y el registro de empleados
@@ -47,6 +47,18 @@ export const catalogosService = {
     });
 
     return toOptions(response.data.data);
+  },
+
+  /** Consulta los empleados activos (hasta 100) con su nombre completo como texto */
+  listEmpleados: async (): Promise<SelectOption[]> => {
+    const response = await protectedHttpClient.get<
+      PaginationApiResponse<Pick<Empleado, "id" | "nombre_completo">>
+    >("/rrhh/empleado", { params: { limit: CATALOGO_LIMIT, activo: true } });
+
+    return response.data.data.map(({ id, nombre_completo }) => ({
+      value: id,
+      label: nombre_completo,
+    }));
   },
 
   /** TEMPORAL: tipos de documento (DNI, CE, pasaporte...) */

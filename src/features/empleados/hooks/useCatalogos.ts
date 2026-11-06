@@ -38,3 +38,12 @@ export function useTiposDocumento() {
     catalogosService.listTiposDocumento(),
   );
 }
+
+/** Obtiene los empleados activos para un selector (por ejemplo el filtro de marcaciones) */
+export function useEmpleadosActivos() {
+  return useCatalogo(
+    ["empleados-activos"],
+    () => catalogosService.listEmpleados(),
+    ORGANIZACION_STALE_TIME,
+  );
+}
