@@ -1,7 +1,7 @@
-import { ArrowLeftIcon } from "lucide-react";
-import { Link, Outlet, useParams } from "react-router-dom";
+import { Outlet, useParams } from "react-router-dom";
 
 import { ROUTE_PATHS, buildEmpleadoPath } from "@/app/routes/path";
+import { BackLink } from "@/components/page/BackLink";
 import { PageTabs, type PageTab } from "@/components/page/PageTabs";
 import { EmpleadoCargaEstado } from "@/features/empleados/components/detalle/EmpleadoCargaEstado";
 import { EmpleadoDetalleHeader } from "@/features/empleados/components/detalle/EmpleadoDetalleHeader";
@@ -32,13 +32,7 @@ export default function EmpleadoDetalleLayout() {
       aria-labelledby="empleado-title"
       className="mx-auto w-full max-w-7xl space-y-6"
     >
-      <Link
-        to={ROUTE_PATHS.gestionPersonal.empleados}
-        className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
-      >
-        <ArrowLeftIcon className="size-4" />
-        Volver a Empleados
-      </Link>
+      <BackLink to={ROUTE_PATHS.gestionPersonal.empleados}>Volver a Empleados</BackLink>
 
       <EmpleadoCargaEstado
         isLoading={isLoading}

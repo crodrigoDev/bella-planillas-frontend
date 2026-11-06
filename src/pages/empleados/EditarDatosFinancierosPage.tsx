@@ -1,9 +1,9 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { ArrowLeftIcon } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import { ROUTE_PATHS, buildEmpleadoPath } from "@/app/routes/path";
 import { DetalleTabEstado } from "@/components/feedback/DetalleTabEstado";
+import { BackLink } from "@/components/page/BackLink";
 import { PageHeader } from "@/components/page/PageHeader";
 import { DatosFinancierosFichaForm } from "@/features/datosFinancieros/components/DatosFinancierosFichaForm";
 import { useDatosFinancierosEmpleado } from "@/features/datosFinancieros/hooks/useDatosFinancieros";
@@ -45,13 +45,7 @@ export default function EditarDatosFinancierosPage() {
       aria-labelledby="editar-datos-financieros-title"
       className="mx-auto w-full max-w-7xl space-y-6"
     >
-      <Link
-        to={id ? buildEmpleadoPath(id) : ROUTE_PATHS.gestionPersonal.empleados}
-        className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
-      >
-        <ArrowLeftIcon className="size-4" />
-        Volver a la ficha
-      </Link>
+      <BackLink to={id ? buildEmpleadoPath(id) : ROUTE_PATHS.gestionPersonal.empleados}>Volver a la ficha</BackLink>
 
       {/* El dato provisional del listado no trae la fecha de filiación: se espera el detalle */}
       <EmpleadoCargaEstado

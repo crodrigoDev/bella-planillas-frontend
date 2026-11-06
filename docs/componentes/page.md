@@ -73,3 +73,40 @@ const getTabs = (id: string): PageTab[] => [
 
 [`src/pages/empleados/EmpleadoDetalleLayout.tsx`](../../src/pages/empleados/EmpleadoDetalleLayout.tsx)
 
+## BackLink
+
+Enlace con flecha para volver a la página anterior ("Volver a Empleados", "Volver a la ficha").
+No sirve para los enlaces de auth, forbidden y not-found, que tienen otro diseño.
+
+| Prop | Tipo | Notas |
+| --- | --- | --- |
+| `to` | `string` | Ruta a la que vuelve |
+| `children` | `ReactNode` | Texto del enlace |
+
+```tsx
+<BackLink to={ROUTE_PATHS.gestionPersonal.empleados}>Volver a Empleados</BackLink>
+```
+
+[`src/pages/empleados/NuevoEmpleadoPage.tsx`](../../src/pages/empleados/NuevoEmpleadoPage.tsx)
+
+## ResumenCifra
+
+Tarjeta con una cifra grande y su nombre, para los resúmenes de las importaciones
+(filas válidas, con error, guardadas...). El color del valor se pasa con `className`.
+`ResumenMesCards` no la usa: es una cuadrícula de datos con otro diseño.
+
+| Prop | Tipo | Notas |
+| --- | --- | --- |
+| `label` | `string` | Nombre de la cifra |
+| `value` | `string \| number` | |
+| `className` | `string?` | Color del valor: `text-success`, `text-destructive`... |
+
+```tsx
+<ResumenCifra
+  label="Filas con error"
+  value={filas_invalidas}
+  className={filas_invalidas > 0 ? "text-destructive" : undefined}
+/>
+```
+
+[`src/features/empleados/components/importacion/ImportarRevisionPaso.tsx`](../../src/features/empleados/components/importacion/ImportarRevisionPaso.tsx)

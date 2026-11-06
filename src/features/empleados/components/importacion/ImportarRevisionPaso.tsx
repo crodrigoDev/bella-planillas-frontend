@@ -5,8 +5,8 @@ import {
   ConfirmModal,
   ConfirmModalBody,
 } from "@/components/feedback/ConfirmModal";
+import { ResumenCifra } from "@/components/page/ResumenCifra";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { erroresFilaColumns } from "../../config/cargaMasiva.columns";
 import { useConfirmarCargaMasiva } from "../../hooks/useCargaMasiva";
 import { usePaginacionLocal } from "@/hooks/usePaginacionLocal";
@@ -18,21 +18,6 @@ interface ImportarRevisionPasoProps {
   onElegirOtro: () => void;
   /** Se llama con el id del trabajo cuando el backend lo acepta */
   onConfirmado: (jobId: string) => void;
-}
-
-interface ResumenCifraProps {
-  label: string;
-  value: number;
-  className?: string;
-}
-
-function ResumenCifra({ label, value, className }: ResumenCifraProps) {
-  return (
-    <div className="rounded-lg border p-4">
-      <p className="text-sm text-muted-foreground">{label}</p>
-      <p className={cn("text-2xl font-semibold", className)}>{value}</p>
-    </div>
-  );
 }
 
 /**

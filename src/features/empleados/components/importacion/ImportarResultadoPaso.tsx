@@ -6,9 +6,9 @@ import { DataTable } from "@/components/data-table/DataTable";
 import { EmptyState } from "@/components/feedback/EmptyState";
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { StatusBadge } from "@/components/feedback/StatusBadge";
+import { ResumenCifra } from "@/components/page/ResumenCifra";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
 import { erroresTrabajoColumns } from "../../config/cargaMasiva.columns";
 import { ESTADO_CARGA_MASIVA } from "../../config/cargaMasiva.config";
 import {
@@ -117,25 +117,16 @@ function ResultadoTrabajo({ trabajo, reiniciar }: ResultadoTrabajoProps) {
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
-        <div className="rounded-lg border p-4">
-          <p className="text-sm text-muted-foreground">Empleados guardados</p>
-          <p className="text-2xl font-semibold text-success">
-            {trabajo.procesados}
-          </p>
-        </div>
-        <div className="rounded-lg border p-4">
-          <p className="text-sm text-muted-foreground">
-            No se pudieron guardar
-          </p>
-          <p
-            className={cn(
-              "text-2xl font-semibold",
-              trabajo.fallidos > 0 && "text-destructive",
-            )}
-          >
-            {trabajo.fallidos}
-          </p>
-        </div>
+        <ResumenCifra
+          label="Empleados guardados"
+          value={trabajo.procesados}
+          className="text-success"
+        />
+        <ResumenCifra
+          label="No se pudieron guardar"
+          value={trabajo.fallidos}
+          className={trabajo.fallidos > 0 ? "text-destructive" : undefined}
+        />
       </div>
 
       {rowCount > 0 && (
