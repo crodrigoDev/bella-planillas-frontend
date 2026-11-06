@@ -36,7 +36,7 @@ Cada pieza es una subsección `##` de su archivo, con este formato:
 | --- | --- |
 | [componentes/form.md](componentes/form.md) | [FormField](componentes/form.md#formfield) · [TextField](componentes/form.md#textfield) · [SelectField](componentes/form.md#selectfield) · [OptionSelect](componentes/form.md#optionselect) · [FormSection](componentes/form.md#formsection) · [RequiredMark](componentes/form.md#requiredmark) · [LoadingButton](componentes/form.md#loadingbutton) · [ModalFormFooter](componentes/form.md#modalformfooter) · [FileDropzone](componentes/form.md#filedropzone) · [ResumenCampo](componentes/form.md#resumencampo) |
 | [componentes/feedback.md](componentes/feedback.md) | [ErrorAlert](componentes/feedback.md#erroralert) · [DetalleTabEstado](componentes/feedback.md#detalletabestado) · [EmptyState](componentes/feedback.md#emptystate) · [ConfirmModal](componentes/feedback.md#confirmmodal) · [StatusBadge](componentes/feedback.md#statusbadge) · [statusTone.config.ts](componentes/feedback.md#statustoneconfigts) |
-| [componentes/page.md](componentes/page.md) | [AccionButton](componentes/page.md#accionbutton) · [PageHeader](componentes/page.md#pageheader) · [PageTabs](componentes/page.md#pagetabs) |
+| [componentes/page.md](componentes/page.md) | [AccionButton](componentes/page.md#accionbutton) · [PageHeader](componentes/page.md#pageheader) · [PageTabs](componentes/page.md#pagetabs) · [BackLink](componentes/page.md#backlink) · [ResumenCifra](componentes/page.md#resumencifra) |
 | [componentes/filters.md](componentes/filters.md) | [SearchInput](componentes/filters.md#searchinput) · [FilterSelect](componentes/filters.md#filterselect) · [DateRangeFilter](componentes/filters.md#daterangefilter) · [FilterChip](componentes/filters.md#filterchip) · [filters.config.ts](componentes/filters.md#filtersconfigts) |
 | [componentes/data-table.md](componentes/data-table.md) | [DataTable](componentes/data-table.md#datatable) · [dataTable.config.ts](componentes/data-table.md#datatableconfigts) |
 | [componentes/stepper.md](componentes/stepper.md) | [Stepper](componentes/stepper.md#stepper) · [StepperFooter](componentes/stepper.md#stepperfooter) |
@@ -45,8 +45,8 @@ Cada pieza es una subsección `##` de su archivo, con este formato:
 
 | Archivo | Piezas |
 | --- | --- |
-| [hooks.md](hooks.md) | [useCatalogo](hooks.md#usecatalogo) · [useDebouncedCallback](hooks.md#usedebouncedcallback) · [useMutationConAviso](hooks.md#usemutationconaviso) · [usePaginacionLocal](hooks.md#usepaginacionlocal) · [use-mobile.ts](hooks.md#use-mobilets) |
-| [lib.md](lib.md) | [format.utils.ts](lib.md#formatutilsts) · [date.utils.ts](lib.md#dateutilsts) · [catalogos.utils.ts](lib.md#catalogosutilsts) · [pagination.utils.ts](lib.md#paginationutilsts) · [urlParams.utils.ts](lib.md#urlparamsutilsts) · [zodMessages.utils.ts](lib.md#zodmessagesutilsts) · [personas.config.ts](lib.md#personasconfigts) · [queryKeys.config.ts](lib.md#querykeysconfigts) · [apiError.utils.ts](lib.md#apierrorutilsts) · [Clientes HTTP](lib.md#clientes-http) · [utils.ts](lib.md#utilsts) |
+| [hooks.md](hooks.md) | [useCatalogo](hooks.md#usecatalogo) · [useDebouncedCallback](hooks.md#usedebouncedcallback) · [useMutationConAviso](hooks.md#usemutationconaviso) · [usePaginacionLocal](hooks.md#usepaginacionlocal) · [usePaginacionUrl](hooks.md#usepaginacionurl) · [usePaginacionServidor](hooks.md#usepaginacionservidor) · [use-mobile.ts](hooks.md#use-mobilets) |
+| [lib.md](lib.md) | [format.utils.ts](lib.md#formatutilsts) · [date.utils.ts](lib.md#dateutilsts) · [catalogos.utils.ts](lib.md#catalogosutilsts) · [pagination.utils.ts](lib.md#paginationutilsts) · [urlParams.utils.ts](lib.md#urlparamsutilsts) · [archivo.utils.ts](lib.md#archivoutilsts) · [zodMessages.utils.ts](lib.md#zodmessagesutilsts) · [personas.config.ts](lib.md#personasconfigts) · [queryKeys.config.ts](lib.md#querykeysconfigts) · [apiError.utils.ts](lib.md#apierrorutilsts) · [Clientes HTTP](lib.md#clientes-http) · [utils.ts](lib.md#utilsts) |
 
 ## ¿Qué uso para...?
 
@@ -65,9 +65,12 @@ Cada pieza es una subsección `##` de su archivo, con este formato:
 | Una insignia con el estado de algo (activo, vencido, aprobado...) | [StatusBadge](componentes/feedback.md#statusbadge) |
 | Un botón de icono con tooltip en una fila | [AccionButton](componentes/page.md#accionbutton) |
 | El encabezado de una página | [PageHeader](componentes/page.md#pageheader) |
-| Un listado con filtros en la URL | [SearchInput](componentes/filters.md#searchinput), [FilterSelect](componentes/filters.md#filterselect), [urlParams.utils.ts](lib.md#urlparamsutilsts) |
+| El enlace "Volver a…" de una página | [BackLink](componentes/page.md#backlink) |
+| Una tarjeta con una cifra (resumen de una importación) | [ResumenCifra](componentes/page.md#resumencifra) |
+| Validar el tipo y el tamaño de un archivo antes de subirlo | [archivo.utils.ts](lib.md#archivoutilsts) |
+| Un listado con filtros en la URL | [SearchInput](componentes/filters.md#searchinput), [FilterSelect](componentes/filters.md#filterselect), [usePaginacionUrl](hooks.md#usepaginacionurl), [urlParams.utils.ts](lib.md#urlparamsutilsts) |
 | Filtrar por un rango de fechas | [DateRangeFilter](componentes/filters.md#daterangefilter) |
-| Una tabla con paginación del servidor | [DataTable](componentes/data-table.md#datatable) |
+| Una tabla con paginación del servidor | [DataTable](componentes/data-table.md#datatable) con [usePaginacionServidor](hooks.md#usepaginacionservidor) |
 | Paginar en el navegador una lista que ya está completa (errores de un archivo) | [usePaginacionLocal](hooks.md#usepaginacionlocal) con [DataTable](componentes/data-table.md#datatable) |
 | Un proceso por pasos | [Stepper](componentes/stepper.md#stepper) y [StepperFooter](componentes/stepper.md#stepperfooter) |
 | Opciones de un catálogo del backend | [useCatalogo](hooks.md#usecatalogo) y [catalogos.utils.ts](lib.md#catalogosutilsts) |
