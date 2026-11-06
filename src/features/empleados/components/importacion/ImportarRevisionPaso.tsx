@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { erroresFilaColumns } from "../../config/cargaMasiva.columns";
 import { useConfirmarCargaMasiva } from "../../hooks/useCargaMasiva";
-import { usePaginacionLocal } from "../../hooks/usePaginacionLocal";
+import { usePaginacionLocal } from "@/hooks/usePaginacionLocal";
 import type { CargaMasivaPreValidacion } from "../../types/cargaMasiva.types";
 
 interface ImportarRevisionPasoProps {

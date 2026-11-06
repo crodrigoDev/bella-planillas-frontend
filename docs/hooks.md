@@ -91,6 +91,34 @@ useMutationConAviso({
 
 [`src/features/asistencia/hooks/useAsistenciaActions.ts`](../src/features/asistencia/hooks/useAsistenciaActions.ts)
 
+## usePaginacionLocal
+
+Pagina en el navegador una lista que ya está completa en memoria, para pasarla a
+`DataTable` sin pedir páginas al servidor. Muestra 20 filas por página. Devuelve
+`{ pagination, onPaginationChange, pageItems, rowCount }`, que son las props de
+`DataTable`.
+
+| Parámetro | Tipo | Notas |
+| --- | --- | --- |
+| `items` | `readonly T[]` | Todas las filas |
+
+```tsx
+const { pagination, onPaginationChange, pageItems, rowCount } =
+  usePaginacionLocal(revision.errores_detalle);
+
+<DataTable
+  columns={erroresFilaColumns}
+  data={pageItems}
+  pagination={pagination}
+  rowCount={rowCount}
+  onPaginationChange={onPaginationChange}
+  emptyMessage="No hay errores"
+  itemLabel="errores"
+/>
+```
+
+[`src/features/empleados/components/importacion/ImportarRevisionPaso.tsx`](../src/features/empleados/components/importacion/ImportarRevisionPaso.tsx)
+
 ## use-mobile.ts
 
 Exporta `useIsMobile()`. Es de shadcn y lo usa `components/ui/sidebar.tsx`; no está

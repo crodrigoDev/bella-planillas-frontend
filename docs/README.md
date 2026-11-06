@@ -45,7 +45,7 @@ Cada pieza es una subsección `##` de su archivo, con este formato:
 
 | Archivo | Piezas |
 | --- | --- |
-| [hooks.md](hooks.md) | [useCatalogo](hooks.md#usecatalogo) · [useDebouncedCallback](hooks.md#usedebouncedcallback) · [useMutationConAviso](hooks.md#usemutationconaviso) · [use-mobile.ts](hooks.md#use-mobilets) |
+| [hooks.md](hooks.md) | [useCatalogo](hooks.md#usecatalogo) · [useDebouncedCallback](hooks.md#usedebouncedcallback) · [useMutationConAviso](hooks.md#usemutationconaviso) · [usePaginacionLocal](hooks.md#usepaginacionlocal) · [use-mobile.ts](hooks.md#use-mobilets) |
 | [lib.md](lib.md) | [format.utils.ts](lib.md#formatutilsts) · [date.utils.ts](lib.md#dateutilsts) · [catalogos.utils.ts](lib.md#catalogosutilsts) · [pagination.utils.ts](lib.md#paginationutilsts) · [urlParams.utils.ts](lib.md#urlparamsutilsts) · [zodMessages.utils.ts](lib.md#zodmessagesutilsts) · [personas.config.ts](lib.md#personasconfigts) · [queryKeys.config.ts](lib.md#querykeysconfigts) · [apiError.utils.ts](lib.md#apierrorutilsts) · [Clientes HTTP](lib.md#clientes-http) · [utils.ts](lib.md#utilsts) |
 
 ## ¿Qué uso para...?
@@ -67,6 +67,7 @@ Cada pieza es una subsección `##` de su archivo, con este formato:
 | El encabezado de una página | [PageHeader](componentes/page.md#pageheader) |
 | Un listado con filtros en la URL | [SearchInput](componentes/filters.md#searchinput), [FilterSelect](componentes/filters.md#filterselect), [urlParams.utils.ts](lib.md#urlparamsutilsts) |
 | Una tabla con paginación del servidor | [DataTable](componentes/data-table.md#datatable) |
+| Paginar en el navegador una lista que ya está completa (errores de un archivo) | [usePaginacionLocal](hooks.md#usepaginacionlocal) con [DataTable](componentes/data-table.md#datatable) |
 | Un proceso por pasos | [Stepper](componentes/stepper.md#stepper) y [StepperFooter](componentes/stepper.md#stepperfooter) |
 | Opciones de un catálogo del backend | [useCatalogo](hooks.md#usecatalogo) y [catalogos.utils.ts](lib.md#catalogosutilsts) |
 | Mostrar fechas, montos o datos vacíos | [format.utils.ts](lib.md#formatutilsts) |
