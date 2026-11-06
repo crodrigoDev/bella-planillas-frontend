@@ -1,4 +1,5 @@
 import { getTodayIsoDate } from "@/lib/date.utils";
+import type { MarcacionManualDto } from "../services/asistencia.service";
 import type { DiaAsistencia, ResumenMes } from "../types/asistencia.types";
 import { ALERTA_SIN_JORNADA, ZONA_LIMA } from "../config/asistencia.config";
 
@@ -120,6 +121,24 @@ export const formatMinutos = (minutos: number): string => {
  */
 export const toFechaHoraLima = (fecha: string, hora: string): string =>
   `${fecha}T${hora}:00${ZONA_LIMA}`;
+
+/**
+ * Arma lo que pide el backend para una marcación manual a partir del formulario
+ *
+ * @param nroDocumento - Documento del empleado: el backend lo identifica por él
+ */
+export const toMarcacionManualDto = (
+  nroDocumento: string,
+  values: Pick<MarcacionManualDto, "tipo_marcacion" | "motivo"> & {
+    fecha: string;
+    hora: string;
+  },
+): MarcacionManualDto => ({
+  nro_documento: nroDocumento,
+  fecha_hora: toFechaHoraLima(values.fecha, values.hora),
+  tipo_marcacion: values.tipo_marcacion,
+  motivo: values.motivo,
+});
 
 /** Convierte un código del backend en texto legible si no hay uno escrito */
 export const humanizarCodigo = (codigo: string): string => {

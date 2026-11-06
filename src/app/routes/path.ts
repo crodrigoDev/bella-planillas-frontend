@@ -34,6 +34,7 @@ export const ROUTE_PATHS = {
   asistencia: {
     jornadas: "/jornadas",
     marcaciones: "/marcaciones",
+    importarMarcaciones: "/marcaciones/importar",
   },
 
   auditoria: "/auditoria",

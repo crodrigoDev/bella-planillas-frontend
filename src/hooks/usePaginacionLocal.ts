@@ -8,6 +8,10 @@ const TAMANO_PAGINA = 20;
  *
  * @param items - Todas las filas
  * @returns Lo que necesita `DataTable`: la página actual, su estado y el total
+ *
+ * @remarks
+ * Sirve para tablas que no vienen paginadas del servidor, como los errores de
+ * una revisión de archivo. Muestra 20 filas por página.
  */
 export function usePaginacionLocal<T>(items: readonly T[]) {
   const [pagination, setPagination] = useState<PaginationState>({

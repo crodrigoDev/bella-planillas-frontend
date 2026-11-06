@@ -52,6 +52,7 @@ export default function AppLayout() {
 
   return (
     <SidebarProvider
+      className="h-svh"
       style={{ "--sidebar-width-icon": "4rem" } as CSSProperties}
     >
       <AppSidebar
@@ -61,12 +62,12 @@ export default function AppLayout() {
         isLoggingOut={logoutMutation.isPending}
       />
 
-      <SidebarInset>
+      <SidebarInset className="min-h-0 overflow-hidden">
         <header className="flex h-14 items-center border-b border-sidebar-border px-4 sm:px-6 lg:px-8">
           <SidebarTrigger />
         </header>
 
-        <div className="flex-1 space-y-4 p-4 sm:p-6 lg:p-10">
+        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4 sm:p-6 lg:p-10">
           <ErrorAlert error={logoutMutation.error} title="No se pudo cerrar sesión" />
 
           <Outlet />

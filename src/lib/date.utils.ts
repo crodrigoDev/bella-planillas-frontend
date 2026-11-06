@@ -1,4 +1,33 @@
 /**
+ * Convierte un texto YYYY-MM-DD en una fecha local
+ *
+ * @returns La fecha a medianoche hora local, o `undefined` si no hay texto
+ *
+ * @remarks
+ * No pasa por UTC, para no correr un día.
+ */
+export const parseIsoDate = (iso: string | undefined): Date | undefined => {
+  if (!iso) return undefined;
+
+  const [year, month, day] = iso.split("-").map(Number);
+
+  return new Date(year, month - 1, day);
+};
+
+/**
+ * Convierte una fecha local en texto YYYY-MM-DD
+ *
+ * @remarks
+ * Usa año, mes y día locales, no `toISOString()`, que da el día en UTC.
+ */
+export const toIsoDate = (date: Date): string => {
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${date.getFullYear()}-${month}-${day}`;
+};
+
+/**
  * Obtiene la fecha de hoy como YYYY-MM-DD en la zona horaria del navegador
  *
  * @returns El texto que usan los campos `<input type="date">` y el backend
@@ -7,13 +36,7 @@
  * No usa `toISOString()` porque devuelve la fecha en UTC y en Perú (UTC-5)
  * mostraría el día siguiente después de las 19:00.
  */
-export const getTodayIsoDate = (): string => {
-  const today = new Date();
-  const month = String(today.getMonth() + 1).padStart(2, "0");
-  const day = String(today.getDate()).padStart(2, "0");
-
-  return `${today.getFullYear()}-${month}-${day}`;
-};
+export const getTodayIsoDate = (): string => toIsoDate(new Date());
 
 /**
  * Recorta una fecha ISO a AAAA-MM-DD, el único formato que acepta `<input type="date">`

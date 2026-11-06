@@ -62,7 +62,7 @@ export default function EmpleadosPage() {
   };
 
   return (
-    <section className="space-y-4" aria-labelledby="empleados-title">
+    <section className="flex min-h-0 flex-1 flex-col gap-4" aria-labelledby="empleados-title">
       <PageHeader
         id="empleados-title"
         title="Empleados"

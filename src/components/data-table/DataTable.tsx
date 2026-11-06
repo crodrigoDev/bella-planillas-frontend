@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   useTable,
   type ColumnDef,
@@ -15,7 +16,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import {
   Select,
   SelectContent,
@@ -45,6 +54,12 @@ interface DataTableProps<TData extends RowData> {
 
 const SKELETON_ROWS = 6;
 
+// Colores de los botones de página: la actual rellena, las demás con borde
+const PAGE_CLASS =
+  "border border-border bg-background hover:bg-muted dark:border-input dark:bg-input/30 dark:hover:bg-input/50";
+const PAGE_ACTIVE_CLASS =
+  "border-transparent bg-primary text-primary-foreground hover:bg-primary/80";
+
 /**
  * Tabla genérica con paginación controlada por el servidor
  */
@@ -60,6 +75,9 @@ export function DataTable<TData extends RowData>({
   itemLabel = "registros",
   pageSizeOptions = PAGE_SIZE_OPTIONS,
 }: DataTableProps<TData>) {
+  // Con scroll, la cabecera proyecta una sombra hacia las filas
+  const [scrolled, setScrolled] = useState(false);
+
   const table = useTable({
     features: dataTableFeatures,
     columns,
@@ -77,8 +95,18 @@ export function DataTable<TData extends RowData>({
   const lastRow = Math.min((pageIndex + 1) * pageSize, rowCount);
 
   return (
-    <div className="space-y-3">
-      <div className="overflow-hidden rounded-lg border bg-card">
+    <div className="flex min-h-0 flex-col gap-3">
+      <div
+        onScroll={(event) => setScrolled(event.currentTarget.scrollTop > 0)}
+        className={cn(
+          "min-h-0 overflow-auto rounded-lg border bg-card",
+          "[&_[data-slot=table-container]]:overflow-visible [&_table]:min-w-max",
+          "[&_th:not(:last-child)]:border-r [&_td:not(:last-child)]:border-r",
+          "[&_th]:sticky [&_th]:top-0 [&_th]:z-10 [&_th]:bg-[color-mix(in_oklab,var(--muted)_40%,var(--card))] [&_th]:shadow-[inset_0_-1px_0_var(--border)] [&_th]:transition-shadow",
+          scrolled &&
+            "[&_th]:shadow-[inset_0_-1px_0_var(--border),0_4px_6px_-2px_rgb(0_0_0/0.15)]",
+        )}
+      >
         <Table
           className={cn(
             isFetching && !isLoading && "opacity-60 transition-opacity",
@@ -168,50 +196,72 @@ export function DataTable<TData extends RowData>({
             </Select>
           </div>
 
-          <nav
-            aria-label="Paginación"
-            className="flex flex-wrap items-center gap-1"
-          >
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              Anterior
-            </Button>
-
-            {getPageItems(pageIndex + 1, pageCount).map((item, index) =>
-              item === "ellipsis" ? (
-                <span
-                  key={`ellipsis-${index}`}
-                  className="px-1 text-sm text-muted-foreground"
-                >
-                  ...
-                </span>
-              ) : (
-                <Button
-                  key={item}
-                  variant={item === pageIndex + 1 ? "default" : "outline"}
+          <Pagination aria-label="Paginación" className="mx-0 w-auto">
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
                   size="sm"
-                  aria-label={`Página ${item}`}
-                  aria-current={item === pageIndex + 1 ? "page" : undefined}
-                  onClick={() => table.setPageIndex(item - 1)}
-                >
-                  {item}
-                </Button>
-              ),
-            )}
+                  text="Anterior"
+                  aria-label="Página anterior"
+                  aria-disabled={!table.getCanPreviousPage()}
+                  className={cn(
+                    PAGE_CLASS,
+                    !table.getCanPreviousPage() &&
+                      "pointer-events-none opacity-50",
+                  )}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    if (table.getCanPreviousPage()) table.previousPage();
+                  }}
+                />
+              </PaginationItem>
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              Siguiente
-            </Button>
-          </nav>
+              {getPageItems(pageIndex + 1, pageCount).map((item, index) => (
+                <PaginationItem
+                  key={item === "ellipsis" ? `ellipsis-${index}` : item}
+                >
+                  {item === "ellipsis" ? (
+                    <PaginationEllipsis />
+                  ) : (
+                    <PaginationLink
+                      href="#"
+                      size="sm"
+                      className={
+                        item === pageIndex + 1 ? PAGE_ACTIVE_CLASS : PAGE_CLASS
+                      }
+                      aria-label={`Página ${item}`}
+                      isActive={item === pageIndex + 1}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        table.setPageIndex(item - 1);
+                      }}
+                    >
+                      {item}
+                    </PaginationLink>
+                  )}
+                </PaginationItem>
+              ))}
+
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  size="sm"
+                  text="Siguiente"
+                  aria-label="Página siguiente"
+                  aria-disabled={!table.getCanNextPage()}
+                  className={cn(
+                    PAGE_CLASS,
+                    !table.getCanNextPage() && "pointer-events-none opacity-50",
+                  )}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    if (table.getCanNextPage()) table.nextPage();
+                  }}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </div>
       </div>
     </div>

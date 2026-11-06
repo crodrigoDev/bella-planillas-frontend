@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import { ROOT_KEYS } from "@/lib/queryKeys.config";
 
@@ -11,15 +11,18 @@ const CATALOGO_STALE_TIME = 30 * 60_000;
  * @param key - Identifica el catálogo; va después de `"catalogos"` en la caché
  * @param queryFn - Pide el catálogo al servicio
  * @param staleTime - Cuánto tiempo se reutiliza antes de volver a pedirlo
+ * @param keepPrevious - Mantiene la lista anterior mientras llega la nueva (para búsquedas)
  */
 export function useCatalogo<T>(
   key: readonly unknown[],
   queryFn: () => Promise<T>,
   staleTime = CATALOGO_STALE_TIME,
+  keepPrevious = false,
 ) {
   return useQuery({
     queryKey: [...ROOT_KEYS.catalogos, ...key],
     queryFn,
     staleTime,
+    placeholderData: keepPrevious ? keepPreviousData : undefined,
   });
 }

@@ -15,7 +15,7 @@ import {
   esEstadoFinal,
   useEstadoCargaMasiva,
 } from "../../hooks/useCargaMasiva";
-import { usePaginacionLocal } from "../../hooks/usePaginacionLocal";
+import { usePaginacionLocal } from "@/hooks/usePaginacionLocal";
 import type {
   CargaMasivaErrorTrabajo,
   CargaMasivaTrabajo,
