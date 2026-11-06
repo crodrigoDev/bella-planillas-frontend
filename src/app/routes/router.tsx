@@ -179,6 +179,28 @@ export const router = createBrowserRouter([
               },
             ],
           },
+          {
+            element: <RoleRoute path={ROUTE_PATHS.asistencia.marcaciones} />,
+            children: [
+              {
+                path: ROUTE_PATHS.asistencia.marcaciones,
+                lazy: lazyPage(() => import("@/pages/asistencia/MarcacionesPage")),
+              },
+            ],
+          },
+          {
+            element: (
+              <RoleRoute path={ROUTE_PATHS.asistencia.importarMarcaciones} />
+            ),
+            children: [
+              {
+                path: ROUTE_PATHS.asistencia.importarMarcaciones,
+                lazy: lazyPage(
+                  () => import("@/pages/asistencia/ImportarMarcacionesPage"),
+                ),
+              },
+            ],
+          },
           ...pendingPages.map(({ path, title }) => ({
             element: <RoleRoute path={path} />,
             children: [

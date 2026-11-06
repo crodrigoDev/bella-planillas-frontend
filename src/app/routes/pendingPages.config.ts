@@ -11,7 +11,6 @@ export const pendingPages = [
     path: ROUTE_PATHS.asistencia.jornadas,
     title: "Jornadas",
   },
-  { path: ROUTE_PATHS.asistencia.marcaciones, title: "Marcaciones" },
   { path: ROUTE_PATHS.auditoria, title: "Auditoría" },
   { path: ROUTE_PATHS.perfil, title: "Mi perfil" },
 ] as const;
