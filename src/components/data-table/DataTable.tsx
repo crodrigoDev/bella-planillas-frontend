@@ -16,7 +16,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import {
   Select,
   SelectContent,
@@ -45,6 +53,12 @@ interface DataTableProps<TData extends RowData> {
 }
 
 const SKELETON_ROWS = 6;
+
+// Colores de los botones de página: la actual rellena, las demás con borde
+const PAGE_CLASS =
+  "border border-border bg-background hover:bg-muted dark:border-input dark:bg-input/30 dark:hover:bg-input/50";
+const PAGE_ACTIVE_CLASS =
+  "border-transparent bg-primary text-primary-foreground hover:bg-primary/80";
 
 /**
  * Tabla genérica con paginación controlada por el servidor
@@ -82,13 +96,6 @@ export function DataTable<TData extends RowData>({
 
   return (
     <div className="flex min-h-0 flex-col gap-3">
-      {/* Las filas y columnas se desplazan dentro de la caja (como Jira): la
-          cabecera queda fija arriba y la paginación siempre a la vista.
-          Su alto se ajusta a las filas y crece hasta el máximo que le deja su
-          contenedor; a partir de ahí hace scroll (si el contenedor no tiene
-          alto definido, crece con su contenido). El contenedor interno de
-          `Table` pasa a `overflow-visible` para que el scroll sea de esta
-          caja y el `sticky` de la cabecera funcione. */}
       <div
         onScroll={(event) => setScrolled(event.currentTarget.scrollTop > 0)}
         className={cn(
@@ -189,50 +196,72 @@ export function DataTable<TData extends RowData>({
             </Select>
           </div>
 
-          <nav
-            aria-label="Paginación"
-            className="flex flex-wrap items-center gap-1"
-          >
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              Anterior
-            </Button>
-
-            {getPageItems(pageIndex + 1, pageCount).map((item, index) =>
-              item === "ellipsis" ? (
-                <span
-                  key={`ellipsis-${index}`}
-                  className="px-1 text-sm text-muted-foreground"
-                >
-                  ...
-                </span>
-              ) : (
-                <Button
-                  key={item}
-                  variant={item === pageIndex + 1 ? "default" : "outline"}
+          <Pagination aria-label="Paginación" className="mx-0 w-auto">
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
                   size="sm"
-                  aria-label={`Página ${item}`}
-                  aria-current={item === pageIndex + 1 ? "page" : undefined}
-                  onClick={() => table.setPageIndex(item - 1)}
-                >
-                  {item}
-                </Button>
-              ),
-            )}
+                  text="Anterior"
+                  aria-label="Página anterior"
+                  aria-disabled={!table.getCanPreviousPage()}
+                  className={cn(
+                    PAGE_CLASS,
+                    !table.getCanPreviousPage() &&
+                      "pointer-events-none opacity-50",
+                  )}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    if (table.getCanPreviousPage()) table.previousPage();
+                  }}
+                />
+              </PaginationItem>
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              Siguiente
-            </Button>
-          </nav>
+              {getPageItems(pageIndex + 1, pageCount).map((item, index) => (
+                <PaginationItem
+                  key={item === "ellipsis" ? `ellipsis-${index}` : item}
+                >
+                  {item === "ellipsis" ? (
+                    <PaginationEllipsis />
+                  ) : (
+                    <PaginationLink
+                      href="#"
+                      size="sm"
+                      className={
+                        item === pageIndex + 1 ? PAGE_ACTIVE_CLASS : PAGE_CLASS
+                      }
+                      aria-label={`Página ${item}`}
+                      isActive={item === pageIndex + 1}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        table.setPageIndex(item - 1);
+                      }}
+                    >
+                      {item}
+                    </PaginationLink>
+                  )}
+                </PaginationItem>
+              ))}
+
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  size="sm"
+                  text="Siguiente"
+                  aria-label="Página siguiente"
+                  aria-disabled={!table.getCanNextPage()}
+                  className={cn(
+                    PAGE_CLASS,
+                    !table.getCanNextPage() && "pointer-events-none opacity-50",
+                  )}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    if (table.getCanNextPage()) table.nextPage();
+                  }}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </div>
       </div>
     </div>

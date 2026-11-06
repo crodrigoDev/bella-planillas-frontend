@@ -6,7 +6,7 @@
 
 Tabla genérica (TanStack Table) con paginación controlada por el servidor: filas de
 carga, atenuado mientras llega otra página, mensaje vacío, selector de filas por
-página y botones de página (con `getPageItems`). Las filas y columnas se desplazan
+página y paginación con el componente `Pagination` de shadcn (números con `getPageItems`). Las filas y columnas se desplazan
 dentro de la caja de la tabla, como en Jira (cabecera fija con sombra al hacer scroll,
 separadores entre columnas, scroll vertical y horizontal), y la paginación queda
 siempre a la vista. El alto de la caja se ajusta a las filas y crece hasta el máximo que le deja su
