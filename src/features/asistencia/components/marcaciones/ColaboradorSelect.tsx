@@ -55,20 +55,28 @@ export function ColaboradorSelect({
   invalid,
   className,
 }: ColaboradorSelectProps) {
-  // Último elegido por el usuario: conserva su nombre si la búsqueda lo saca de la lista
+  // El elegido se guarda como un solo objeto y solo se reemplaza cuando cambia
+  // de colaborador. Base UI toma un objeto nuevo como una selección nueva y
+  // reescribe el texto del campo: si se armara en cada render, al llegar los
+  // resultados de una búsqueda borraría lo que el usuario está escribiendo.
   const [chosen, setChosen] = useState<EmpleadoMarcableOption | null>(null);
   const { run: sendSearch } = useDebouncedCallback(
     onSearchChange,
     BUSQUEDA_DELAY_MS,
   );
 
-  const selected = !value
-    ? null
-    : (options.find((option) => option.value === value) ??
-      (chosen?.value === value ? chosen : null) ??
+  // El valor puede llegar de fuera (URL o formulario): se arma su opción una vez
+  if (value && chosen?.value !== value) {
+    const externo =
+      options.find((option) => option.value === value) ??
       (selectedLabel
         ? { value, label: selectedLabel, nro_documento: "" }
-        : null));
+        : undefined);
+
+    if (externo) setChosen(externo);
+  }
+
+  const selected = value && chosen?.value === value ? chosen : null;
 
   const items =
     selected && !options.some((option) => option.value === selected.value)
