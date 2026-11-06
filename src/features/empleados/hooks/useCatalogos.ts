@@ -14,19 +14,19 @@ export function useEmpleadosCatalogos(areaId?: string) {
   const areas = useCatalogo(
     ["areas"],
     () => catalogosService.listAreas(),
-    ORGANIZACION_STALE_TIME,
+    { staleTime: ORGANIZACION_STALE_TIME },
   );
 
   const cargos = useCatalogo(
     ["cargos", areaId ?? null],
     () => catalogosService.listCargos(areaId),
-    ORGANIZACION_STALE_TIME,
+    { staleTime: ORGANIZACION_STALE_TIME },
   );
 
   const jornadas = useCatalogo(
     ["jornadas"],
     () => catalogosService.listJornadas(),
-    ORGANIZACION_STALE_TIME,
+    { staleTime: ORGANIZACION_STALE_TIME },
   );
 
   return { areas, cargos, jornadas };
@@ -48,7 +48,6 @@ export function useEmpleadosActivos(search?: string) {
   return useCatalogo(
     ["empleados-activos", search ?? ""],
     () => catalogosService.listEmpleados(search),
-    ORGANIZACION_STALE_TIME,
-    true,
+    { staleTime: ORGANIZACION_STALE_TIME, keepPrevious: true },
   );
 }

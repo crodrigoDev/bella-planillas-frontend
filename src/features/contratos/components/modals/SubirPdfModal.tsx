@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { getArchivoError, type ReglasArchivo } from "@/lib/archivo.utils";
 import { PDF_MAX_BYTES } from "../../config/contratos.config";
 import { useSubirContratoPdf } from "../../hooks/useContratoActions";
 import type { Contrato } from "../../types/contratos.types";
@@ -52,20 +53,18 @@ interface SubirPdfFormProps {
 }
 
 // Mismas reglas que el backend, para avisar antes de enviar
-const getArchivoError = (file: File | null): string | null => {
-  if (!file) return null;
-  if (file.type !== "application/pdf")
-    return "El archivo debe ser un PDF.";
-  if (file.size > PDF_MAX_BYTES) return "El PDF no puede superar los 5 MB.";
-
-  return null;
+const REGLAS_ARCHIVO: ReglasArchivo = {
+  tipos: ["application/pdf"],
+  maxBytes: PDF_MAX_BYTES,
+  descripcionTipo: "un PDF",
+  nombre: "El PDF",
 };
 
 function SubirPdfForm({ contrato, onClose }: SubirPdfFormProps) {
   const [file, setFile] = useState<File | null>(null);
   const mutation = useSubirContratoPdf(contrato.id);
 
-  const archivoError = getArchivoError(file);
+  const archivoError = getArchivoError(file, REGLAS_ARCHIVO);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

@@ -6,7 +6,7 @@
 
 Tabla genérica (TanStack Table) con paginación controlada por el servidor: filas de
 carga, atenuado mientras llega otra página, mensaje vacío, selector de filas por
-página y paginación con el componente `Pagination` de shadcn (números con `getPageItems`). Las filas y columnas se desplazan
+página y paginación con botones reales (`Button` dentro de `Pagination`; los números salen de `getPageItems`; la página actual lleva `aria-current="page"` y los botones se deshabilitan con `disabled`). Las filas y columnas se desplazan
 dentro de la caja de la tabla, como en Jira (cabecera fija con sombra al hacer scroll,
 separadores entre columnas, scroll vertical y horizontal), y la paginación queda
 siempre a la vista. El alto de la caja se ajusta a las filas y crece hasta el máximo que le deja su
@@ -34,7 +34,7 @@ alto definido, la tabla crece con su contenido. Las columnas se definen con
   data={data?.items ?? NO_EMPLEADOS}
   pagination={pagination}
   rowCount={data?.pagination.total ?? 0}
-  onPaginationChange={handlePaginationChange}
+  onPaginationChange={onPaginationChange}
   isLoading={isLoading}
   isFetching={isFetching}
   emptyMessage="No se encontraron empleados"
@@ -42,7 +42,8 @@ alto definido, la tabla crece con su contenido. Las columnas se definen con
 />
 ```
 
-[`src/pages/empleados/EmpleadosPage.tsx`](../../src/pages/empleados/EmpleadosPage.tsx). Las columnas se declaran así
+[`src/pages/empleados/EmpleadosPage.tsx`](../../src/pages/empleados/EmpleadosPage.tsx). `pagination` y `onPaginationChange` salen de
+[usePaginacionServidor](../hooks.md#usepaginacionservidor) (o de [usePaginacionLocal](../hooks.md#usepaginacionlocal)). Las columnas se declaran así
 ([`src/features/empleados/config/empleados.columns.tsx`](../../src/features/empleados/config/empleados.columns.tsx)):
 
 ```tsx

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { ArrowLeftIcon } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { ROUTE_PATHS } from "@/app/routes/path";
+import { BackLink } from "@/components/page/BackLink";
 import { PageHeader } from "@/components/page/PageHeader";
 import { Stepper } from "@/components/stepper/Stepper";
 import { ImportarMarcacionesArchivoPaso } from "@/features/asistencia/components/importacion/ImportarMarcacionesArchivoPaso";
@@ -48,13 +48,7 @@ export default function ImportarMarcacionesPage() {
       aria-labelledby="importar-marcaciones-title"
       className="mx-auto w-full max-w-7xl space-y-6"
     >
-      <Link
-        to={ROUTE_PATHS.asistencia.marcaciones}
-        className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
-      >
-        <ArrowLeftIcon className="size-4" />
-        Volver a Marcaciones
-      </Link>
+      <BackLink to={ROUTE_PATHS.asistencia.marcaciones}>Volver a Marcaciones</BackLink>
 
       <PageHeader
         id="importar-marcaciones-title"

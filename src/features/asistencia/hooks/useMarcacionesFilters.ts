@@ -1,19 +1,11 @@
-import { useSearchParams } from "react-router-dom";
-import { PAGE_SIZE_OPTIONS } from "@/components/data-table/dataTable.config";
-import {
-  applyParamChanges,
-  parseLimit,
-  parsePage,
-  parseUuid,
-  type ParamChanges,
-} from "@/lib/urlParams.utils";
+import { usePaginacionUrl } from "@/hooks/usePaginacionUrl";
+import { parseUuid } from "@/lib/urlParams.utils";
 import type {
   MarcacionFilterKey,
   MarcacionFilters,
   TipoMarcaFiltro,
 } from "../types/marcaciones.types";
 
-const DEFAULT_LIMIT = PAGE_SIZE_OPTIONS[0];
 const FECHA_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
 /** Ignora las fechas con otro formato para no mandar una consulta que el backend rechazaría */
@@ -34,7 +26,8 @@ const parseTipo = (value: string | null): TipoMarcaFiltro | undefined =>
  * Cualquier cambio de filtro vuelve a la primera página.
  */
 export function useMarcacionesFilters() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const { searchParams, page, limit, updateParams, setPage, setLimit } =
+    usePaginacionUrl();
 
   const fechaInicio = parseFecha(searchParams.get("fecha_inicio"));
   const fechaFin = parseFecha(searchParams.get("fecha_fin"));
@@ -42,12 +35,8 @@ export function useMarcacionesFilters() {
     fechaInicio !== undefined && fechaFin !== undefined && fechaInicio > fechaFin;
 
   const filters: MarcacionFilters = {
-    page: parsePage(searchParams.get("page")),
-    limit: parseLimit(
-      searchParams.get("limit"),
-      PAGE_SIZE_OPTIONS,
-      DEFAULT_LIMIT,
-    ),
+    page,
+    limit,
     empleado_id: parseUuid(searchParams.get("empleado_id")),
     fecha_inicio: rangoInvertido ? undefined : fechaInicio,
     fecha_fin: rangoInvertido ? undefined : fechaFin,
@@ -59,29 +48,6 @@ export function useMarcacionesFilters() {
     filters.fecha_inicio !== undefined ||
     filters.fecha_fin !== undefined ||
     filters.tipo_marcacion !== undefined;
-
-  const updateParams = (changes: ParamChanges, replace = false) => {
-    setSearchParams((current) => applyParamChanges(current, changes), {
-      replace,
-    });
-  };
-
-  /**
-   * Cambia de página
-   *
-   * @param replace - Reemplaza la entrada del historial en lugar de agregar otra
-   */
-  const setPage = (page: number, replace = false) => {
-    updateParams({ page: page <= 1 ? undefined : String(page) }, replace);
-  };
-
-  /** Cambia la cantidad de filas por página y vuelve a la primera */
-  const setLimit = (limit: number) => {
-    updateParams({
-      limit: limit === DEFAULT_LIMIT ? undefined : String(limit),
-      page: undefined,
-    });
-  };
 
   const setFilter = (key: MarcacionFilterKey, value: string | undefined) => {
     updateParams({ [key]: value || undefined, page: undefined });

@@ -5,9 +5,9 @@ import {
   ConfirmModal,
   ConfirmModalBody,
 } from "@/components/feedback/ConfirmModal";
+import { ResumenCifra } from "@/components/page/ResumenCifra";
 import { Button } from "@/components/ui/button";
 import { usePaginacionLocal } from "@/hooks/usePaginacionLocal";
-import { cn } from "@/lib/utils";
 import { erroresImportacionColumns } from "../../config/marcaciones.columns";
 import { MARCACIONES_MAX_ERRORES } from "../../config/marcaciones.config";
 import { useImportarMarcaciones } from "../../hooks/useImportarMarcaciones";
@@ -25,21 +25,6 @@ interface ImportarMarcacionesRevisionPasoProps {
   onElegirOtro: () => void;
   /** Se llama con el resultado cuando el backend termina de importar */
   onImportado: (resultado: ImportacionMarcacionesResultado) => void;
-}
-
-interface ResumenCifraProps {
-  label: string;
-  value: string | number;
-  className?: string;
-}
-
-function ResumenCifra({ label, value, className }: ResumenCifraProps) {
-  return (
-    <div className="rounded-lg border p-4">
-      <p className="text-sm text-muted-foreground">{label}</p>
-      <p className={cn("text-2xl font-semibold", className)}>{value}</p>
-    </div>
-  );
 }
 
 /**

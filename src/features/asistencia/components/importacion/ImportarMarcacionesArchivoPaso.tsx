@@ -3,6 +3,7 @@ import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { FileDropzone } from "@/components/form/FileDropzone";
 import { LoadingButton } from "@/components/form/LoadingButton";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { formatBytes, getArchivoError, type ReglasArchivo } from "@/lib/archivo.utils";
 import {
   MARCACIONES_COLUMNAS,
   MARCACIONES_EXTENSION,
@@ -21,15 +22,10 @@ interface ImportarMarcacionesArchivoPasoProps {
 }
 
 // Mismas reglas que el backend, para avisar antes de enviar
-const getArchivoError = (file: File | null): string | null => {
-  if (!file) return null;
-
-  if (!file.name.toLowerCase().endsWith(MARCACIONES_EXTENSION))
-    return "El archivo debe ser de Excel (.xlsx).";
-  if (file.size > MARCACIONES_MAX_BYTES)
-    return "El archivo no puede superar los 2 MB.";
-
-  return null;
+const REGLAS_ARCHIVO: ReglasArchivo = {
+  extensiones: [MARCACIONES_EXTENSION],
+  maxBytes: MARCACIONES_MAX_BYTES,
+  descripcionTipo: "de Excel (.xlsx)",
 };
 
 /**
@@ -44,7 +40,7 @@ export function ImportarMarcacionesArchivoPaso({
   const [file, setFile] = useState<File | null>(null);
   const validar = useValidarMarcaciones();
 
-  const archivoError = getArchivoError(file);
+  const archivoError = getArchivoError(file, REGLAS_ARCHIVO);
 
   const handleChange = (next: File | null) => {
     validar.reset();
@@ -82,7 +78,7 @@ export function ImportarMarcacionesArchivoPaso({
         </ul>
 
         <p className="text-sm text-muted-foreground">
-          Máximo {MARCACIONES_MAX_FILAS} filas y 2 MB. Todas las marcaciones
+          Máximo {MARCACIONES_MAX_FILAS} filas y {formatBytes(MARCACIONES_MAX_BYTES)}. Todas las marcaciones
           deben ser de un solo mes.
         </p>
       </div>
@@ -96,7 +92,7 @@ export function ImportarMarcacionesArchivoPaso({
           file={file}
           onChange={handleChange}
           accept={MARCACIONES_EXTENSION}
-          hint="Archivos .xlsx de hasta 2 MB"
+          hint={`Archivos .xlsx de hasta ${formatBytes(MARCACIONES_MAX_BYTES)}`}
           invalid={Boolean(archivoError)}
           disabled={validar.isPending}
         />

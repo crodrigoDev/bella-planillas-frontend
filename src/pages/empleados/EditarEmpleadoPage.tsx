@@ -1,7 +1,7 @@
-import { ArrowLeftIcon } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import { ROUTE_PATHS, buildEmpleadoPath } from "@/app/routes/path";
+import { BackLink } from "@/components/page/BackLink";
 import { PageHeader } from "@/components/page/PageHeader";
 import { EmpleadoCargaEstado } from "@/features/empleados/components/detalle/EmpleadoCargaEstado";
 import { EditarEmpleadoForm } from "@/features/empleados/components/edicion/EditarEmpleadoForm";
@@ -27,13 +27,7 @@ export default function EditarEmpleadoPage() {
       aria-labelledby="editar-empleado-title"
       className="mx-auto w-full max-w-7xl space-y-6"
     >
-      <Link
-        to={id ? buildEmpleadoPath(id) : ROUTE_PATHS.gestionPersonal.empleados}
-        className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
-      >
-        <ArrowLeftIcon className="size-4" />
-        Volver a la ficha
-      </Link>
+      <BackLink to={id ? buildEmpleadoPath(id) : ROUTE_PATHS.gestionPersonal.empleados}>Volver a la ficha</BackLink>
 
       {/* El dato provisional del listado no trae domicilio ni nombres separados: se espera el detalle */}
       <EmpleadoCargaEstado

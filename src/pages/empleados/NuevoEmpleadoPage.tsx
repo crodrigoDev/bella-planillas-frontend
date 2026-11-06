@@ -1,8 +1,7 @@
 import { useEffect } from "react";
-import { ArrowLeftIcon } from "lucide-react";
-import { Link } from "react-router-dom";
 
 import { ROUTE_PATHS } from "@/app/routes/path";
+import { BackLink } from "@/components/page/BackLink";
 import { PageHeader } from "@/components/page/PageHeader";
 import { Stepper } from "@/components/stepper/Stepper";
 import { SalirRegistroModal } from "@/features/empleados/components/modals/SalirRegistroModal";
@@ -28,13 +27,7 @@ export default function NuevoEmpleadoPage() {
 
   return (
     <section aria-labelledby="nuevo-empleado-title" className="mx-auto w-full max-w-7xl space-y-6">
-      <Link
-        to={ROUTE_PATHS.gestionPersonal.empleados}
-        className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
-      >
-        <ArrowLeftIcon className="size-4" />
-        Volver a Empleados
-      </Link>
+      <BackLink to={ROUTE_PATHS.gestionPersonal.empleados}>Volver a Empleados</BackLink>
 
       <PageHeader
         id="nuevo-empleado-title"

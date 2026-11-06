@@ -14,8 +14,9 @@ lo envuelve en su `useCatalogos.ts`.
 | --- | --- | --- |
 | `key` | `readonly unknown[]` | Va después de `"catalogos"` |
 | `queryFn` | `() => Promise<T>` | Llama al servicio |
-| `staleTime` | `number?` | Por defecto 30 minutos |
-| `keepPrevious` | `boolean?` | Conserva la lista anterior mientras llega la nueva; para catálogos con búsqueda |
+| `options` | `{ staleTime?, keepPrevious? }?` | Opcional |
+| `options.staleTime` | `number?` | Por defecto 30 minutos |
+| `options.keepPrevious` | `boolean?` | Conserva la lista anterior mientras llega la nueva; para catálogos con búsqueda |
 
 ```ts
 export function useModalidadesContrato() {
@@ -26,6 +27,66 @@ export function useModalidadesContrato() {
 ```
 
 [`src/features/contratos/hooks/useCatalogos.ts`](../src/features/contratos/hooks/useCatalogos.ts)
+
+Con opciones (búsqueda que conserva la lista anterior):
+
+```ts
+useCatalogo(
+  ["empleados-activos", search ?? ""],
+  () => catalogosService.listEmpleados(search),
+  { staleTime: ORGANIZACION_STALE_TIME, keepPrevious: true },
+);
+```
+
+[`src/features/empleados/hooks/useCatalogos.ts`](../src/features/empleados/hooks/useCatalogos.ts)
+
+## usePaginacionUrl
+
+Lee `page` y `limit` de la URL y devuelve `{ searchParams, page, limit, updateParams, setPage, setLimit }`.
+Es la base de los hooks de filtros de los listados (`useEmpleadosFilters`,
+`useMarcacionesFilters`): cada uno agrega sus propios filtros y los cambia con
+`updateParams`. `setLimit` vuelve a la primera página; los valores por defecto no se
+escriben en la URL.
+
+| Devuelve | Tipo | Notas |
+| --- | --- | --- |
+| `searchParams` | `URLSearchParams` | Para leer los filtros propios |
+| `page`, `limit` | `number` | Ya validados (`limit` solo admite `PAGE_SIZE_OPTIONS`) |
+| `updateParams` | `(changes: ParamChanges, replace?) => void` | `undefined` quita el parámetro |
+| `setPage` | `(page: number, replace?) => void` | `replace` no suma al historial |
+| `setLimit` | `(limit: number) => void` | Vuelve a la página 1 |
+
+```ts
+const { searchParams, page, limit, updateParams, setPage, setLimit } =
+  usePaginacionUrl();
+const filters = { page, limit, search: searchParams.get("search") || undefined };
+```
+
+[`src/features/empleados/hooks/useEmpleadosFilters.ts`](../src/features/empleados/hooks/useEmpleadosFilters.ts)
+
+## usePaginacionServidor
+
+Prepara la paginación del servidor para `DataTable`: devuelve `{ pagination, onPaginationChange }`
+y corrige la página cuando la URL supera la última (sin sumar al historial). Cambiar las
+filas por página vuelve a la primera.
+
+| Parámetro | Tipo | Notas |
+| --- | --- | --- |
+| `page`, `limit` | `number` | Los de `usePaginacionUrl` |
+| `totalPages` | `number \| undefined` | Del servidor; pasa `undefined` mientras carga o hay datos anteriores (`isPlaceholderData`) |
+| `setPage`, `setLimit` | funciones | Los de `usePaginacionUrl` |
+
+```tsx
+const { pagination, onPaginationChange } = usePaginacionServidor({
+  page: filters.page,
+  limit: filters.limit,
+  totalPages: isPlaceholderData ? undefined : data?.pagination.totalPages,
+  setPage,
+  setLimit,
+});
+```
+
+[`src/pages/empleados/EmpleadosPage.tsx`](../src/pages/empleados/EmpleadosPage.tsx)
 
 ## useDebouncedCallback
 

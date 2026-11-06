@@ -6,6 +6,7 @@ import {
   type PaginationState,
   type RowData,
 } from "@tanstack/react-table";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { cn } from "cn";
 import {
   Table,
@@ -21,10 +22,8 @@ import {
   PaginationContent,
   PaginationEllipsis,
   PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -53,12 +52,6 @@ interface DataTableProps<TData extends RowData> {
 }
 
 const SKELETON_ROWS = 6;
-
-// Colores de los botones de página: la actual rellena, las demás con borde
-const PAGE_CLASS =
-  "border border-border bg-background hover:bg-muted dark:border-input dark:bg-input/30 dark:hover:bg-input/50";
-const PAGE_ACTIVE_CLASS =
-  "border-transparent bg-primary text-primary-foreground hover:bg-primary/80";
 
 /**
  * Tabla genérica con paginación controlada por el servidor
@@ -199,22 +192,17 @@ export function DataTable<TData extends RowData>({
           <Pagination aria-label="Paginación" className="mx-0 w-auto">
             <PaginationContent>
               <PaginationItem>
-                <PaginationPrevious
-                  href="#"
+                <Button
+                  type="button"
+                  variant="outline"
                   size="sm"
-                  text="Anterior"
                   aria-label="Página anterior"
-                  aria-disabled={!table.getCanPreviousPage()}
-                  className={cn(
-                    PAGE_CLASS,
-                    !table.getCanPreviousPage() &&
-                      "pointer-events-none opacity-50",
-                  )}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    if (table.getCanPreviousPage()) table.previousPage();
-                  }}
-                />
+                  disabled={!table.getCanPreviousPage()}
+                  onClick={() => table.previousPage()}
+                >
+                  <ChevronLeftIcon data-icon="inline-start" />
+                  <span className="hidden sm:block">Anterior</span>
+                </Button>
               </PaginationItem>
 
               {getPageItems(pageIndex + 1, pageCount).map((item, index) => (
@@ -224,41 +212,32 @@ export function DataTable<TData extends RowData>({
                   {item === "ellipsis" ? (
                     <PaginationEllipsis />
                   ) : (
-                    <PaginationLink
-                      href="#"
+                    <Button
+                      type="button"
+                      variant={item === pageIndex + 1 ? "default" : "outline"}
                       size="sm"
-                      className={
-                        item === pageIndex + 1 ? PAGE_ACTIVE_CLASS : PAGE_CLASS
-                      }
                       aria-label={`Página ${item}`}
-                      isActive={item === pageIndex + 1}
-                      onClick={(event) => {
-                        event.preventDefault();
-                        table.setPageIndex(item - 1);
-                      }}
+                      aria-current={item === pageIndex + 1 ? "page" : undefined}
+                      onClick={() => table.setPageIndex(item - 1)}
                     >
                       {item}
-                    </PaginationLink>
+                    </Button>
                   )}
                 </PaginationItem>
               ))}
 
               <PaginationItem>
-                <PaginationNext
-                  href="#"
+                <Button
+                  type="button"
+                  variant="outline"
                   size="sm"
-                  text="Siguiente"
                   aria-label="Página siguiente"
-                  aria-disabled={!table.getCanNextPage()}
-                  className={cn(
-                    PAGE_CLASS,
-                    !table.getCanNextPage() && "pointer-events-none opacity-50",
-                  )}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    if (table.getCanNextPage()) table.nextPage();
-                  }}
-                />
+                  disabled={!table.getCanNextPage()}
+                  onClick={() => table.nextPage()}
+                >
+                  <span className="hidden sm:block">Siguiente</span>
+                  <ChevronRightIcon data-icon="inline-end" />
+                </Button>
               </PaginationItem>
             </PaginationContent>
           </Pagination>
