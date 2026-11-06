@@ -91,6 +91,11 @@ export function useMarcacionesFilters() {
     updateParams({ [key]: value || undefined, page: undefined });
   };
 
+  /** Cambia el rango de fechas de una vez y vuelve a la primera página */
+  const setFechas = (inicio: string | undefined, fin: string | undefined) => {
+    updateParams({ fecha_inicio: inicio, fecha_fin: fin, page: undefined });
+  };
+
   const clearFilters = () => {
     updateParams({
       empleado_id: undefined,
@@ -109,6 +114,7 @@ export function useMarcacionesFilters() {
     setPage,
     setLimit,
     setFilter,
+    setFechas,
     clearFilters,
   };
 }

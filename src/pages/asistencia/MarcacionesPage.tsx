@@ -34,6 +34,7 @@ export default function MarcacionesPage() {
     setPage,
     setLimit,
     setFilter,
+    setFechas,
     clearFilters,
   } = useMarcacionesFilters();
   const empleados = useEmpleadosActivos();
@@ -86,6 +87,7 @@ export default function MarcacionesPage() {
         empleados={empleados.data ?? NO_OPTIONS}
         empleadosLoading={empleados.isLoading}
         onFilterChange={setFilter}
+        onFechasChange={setFechas}
         onClear={clearFilters}
       />
 
