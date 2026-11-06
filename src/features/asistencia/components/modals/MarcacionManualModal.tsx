@@ -1,4 +1,4 @@
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
@@ -22,6 +22,7 @@ import {
   getRangoPeriodo,
   toFechaHoraLima,
 } from "../../utils/asistencia.utils";
+import { AvisoJornada } from "../AvisoJornada";
 import { MotivoField } from "../MotivoField";
 
 const resolver = zodResolver(MarcacionManualFormSchema, zodResolverOptions);
@@ -34,6 +35,8 @@ interface MarcacionManualModalProps {
   /** Documento del empleado: el backend identifica la marcación por él */
   nroDocumento: string;
   periodo: string;
+  /** Fechas del mes que no tienen jornada asignada; la marcación se guarda igual */
+  fechasSinJornada: string[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -50,6 +53,7 @@ export function MarcacionManualModal({
   empleadoId,
   nroDocumento,
   periodo,
+  fechasSinJornada,
   open,
   onOpenChange,
 }: MarcacionManualModalProps) {
@@ -60,6 +64,7 @@ export function MarcacionManualModal({
           empleadoId={empleadoId}
           nroDocumento={nroDocumento}
           periodo={periodo}
+          fechasSinJornada={fechasSinJornada}
           onClose={() => onOpenChange(false)}
         />
       </DialogContent>
@@ -71,6 +76,7 @@ interface MarcacionManualFormProps {
   empleadoId: string;
   nroDocumento: string;
   periodo: string;
+  fechasSinJornada: string[];
   onClose: () => void;
 }
 
@@ -78,6 +84,7 @@ function MarcacionManualForm({
   empleadoId,
   nroDocumento,
   periodo,
+  fechasSinJornada,
   onClose,
 }: MarcacionManualFormProps) {
   const mutation = useMarcacionManual(empleadoId, periodo);
@@ -89,6 +96,10 @@ function MarcacionManualForm({
   const methods = useForm<MarcacionValues, unknown, MarcacionDatos>({
     resolver,
   });
+
+  // La marcación es un hecho y se guarda; solo se avisa que aún no se calcula
+  const fecha = useWatch({ control: methods.control, name: "fecha" });
+  const sinJornada = !!fecha && fechasSinJornada.includes(fecha);
 
   const onSubmit = (values: MarcacionDatos) =>
     mutation.mutate(
@@ -136,6 +147,12 @@ function MarcacionManualForm({
           />
           <MotivoField placeholder="Por qué se registra a mano" />
         </div>
+
+        {sinJornada && (
+          <AvisoJornada>
+            Se guardará, pero no se calculará hasta asignar una jornada.
+          </AvisoJornada>
+        )}
 
         <ErrorAlert error={mutation.error} />
 

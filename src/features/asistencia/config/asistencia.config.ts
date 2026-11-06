@@ -48,8 +48,12 @@ export const ESTADOS_DIA_SIN_RESOLVER = [
   "FERIADO_O_DESCANSO_ACORDADO",
 ];
 
+/** Alerta del backend cuando el empleado no tiene jornada para ese día: el día no se calcula */
+export const ALERTA_SIN_JORNADA = "JORNADA_HISTORICA_NO_ASIGNADA";
+
 /** Texto de las alertas de un día, por el código que envía el backend */
 export const ALERTA_LABELS: Record<string, string> = {
+  [ALERTA_SIN_JORNADA]: "Sin jornada asignada",
   AUSENCIA_REQUIERE_VERIFICACION: "La ausencia necesita verificación",
   SOLICITUD_DE_ASISTENCIA_SIN_FECHAS: "Una solicitud no tiene fechas",
   INCAPACIDAD_MEDICA_REQUIERE_REVISION_DE_SUBSIDIOS:

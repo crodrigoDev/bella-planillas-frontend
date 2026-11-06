@@ -1,18 +1,26 @@
 import { getTodayIsoDate } from "@/lib/date.utils";
-import type { ResumenMes } from "../types/asistencia.types";
-import { ZONA_LIMA } from "../config/asistencia.config";
+import type { DiaAsistencia, ResumenMes } from "../types/asistencia.types";
+import { ALERTA_SIN_JORNADA, ZONA_LIMA } from "../config/asistencia.config";
+
+/** Si el backend no pudo evaluar el día porque no hay jornada asignada */
+export const esDiaSinJornada = (dia: DiaAsistencia): boolean =>
+  dia.alertas.includes(ALERTA_SIN_JORNADA);
 
 /**
  * Por qué no se puede aprobar un resumen pendiente, o null si se puede
  *
  * @remarks
  * Son las mismas condiciones que exige el backend: resumen vigente, completo
- * y sin días por resolver.
+ * y sin días por resolver. Los días sin jornada también cuentan como pendientes
+ * en el backend, pero no se pueden resolver: el motivo manda a asignar la jornada.
  */
 export const getMotivoNoAprobable = (resumen: ResumenMes): string | null => {
   if (resumen.estado !== "PENDIENTE") return null;
   if (!resumen.vigente)
     return "El resumen está desactualizado: actualízalo para poder aprobarlo.";
+  const sinJornada = resumen.detalle?.dias.filter(esDiaSinJornada).length ?? 0;
+  if (sinJornada > 0)
+    return `Hay ${sinJornada} ${sinJornada === 1 ? "día" : "días"} sin jornada asignada: asigna una jornada y actualiza el resumen para poder aprobarlo.`;
   if (resumen.pendientes > 0)
     return `Hay ${resumen.pendientes} ${resumen.pendientes === 1 ? "día" : "días"} por resolver antes de aprobar.`;
   if (!resumen.completo)
