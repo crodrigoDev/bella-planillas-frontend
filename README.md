@@ -97,9 +97,9 @@ Reglas que se mantienen:
 ### Rutas y roles
 
 Las rutas se declaran en `src/app/routes/router.tsx`, envueltas en `RoleRoute`. Cada
-ruta nueva también se registra en `features/auth/config/route-access.config.ts`
+ruta nueva también se registra en `features/auth/config/routeAccess.config.ts`
 (`null` = cualquier usuario autenticado; si no aparece, se deniega). Las pantallas aún
-no construidas están en `pending-pages.ts`.
+no construidas están en `pendingPages.config.ts`.
 
 Por ahora solo está activo el rol `RRHH`.
 

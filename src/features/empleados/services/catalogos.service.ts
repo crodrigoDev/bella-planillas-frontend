@@ -1,4 +1,4 @@
-import { protectedHttpClient } from "@/lib/api/protected-http-client";
+import { protectedHttpClient } from "@/lib/api/protectedHttpClient";
 import type { PaginationApiResponse } from "@/lib/api/types/api.types";
 import { CATALOGO_LIMIT, toOptions } from "@/lib/catalogos.utils";
 import type { SelectOption } from "@/lib/types/options.types";

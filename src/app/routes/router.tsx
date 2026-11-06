@@ -1,7 +1,7 @@
 import type { ComponentType } from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import { ROUTE_PATHS } from "@/app/routes/path";
-import { pendingPages } from "@/app/routes/pending-pages";
+import { pendingPages } from "@/app/routes/pendingPages.config";
 import GuestRoute from "@/features/auth/components/GuestRoute";
 import ProtectedRoute from "@/features/auth/components/ProtectedRoute";
 import RoleRoute from "@/features/auth/components/RoleRoute";

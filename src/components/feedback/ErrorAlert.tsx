@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
+import { getApiErrorMessage } from "@/lib/api/apiError.utils";
 import { cn } from "@/lib/utils";
 
 interface ErrorAlertProps {

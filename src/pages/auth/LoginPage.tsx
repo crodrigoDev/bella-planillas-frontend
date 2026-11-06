@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { FieldError } from "@/components/ui/field";
-import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
+import { getApiErrorMessage } from "@/lib/api/apiError.utils";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { LoginForm } from "@/features/auth/components/LoginForm";
 

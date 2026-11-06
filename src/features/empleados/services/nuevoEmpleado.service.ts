@@ -1,6 +1,6 @@
 import type { CrearEmpleadoDto } from "@jyp/shared-contracts";
 import type { ApiResponse } from "@/lib/api/types/api.types";
-import { protectedHttpClient } from "@/lib/api/protected-http-client";
+import { protectedHttpClient } from "@/lib/api/protectedHttpClient";
 
 /**
  * Operaciones del backend con las que se registra un empleado nuevo

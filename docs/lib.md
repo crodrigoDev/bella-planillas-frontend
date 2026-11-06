@@ -148,7 +148,7 @@ invalidate: [derechohabientesKey.all, ROOT_KEYS.empleados],
 
 [`src/features/derechohabientes/hooks/useDerechohabienteActions.ts`](../src/features/derechohabientes/hooks/useDerechohabienteActions.ts)
 
-## get-api-error-message.ts
+## apiError.utils.ts
 
 `getApiErrorMessage(error: unknown): string` convierte un error de axios en un mensaje
 para el usuario (sin conexión, tiempo agotado, error 5xx, o el `detail` del backend).
@@ -163,7 +163,7 @@ usa `ErrorAlert`; esta función es para cuando se necesita el texto suelto.
 
 ## Clientes HTTP
 
-`lib/api/public-http-client.ts` y `lib/api/protected-http-client.ts`. Ambos usan
+`lib/api/publicHttpClient.ts` y `lib/api/protectedHttpClient.ts`. Ambos usan
 `VITE_API_URL` (el público lanza un error al cargar si falta).
 
 | Export | Cuándo usarlo |

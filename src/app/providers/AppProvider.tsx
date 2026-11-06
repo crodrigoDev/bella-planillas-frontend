@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { queryClient } from "@/app/config/query-client.config";
+import { queryClient } from "@/app/config/queryClient.config";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/features/auth/providers/AuthProvider";

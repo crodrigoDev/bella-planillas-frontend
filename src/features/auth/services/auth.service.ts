@@ -3,7 +3,7 @@ import type {
   RestablecerPasswordDTO,
   SolicitudRecuperacionDTO,
 } from "@jyp/shared-contracts";
-import { publicHttpClient } from "@/lib/api/public-http-client";
+import { publicHttpClient } from "@/lib/api/publicHttpClient";
 import type { ApiResponse } from "@/lib/api/types/api.types";
 import type {
   LoginResponse,
@@ -12,7 +12,7 @@ import type {
   PasswordRecoveryResponse,
   PasswordResetResponse,
 } from "@/features/auth/types/auth.types";
-import { protectedHttpClient } from "@/lib/api/protected-http-client";
+import { protectedHttpClient } from "@/lib/api/protectedHttpClient";
 
 /**
  * Agrupa las operaciones de autenticación que se comunican con el backend

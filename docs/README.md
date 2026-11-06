@@ -46,7 +46,7 @@ Cada pieza es una subsección `##` de su archivo, con este formato:
 | Archivo | Piezas |
 | --- | --- |
 | [hooks.md](hooks.md) | [useCatalogo](hooks.md#usecatalogo) · [useDebouncedCallback](hooks.md#usedebouncedcallback) · [useMutationConAviso](hooks.md#usemutationconaviso) · [use-mobile.ts](hooks.md#use-mobilets) |
-| [lib.md](lib.md) | [format.utils.ts](lib.md#formatutilsts) · [date.utils.ts](lib.md#dateutilsts) · [catalogos.utils.ts](lib.md#catalogosutilsts) · [pagination.utils.ts](lib.md#paginationutilsts) · [urlParams.utils.ts](lib.md#urlparamsutilsts) · [zodMessages.utils.ts](lib.md#zodmessagesutilsts) · [personas.config.ts](lib.md#personasconfigts) · [queryKeys.config.ts](lib.md#querykeysconfigts) · [get-api-error-message.ts](lib.md#get-api-error-messagets) · [Clientes HTTP](lib.md#clientes-http) · [utils.ts](lib.md#utilsts) |
+| [lib.md](lib.md) | [format.utils.ts](lib.md#formatutilsts) · [date.utils.ts](lib.md#dateutilsts) · [catalogos.utils.ts](lib.md#catalogosutilsts) · [pagination.utils.ts](lib.md#paginationutilsts) · [urlParams.utils.ts](lib.md#urlparamsutilsts) · [zodMessages.utils.ts](lib.md#zodmessagesutilsts) · [personas.config.ts](lib.md#personasconfigts) · [queryKeys.config.ts](lib.md#querykeysconfigts) · [apiError.utils.ts](lib.md#apierrorutilsts) · [Clientes HTTP](lib.md#clientes-http) · [utils.ts](lib.md#utilsts) |
 
 ## ¿Qué uso para...?
 

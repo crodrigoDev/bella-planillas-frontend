@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/select";
 import { PasswordField } from "@/features/auth/components/PasswordField";
 import { RequeridoTag } from "@/features/auth/components/RequeridoTag";
-import { TIPOS_DOCUMENTOS } from "@/features/auth/data/tipo-documentos.data";
+import { TIPOS_DOCUMENTOS } from "@/features/auth/data/tipoDocumentos.data";
 import { zodResolverOptions } from "@/lib/zodMessages.utils";
 
 interface LoginFormProps {
