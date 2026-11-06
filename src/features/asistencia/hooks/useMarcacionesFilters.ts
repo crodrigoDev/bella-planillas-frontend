@@ -26,15 +26,20 @@ const parseTipo = (value: string | null): TipoMarcaFiltro | undefined =>
 /**
  * Lee los filtros del listado de marcaciones de la URL y permite cambiarlos
  *
- * @returns Los filtros de la URL, los que se envían al backend y las funciones para modificarlos
+ * @returns Los filtros de la URL y las funciones para modificarlos
  *
  * @remarks
- * La URL es la fuente de la verdad. Si la fecha inicial es posterior a la final,
- * `queryFilters` no lleva ninguna de las dos y `rangoInvalido` es `true` para avisarlo.
+ * La URL es la fuente de la verdad. Si la fecha inicial es posterior a la final
+ * (solo pasa al editar la URL a mano), se descartan las dos fechas.
  * Cualquier cambio de filtro vuelve a la primera página.
  */
 export function useMarcacionesFilters() {
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const fechaInicio = parseFecha(searchParams.get("fecha_inicio"));
+  const fechaFin = parseFecha(searchParams.get("fecha_fin"));
+  const rangoInvertido =
+    fechaInicio !== undefined && fechaFin !== undefined && fechaInicio > fechaFin;
 
   const filters: MarcacionFilters = {
     page: parsePage(searchParams.get("page")),
@@ -44,19 +49,10 @@ export function useMarcacionesFilters() {
       DEFAULT_LIMIT,
     ),
     empleado_id: parseUuid(searchParams.get("empleado_id")),
-    fecha_inicio: parseFecha(searchParams.get("fecha_inicio")),
-    fecha_fin: parseFecha(searchParams.get("fecha_fin")),
+    fecha_inicio: rangoInvertido ? undefined : fechaInicio,
+    fecha_fin: rangoInvertido ? undefined : fechaFin,
     tipo_marcacion: parseTipo(searchParams.get("tipo_marcacion")),
   };
-
-  const rangoInvalido =
-    filters.fecha_inicio !== undefined &&
-    filters.fecha_fin !== undefined &&
-    filters.fecha_inicio > filters.fecha_fin;
-
-  const queryFilters: MarcacionFilters = rangoInvalido
-    ? { ...filters, fecha_inicio: undefined, fecha_fin: undefined }
-    : filters;
 
   const hasActiveFilters =
     filters.empleado_id !== undefined ||
@@ -108,8 +104,6 @@ export function useMarcacionesFilters() {
 
   return {
     filters,
-    queryFilters,
-    rangoInvalido,
     hasActiveFilters,
     setPage,
     setLimit,

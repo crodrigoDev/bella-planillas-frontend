@@ -32,6 +32,8 @@ Fechas como texto `YYYY-MM-DD`, seguras frente a la zona horaria.
 | Función | Qué hace |
 | --- | --- |
 | `getTodayIsoDate()` | Hoy en la zona del navegador (no usa `toISOString()`, que da el día siguiente en Perú después de las 19:00) |
+| `parseIsoDate(iso)` | Texto `YYYY-MM-DD` a fecha local, sin pasar por UTC; `undefined` si no hay texto |
+| `toIsoDate(date)` | Fecha local a `YYYY-MM-DD`, sin pasar por UTC |
 | `toDateInput(isoDate)` | Recorta a `YYYY-MM-DD` para `<input type="date">`; `""` si no hay fecha |
 | `getAge(birthIsoDate, referenceIsoDate = hoy)` | Años cumplidos; negativo si la fecha es futura |
 

@@ -5,21 +5,24 @@ import { FilterSelect } from "@/components/filters/FilterSelect";
 import { Button } from "@/components/ui/button";
 import { getOptionLabel } from "@/lib/catalogos.utils";
 import { formatDate } from "@/lib/format.utils";
-import type { SelectOption } from "@/lib/types/options.types";
 import { TIPO_MARCA_FILTRO_OPTIONS } from "../../config/marcaciones.config";
+import { ColaboradorSelect } from "./ColaboradorSelect";
 import type {
+  EmpleadoMarcableOption,
   MarcacionFilterKey,
   MarcacionFilters,
 } from "../../types/marcaciones.types";
 
 interface MarcacionesToolbarProps {
   filters: MarcacionFilters;
-  /** La fecha inicial es posterior a la final: no se aplican las fechas */
-  rangoInvalido: boolean;
   hasActiveFilters: boolean;
-  /** Empleados para el selector; los trae la página para no depender de otra feature */
-  empleados: SelectOption[];
+  /** Resultado de la búsqueda de colaboradores; lo trae la página para no depender de otra feature */
+  empleados: EmpleadoMarcableOption[];
   empleadosLoading: boolean;
+  /** Nombre del colaborador filtrado, que la página busca por su id */
+  colaboradorNombre: string | undefined;
+  /** Se llama con el texto a buscar cuando el usuario deja de teclear */
+  onEmpleadoSearchChange: (search: string) => void;
   onFilterChange: (key: MarcacionFilterKey, value: string | undefined) => void;
   onFechasChange: (inicio: string | undefined, fin: string | undefined) => void;
   onClear: () => void;
@@ -34,10 +37,11 @@ interface MarcacionesToolbarProps {
  */
 export function MarcacionesToolbar({
   filters,
-  rangoInvalido,
   hasActiveFilters,
   empleados,
   empleadosLoading,
+  colaboradorNombre,
+  onEmpleadoSearchChange,
   onFilterChange,
   onFechasChange,
   onClear,
@@ -47,7 +51,9 @@ export function MarcacionesToolbar({
   if (filters.empleado_id)
     appliedFilters.push({
       key: "empleado_id",
-      label: `Colaborador: ${getOptionLabel(empleados, filters.empleado_id)}`,
+      label: colaboradorNombre
+        ? `Colaborador: ${colaboradorNombre}`
+        : "Colaborador",
     });
   if (filters.fecha_inicio)
     appliedFilters.push({
@@ -68,21 +74,23 @@ export function MarcacionesToolbar({
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
-        <FilterSelect
-          ariaLabel="Filtrar por colaborador"
-          allLabel="Todos los colaboradores"
-          options={empleados}
-          value={filters.empleado_id}
-          onChange={(value) => onFilterChange("empleado_id", value)}
-          isLoading={empleadosLoading}
-          className="sm:w-64"
-        />
+        <div className="w-full sm:w-64">
+          <ColaboradorSelect
+            ariaLabel="Filtrar por colaborador"
+            placeholder="Todos los colaboradores"
+            value={filters.empleado_id}
+            onChange={(value) => onFilterChange("empleado_id", value)}
+            options={empleados}
+            isLoading={empleadosLoading}
+            onSearchChange={onEmpleadoSearchChange}
+            selectedLabel={colaboradorNombre}
+          />
+        </div>
         <DateRangeFilter
           ariaLabel="Filtrar por rango de fechas"
           placeholder="Rango de fechas"
           from={filters.fecha_inicio}
           to={filters.fecha_fin}
-          invalid={rangoInvalido}
           onChange={onFechasChange}
           className="w-full sm:w-64"
         />
@@ -101,13 +109,6 @@ export function MarcacionesToolbar({
           </Button>
         )}
       </div>
-
-      {rangoInvalido && (
-        <p role="alert" className="text-sm text-destructive">
-          La fecha inicial es posterior a la final: no se aplican las fechas.
-          Corrige el rango para filtrar por fecha.
-        </p>
-      )}
 
       {appliedFilters.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">

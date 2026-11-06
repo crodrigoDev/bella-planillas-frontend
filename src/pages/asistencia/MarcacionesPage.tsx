@@ -17,24 +17,23 @@ import type {
   Marcacion,
 } from "@/features/asistencia/types/marcaciones.types";
 import { useEmpleadosActivos } from "@/features/empleados/hooks/useCatalogos";
-import type { SelectOption } from "@/lib/types/options.types";
+import { useEmpleado } from "@/features/empleados/hooks/useEmpleado";
+import { getNombreCompleto } from "@/features/empleados/utils/empleados.utils";
 
 const NO_MARCACIONES: Marcacion[] = [];
-const NO_OPTIONS: SelectOption[] = [];
 const NO_EMPLEADOS: EmpleadoMarcableOption[] = [];
 
 /**
  * Lista todas las marcaciones con paginación del servidor y filtros
  *
  * @remarks
- * No guarda los filtros: los recibe de la URL. Los empleados del filtro los
- * trae esta página y se los pasa a la barra, porque asistencia no importa de empleados.
+ * No guarda los filtros: los recibe de la URL. Los empleados (la búsqueda del filtro
+ * y del modal, que comparten consulta, y el nombre del filtrado) los trae esta página
+ * y se los pasa a los componentes, porque asistencia no importa de empleados.
  */
 export default function MarcacionesPage() {
   const {
     filters,
-    queryFilters,
-    rangoInvalido,
     hasActiveFilters,
     setPage,
     setLimit,
@@ -44,10 +43,10 @@ export default function MarcacionesPage() {
   } = useMarcacionesFilters();
   const [registrando, setRegistrando] = useState(false);
   const [busqueda, setBusqueda] = useState("");
-  const empleados = useEmpleadosActivos();
-  const empleadosBusqueda = useEmpleadosActivos(busqueda);
+  const empleados = useEmpleadosActivos(busqueda);
+  const colaborador = useEmpleado(filters.empleado_id);
   const { data, isLoading, isFetching, isPlaceholderData, error, refetch } =
-    useMarcaciones(queryFilters);
+    useMarcaciones(filters);
 
   useEffect(() => {
     if (!data || isPlaceholderData) return;
@@ -99,10 +98,13 @@ export default function MarcacionesPage() {
 
       <MarcacionesToolbar
         filters={filters}
-        rangoInvalido={rangoInvalido}
         hasActiveFilters={hasActiveFilters}
-        empleados={empleados.data ?? NO_OPTIONS}
-        empleadosLoading={empleados.isLoading}
+        empleados={empleados.data ?? NO_EMPLEADOS}
+        empleadosLoading={empleados.isFetching}
+        colaboradorNombre={
+          colaborador.data ? getNombreCompleto(colaborador.data) : undefined
+        }
+        onEmpleadoSearchChange={setBusqueda}
         onFilterChange={setFilter}
         onFechasChange={setFechas}
         onClear={clearFilters}
@@ -131,13 +133,14 @@ export default function MarcacionesPage() {
       />
 
       <RegistrarMarcacionModal
-        empleados={empleadosBusqueda.data ?? NO_EMPLEADOS}
-        empleadosLoading={empleadosBusqueda.isFetching}
+        empleados={empleados.data ?? NO_EMPLEADOS}
+        empleadosLoading={empleados.isFetching}
         onSearchChange={setBusqueda}
         open={registrando}
         onOpenChange={(open) => {
           setRegistrando(open);
-          if (!open) setBusqueda("");
+          // Cada selector empieza sin texto de búsqueda
+          setBusqueda("");
         }}
       />
     </section>

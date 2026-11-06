@@ -8,6 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { parseIsoDate, toIsoDate } from "@/lib/date.utils";
 import { formatDate } from "@/lib/format.utils";
 import { cn } from "@/lib/utils";
 
@@ -20,29 +21,8 @@ interface DateRangeFilterProps {
   onChange: (from: string | undefined, to: string | undefined) => void;
   ariaLabel: string;
   placeholder?: string;
-  /** Marca el botón como inválido (por ejemplo, un rango invertido) */
-  invalid?: boolean;
   className?: string;
 }
-
-/** Texto `YYYY-MM-DD` a fecha local (sin pasar por UTC, para no correr un día) */
-const parseIsoDate = (iso: string | undefined): Date | undefined => {
-  if (!iso) return undefined;
-
-  const [year, month, day] = iso.split("-").map(Number);
-
-  return new Date(year, month - 1, day);
-};
-
-/** Fecha local a texto `YYYY-MM-DD` */
-const toIsoDate = (date: Date | undefined): string | undefined => {
-  if (!date) return undefined;
-
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-
-  return `${date.getFullYear()}-${month}-${day}`;
-};
 
 /**
  * Selector de un rango de fechas con calendario de dos meses
@@ -57,7 +37,6 @@ export function DateRangeFilter({
   onChange,
   ariaLabel,
   placeholder = "Rango de fechas",
-  invalid = false,
   className,
 }: DateRangeFilterProps) {
   const selected: DateRange | undefined = from
@@ -76,9 +55,8 @@ export function DateRangeFilter({
             variant="outline"
             size="lg"
             aria-label={ariaLabel}
-            aria-invalid={invalid}
             className={cn(
-              "justify-start font-normal aria-invalid:border-destructive",
+              "justify-start font-normal",
               !from && "text-muted-foreground",
               className,
             )}
@@ -97,7 +75,10 @@ export function DateRangeFilter({
           defaultMonth={parseIsoDate(from)}
           selected={selected}
           onSelect={(range) =>
-            onChange(toIsoDate(range?.from), toIsoDate(range?.to))
+            onChange(
+              range?.from && toIsoDate(range.from),
+              range?.to && toIsoDate(range.to),
+            )
           }
         />
       </PopoverContent>

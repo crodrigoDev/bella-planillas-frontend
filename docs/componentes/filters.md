@@ -44,7 +44,6 @@ la fecha inicial.
 | `onChange` | `(from?, to?) => void` | Recibe el rango completo en una sola llamada |
 | `ariaLabel` | `string` | |
 | `placeholder` | `string?` | Por defecto "Rango de fechas" |
-| `invalid` | `boolean?` | Borde de error (rango invertido) |
 | `className` | `string?` | |
 
 ```tsx
