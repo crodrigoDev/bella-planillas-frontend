@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   useTable,
   type ColumnDef,
@@ -60,6 +61,9 @@ export function DataTable<TData extends RowData>({
   itemLabel = "registros",
   pageSizeOptions = PAGE_SIZE_OPTIONS,
 }: DataTableProps<TData>) {
+  // Con scroll, la cabecera proyecta una sombra hacia las filas
+  const [scrolled, setScrolled] = useState(false);
+
   const table = useTable({
     features: dataTableFeatures,
     columns,
@@ -77,8 +81,24 @@ export function DataTable<TData extends RowData>({
   const lastRow = Math.min((pageIndex + 1) * pageSize, rowCount);
 
   return (
-    <div className="space-y-3">
-      <div className="overflow-hidden rounded-lg border bg-card">
+    <div className="flex min-h-0 flex-1 flex-col gap-3">
+      {/* Las filas y columnas se desplazan dentro de la caja (como Jira): la
+          cabecera queda fija arriba y la paginación siempre a la vista.
+          Ocupa el alto que le deja su contenedor (si el contenedor no tiene
+          alto definido, crece con su contenido). El contenedor interno de
+          `Table` pasa a `overflow-visible` para que el scroll sea de esta
+          caja y el `sticky` de la cabecera funcione. */}
+      <div
+        onScroll={(event) => setScrolled(event.currentTarget.scrollTop > 0)}
+        className={cn(
+          "min-h-64 flex-1 overflow-auto rounded-lg border bg-card",
+          "[&_[data-slot=table-container]]:overflow-visible [&_table]:min-w-max",
+          "[&_th:not(:last-child)]:border-r [&_td:not(:last-child)]:border-r",
+          "[&_th]:sticky [&_th]:top-0 [&_th]:z-10 [&_th]:bg-[color-mix(in_oklab,var(--muted)_40%,var(--card))] [&_th]:shadow-[inset_0_-1px_0_var(--border)] [&_th]:transition-shadow",
+          scrolled &&
+            "[&_th]:shadow-[inset_0_-1px_0_var(--border),0_4px_6px_-2px_rgb(0_0_0/0.15)]",
+        )}
+      >
         <Table
           className={cn(
             isFetching && !isLoading && "opacity-60 transition-opacity",

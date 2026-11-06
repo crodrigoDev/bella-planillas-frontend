@@ -6,7 +6,12 @@
 
 Tabla genérica (TanStack Table) con paginación controlada por el servidor: filas de
 carga, atenuado mientras llega otra página, mensaje vacío, selector de filas por
-página y botones de página (con `getPageItems`). Las columnas se definen con
+página y botones de página (con `getPageItems`). Las filas y columnas se desplazan
+dentro de la caja de la tabla, como en Jira (cabecera fija con sombra al hacer scroll,
+separadores entre columnas, scroll vertical y horizontal), y la paginación queda
+siempre a la vista. La caja ocupa el alto que le deja su contenedor: en una página de
+listado, la `section` debe ser `flex min-h-0 flex-1 flex-col` (el layout ya limita el
+alto); si el contenedor no tiene alto definido, la tabla crece con su contenido. Las columnas se definen con
 `createColumnHelper<DataTableFeatures, T>()`.
 
 | Prop | Tipo | Notas |
