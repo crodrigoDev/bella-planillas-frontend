@@ -14,7 +14,7 @@ import {
   ESTADO_DIA,
 } from "../config/asistencia.config";
 import type { DiaAsistencia, TipoMarca } from "../types/asistencia.types";
-import { formatMinutos, humanizarCodigo } from "./asistencia.utils";
+import { esDiaSinJornada, formatMinutos, humanizarCodigo } from "./asistencia.utils";
 
 /** Orden en que se muestran las marcaciones de un día: E, SA, EA, S */
 const ORDEN_MARCAS: TipoMarca[] = [
@@ -135,8 +135,9 @@ export const getMarcasEnOrden = (dia: DiaAsistencia) =>
  * @param puedeResolver - Si el mes admite resolver días (aprobado, no)
  *
  * @remarks
- * Los días futuros, los descansos y los días fuera del vínculo no se pueden
- * resolver. `accion` es el texto del botón: "Justificar" en una falta,
+ * Los días futuros, los descansos, los días fuera del vínculo y los días sin
+ * jornada asignada no se pueden resolver (el backend no los evalúa hasta que
+ * exista una jornada, así que decidir sería a ciegas). `accion` es el texto del botón: "Justificar" en una falta,
  * "Resolver" si hay algo que revisar y "Gestionar" en el resto.
  */
 export const getFilaDia = (
@@ -150,12 +151,14 @@ export const getFilaDia = (
     dia.alertas.length > 0 ||
     (dia.estado === "ASISTENCIA_REGISTRADA" && dia.minutos_tardanza > 0);
   const esFalta = dia.estado === "FALTA_INJUSTIFICADA";
+  const sinJornada = esDiaSinJornada(dia);
 
   return {
+    sinJornada,
     sinTrabajo,
     conProblema,
     esFalta,
-    resoluble: puedeResolver && dia.fecha <= hoy && !sinTrabajo,
+    resoluble: puedeResolver && dia.fecha <= hoy && !sinTrabajo && !sinJornada,
     esFuturo: dia.fecha > hoy,
     esHoy: dia.fecha === hoy,
     accion: esFalta ? "Justificar" : conProblema ? "Resolver" : "Gestionar",

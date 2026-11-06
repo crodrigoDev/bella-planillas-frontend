@@ -20,10 +20,12 @@ import type { SelectOption } from "@/lib/types/options.types";
 import { useGenerarResumen } from "../hooks/useAsistenciaActions";
 import { useResumenMes } from "../hooks/useAsistencia";
 import {
+  esDiaSinJornada,
   formatPeriodo,
   getMotivoNoAprobable,
   getPeriodoActual,
 } from "../utils/asistencia.utils";
+import { AvisoJornada } from "./AvisoJornada";
 import { DetalleDiarioTabla } from "./DetalleDiarioTabla";
 import { AprobarResumenModal } from "./modals/AprobarResumenModal";
 import { AsignarJornadaModal } from "./modals/AsignarJornadaModal";
@@ -91,6 +93,10 @@ export function AsistenciaEmpleado({
   const aprobado = data?.estado === "APROBADO";
   const motivoNoAprobable = data ? getMotivoNoAprobable(data) : null;
   const puedeAprobar = data?.estado === "PENDIENTE" && !motivoNoAprobable;
+  // Días que el backend no evalúa porque falta la jornada
+  const fechasSinJornada = (data?.detalle?.dias ?? [])
+    .filter(esDiaSinJornada)
+    .map((dia) => dia.fecha);
 
   return (
     <div className="space-y-4">
@@ -198,6 +204,24 @@ export function AsistenciaEmpleado({
       >
         {data && (
           <div className="space-y-4">
+            {fechasSinJornada.length > 0 && (
+              <AvisoJornada
+                action={
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setModal({ tipo: "jornada" })}
+                  >
+                    Asignar jornada
+                  </Button>
+                }
+              >
+                Falta asignar una jornada desde la fecha de ingreso del
+                empleado. Hasta entonces, los días sin jornada no se calculan ni
+                se pueden resolver. Las marcaciones que se registren se guardan
+                y se usarán cuando exista la jornada.
+              </AvisoJornada>
+            )}
             <ResumenMesCards resumen={data} />
             <DetalleDiarioTabla
               dias={data.detalle?.dias ?? []}
@@ -226,6 +250,7 @@ export function AsistenciaEmpleado({
         empleadoId={empleadoId}
         nroDocumento={nroDocumento}
         periodo={periodo}
+        fechasSinJornada={fechasSinJornada}
         open={modal?.tipo === "marcacion"}
         onOpenChange={handleOpenChange}
       />
