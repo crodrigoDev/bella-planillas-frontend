@@ -1,48 +1,45 @@
+import type { StatusTone } from "@/components/feedback/statusTone.config";
 import type { SelectOption } from "@/lib/types/options.types";
 import type { EstadoResumen, TipoMarca } from "../types/asistencia.types";
 
-/** Nombre de cada estado del resumen mensual */
-export const ESTADO_RESUMEN_LABELS: Record<EstadoResumen, string> = {
-  PENDIENTE: "Pendiente",
-  APROBADO: "Aprobado",
-  RECHAZADO: "Rechazado",
+/** Nombre y tono de cada estado del resumen mensual */
+export const ESTADO_RESUMEN: Record<
+  EstadoResumen,
+  { label: string; tone: StatusTone }
+> = {
+  PENDIENTE: { label: "Pendiente", tone: "warning" },
+  APROBADO: { label: "Aprobado", tone: "success" },
+  RECHAZADO: { label: "Rechazado", tone: "danger" },
 };
 
-/** Colores de la insignia de cada estado del resumen */
-export const ESTADO_RESUMEN_STYLES: Record<EstadoResumen, string> = {
-  PENDIENTE: "border-amber-200 bg-amber-50 text-amber-700",
-  APROBADO: "border-emerald-200 bg-emerald-50 text-emerald-700",
-  RECHAZADO: "border-red-200 bg-red-50 text-red-700",
+/**
+ * Nombre y tono de cada estado de un día, por el código que envía el backend
+ *
+ * @remarks
+ * Los días sin color propio (descansos, fuera del vínculo...) son neutros.
+ */
+export const ESTADO_DIA: Record<string, { label: string; tone: StatusTone }> = {
+  ASISTENCIA_REGISTRADA: { label: "Asistió", tone: "success" },
+  MARCACION_INCOMPLETA: { label: "Marcación incompleta", tone: "warning" },
+  FALTA_INJUSTIFICADA: { label: "Falta injustificada", tone: "danger" },
+  AUSENCIA_SIN_GOCE: { label: "Ausencia sin goce", tone: "warning" },
+  AUSENCIA_PENDIENTE: { label: "Ausencia por verificar", tone: "warning" },
+  JUSTIFICADA: { label: "Justificada", tone: "info" },
+  PENDIENTE: { label: "Pendiente", tone: "warning" },
+  NO_EVALUADO: { label: "Sin evaluar", tone: "neutral" },
+  DESCANSO_SEMANAL: { label: "Descanso semanal", tone: "neutral" },
+  FERIADO_O_DESCANSO_ACORDADO: { label: "Feriado o descanso", tone: "neutral" },
+  FUERA_DE_VINCULO: { label: "Fuera del vínculo", tone: "neutral" },
 };
 
-/** Nombre de cada estado de un día, por el código que envía el backend */
-export const ESTADO_DIA_LABELS: Record<string, string> = {
-  ASISTENCIA_REGISTRADA: "Asistió",
-  MARCACION_INCOMPLETA: "Marcación incompleta",
-  FALTA_INJUSTIFICADA: "Falta injustificada",
-  AUSENCIA_SIN_GOCE: "Ausencia sin goce",
-  AUSENCIA_PENDIENTE: "Ausencia por verificar",
-  JUSTIFICADA: "Justificada",
-  PENDIENTE: "Pendiente",
-  NO_EVALUADO: "Sin evaluar",
-  DESCANSO_SEMANAL: "Descanso semanal",
-  FERIADO_O_DESCANSO_ACORDADO: "Feriado o descanso",
-  FUERA_DE_VINCULO: "Fuera del vínculo",
-};
-
-/** Colores de la insignia de cada estado de un día */
-export const ESTADO_DIA_STYLES: Record<string, string> = {
-  ASISTENCIA_REGISTRADA: "border-emerald-200 bg-emerald-50 text-emerald-700",
-  JUSTIFICADA: "border-sky-200 bg-sky-50 text-sky-700",
-  FALTA_INJUSTIFICADA: "border-red-200 bg-red-50 text-red-700",
-  MARCACION_INCOMPLETA: "border-amber-200 bg-amber-50 text-amber-700",
-  AUSENCIA_SIN_GOCE: "border-amber-200 bg-amber-50 text-amber-700",
-  AUSENCIA_PENDIENTE: "border-amber-200 bg-amber-50 text-amber-700",
-  PENDIENTE: "border-amber-200 bg-amber-50 text-amber-700",
-};
-
-/** Estilo de un día sin color propio (descansos, fuera del vínculo...) */
-export const ESTADO_DIA_NEUTRO = "border-border bg-muted text-muted-foreground";
+/** Estados de un día que hay que revisar o corregir */
+export const ESTADOS_DIA_CON_PROBLEMA = [
+  "FALTA_INJUSTIFICADA",
+  "MARCACION_INCOMPLETA",
+  "AUSENCIA_PENDIENTE",
+  "AUSENCIA_SIN_GOCE",
+  "PENDIENTE",
+];
 
 /** Días en los que no hay nada que resolver porque no se trabaja o no hay vínculo */
 export const ESTADOS_DIA_SIN_RESOLVER = [

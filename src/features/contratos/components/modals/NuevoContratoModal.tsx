@@ -2,14 +2,11 @@ import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
-import { LoadingButton } from "@/components/form/LoadingButton";
-import { Button } from "@/components/ui/button";
+import { ModalFormFooter } from "@/components/form/ModalFormFooter";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -100,21 +97,10 @@ function NuevoContratoForm({ empleadoId, onClose }: NuevoContratoFormProps) {
 
         <ErrorAlert error={mutation.error} />
 
-        <DialogFooter>
-          <DialogClose
-            render={<Button type="button" variant="outline" />}
-            disabled={mutation.isPending}
-          >
-            Cancelar
-          </DialogClose>
-          <LoadingButton
-            type="submit"
-            isLoading={mutation.isPending}
-            loadingText="Guardando…"
-          >
-            Registrar contrato
-          </LoadingButton>
-        </DialogFooter>
+        <ModalFormFooter
+          isPending={mutation.isPending}
+          submitLabel="Registrar contrato"
+        />
       </form>
     </FormProvider>
   );

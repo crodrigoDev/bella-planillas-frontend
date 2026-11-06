@@ -1,33 +1,29 @@
-import { ErrorAlert } from "@/components/feedback/ErrorAlert";
-import { LoadingButton } from "@/components/form/LoadingButton";
-import { useState, type FormEvent } from "react";
+import { FormProvider, useForm, useFormState } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { CambiarEstadoLaboralSchema } from "@jyp/shared-contracts";
 
-import { Button } from "@/components/ui/button";
+import { ErrorAlert } from "@/components/feedback/ErrorAlert";
+import { FormField } from "@/components/form/FormField";
+import { ModalFormFooter } from "@/components/form/ModalFormFooter";
+import { SelectField } from "@/components/form/SelectField";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Field, FieldLabel } from "@/components/ui/field";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { zodResolverOptions } from "@/lib/zodMessages.utils";
 import { ESTADO_LABORAL_OPTIONS } from "../../config/empleados.config";
 import { useCambiarEstadoLaboral } from "../../hooks/useEmpleadoActions";
-import type {
-  Empleado,
-  EstadoLaboralEditable,
-} from "../../types/empleados.types";
+import type { Empleado } from "../../types/empleados.types";
 import { getNombreCompleto } from "../../utils/empleados.utils";
+
+const resolver = zodResolver(CambiarEstadoLaboralSchema, zodResolverOptions);
+
+type CambiarEstadoValues = Parameters<typeof resolver>[0];
+type CambiarEstadoDatos = typeof CambiarEstadoLaboralSchema._output;
 
 interface CambiarEstadoModalProps {
   empleado: Empleado;
@@ -65,8 +61,6 @@ interface CambiarEstadoFormProps {
 }
 
 function CambiarEstadoForm({ empleado, onClose }: CambiarEstadoFormProps) {
-  const [estado, setEstado] = useState<EstadoLaboralEditable | null>(null);
-  const [motivo, setMotivo] = useState("");
   const mutation = useCambiarEstadoLaboral();
 
   // El backend rechaza "cambiar" al estado que el empleado ya tiene
@@ -74,79 +68,60 @@ function CambiarEstadoForm({ empleado, onClose }: CambiarEstadoFormProps) {
     (option) => option.value !== empleado.estado_laboral,
   );
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const methods = useForm<CambiarEstadoValues, unknown, CambiarEstadoDatos>({
+    resolver,
+    mode: "onChange",
+  });
+  const { isValid } = useFormState({ control: methods.control });
 
-    if (!estado) return;
-
-    mutation.mutate(
-      {
-        empleado,
-        dto: { estado_laboral: estado, motivo: motivo.trim() || undefined },
-      },
-      { onSuccess: onClose },
-    );
-  };
+  const onSubmit = (dto: CambiarEstadoDatos) =>
+    mutation.mutate({ empleado, dto }, { onSuccess: onClose });
 
   return (
-    <form onSubmit={handleSubmit} className="grid gap-4">
-      <DialogHeader>
-        <DialogTitle>Cambiar estado laboral</DialogTitle>
-        <DialogDescription>
-          {getNombreCompleto(empleado)} sigue activo en la empresa. Elige su
-          nueva situación.
-        </DialogDescription>
-      </DialogHeader>
+    <FormProvider {...methods}>
+      <form
+        onSubmit={methods.handleSubmit(onSubmit)}
+        noValidate
+        className="grid gap-4"
+      >
+        <DialogHeader>
+          <DialogTitle>Cambiar estado laboral</DialogTitle>
+          <DialogDescription>
+            {getNombreCompleto(empleado)} sigue activo en la empresa. Elige su
+            nueva situación.
+          </DialogDescription>
+        </DialogHeader>
 
-      <Field>
-        <FieldLabel htmlFor="estado-laboral">Nuevo estado</FieldLabel>
-        <Select
-          items={options}
-          value={estado}
-          onValueChange={setEstado}
-          disabled={mutation.isPending}
-        >
-          <SelectTrigger id="estado-laboral" className="w-full">
-            <SelectValue placeholder="Selecciona un estado" />
-          </SelectTrigger>
-          <SelectContent alignItemWithTrigger={false}>
-            {options.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </Field>
-
-      <Field>
-        <FieldLabel htmlFor="estado-motivo">Motivo (opcional)</FieldLabel>
-        <Textarea
-          id="estado-motivo"
-          value={motivo}
-          onChange={(event) => setMotivo(event.target.value)}
-          maxLength={255}
-          disabled={mutation.isPending}
+        <SelectField
+          name="estado_laboral"
+          label="Nuevo estado"
+          options={options}
+          placeholder="Selecciona un estado"
         />
-      </Field>
 
-      <ErrorAlert error={mutation.error} />
+        <FormField name="motivo" label="Motivo (opcional)">
+          {(invalid) => (
+            <Textarea
+              id="motivo"
+              maxLength={255}
+              aria-invalid={invalid}
+              disabled={mutation.isPending}
+              // Un motivo vacío o solo con espacios no se envía
+              {...methods.register("motivo", {
+                setValueAs: (value: string) => value.trim() || undefined,
+              })}
+            />
+          )}
+        </FormField>
 
-      <DialogFooter>
-        <DialogClose
-          render={<Button type="button" variant="outline" />}
-          disabled={mutation.isPending}
-        >
-          Cancelar
-        </DialogClose>
-        <LoadingButton
-          type="submit"
-          isLoading={mutation.isPending}
-          disabled={!estado}
-        >
-          Guardar cambio
-        </LoadingButton>
-      </DialogFooter>
-    </form>
+        <ErrorAlert error={mutation.error} />
+
+        <ModalFormFooter
+          isPending={mutation.isPending}
+          submitLabel="Guardar cambio"
+          disabled={!isValid}
+        />
+      </form>
+    </FormProvider>
   );
 }

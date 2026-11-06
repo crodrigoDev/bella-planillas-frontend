@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { ROUTE_PATHS } from "@/app/routes/path";
-import { canAccessRoute } from "@/features/auth/config/route-access.config";
+import { canAccessRoute } from "@/features/auth/config/routeAccess.config";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import ForbiddenPage from "@/pages/forbidden/ForbiddenPage";
 

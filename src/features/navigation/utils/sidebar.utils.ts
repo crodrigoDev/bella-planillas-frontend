@@ -1,4 +1,4 @@
-import { canAccessRoute } from "@/features/auth/config/route-access.config";
+import { canAccessRoute } from "@/features/auth/config/routeAccess.config";
 import type { AuthRol } from "@/features/auth/types/auth.types";
 import type { SidebarItem } from "@/features/navigation/types/navigation.types";
 

@@ -1,15 +1,7 @@
-import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Spinner } from "@/components/ui/spinner";
+  ConfirmModal,
+  ConfirmModalBody,
+} from "@/components/feedback/ConfirmModal";
 import { useReactivarEmpleado } from "../../hooks/useEmpleadoActions";
 import type { Empleado } from "../../types/empleados.types";
 import { getNombreCompleto } from "../../utils/empleados.utils";
@@ -33,14 +25,12 @@ export function ReactivarModal({
   onOpenChange,
 }: ReactivarModalProps) {
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
-        <ReactivarContent
-          empleado={empleado}
-          onClose={() => onOpenChange(false)}
-        />
-      </AlertDialogContent>
-    </AlertDialog>
+    <ConfirmModal open={open} onOpenChange={onOpenChange}>
+      <ReactivarContent
+        empleado={empleado}
+        onClose={() => onOpenChange(false)}
+      />
+    </ConfirmModal>
   );
 }
 
@@ -57,30 +47,19 @@ function ReactivarContent({ empleado, onClose }: ReactivarContentProps) {
   };
 
   return (
-    <>
-      <AlertDialogHeader>
-        <AlertDialogTitle>Reactivar colaborador</AlertDialogTitle>
-        <AlertDialogDescription>
+    <ConfirmModalBody
+      title="Reactivar colaborador"
+      description={
+        <>
           {getNombreCompleto(empleado)} volverá al estado Activo y se quitará
           su fecha de cese. Revisa después su contrato, jornada y régimen
           previsional.
-        </AlertDialogDescription>
-      </AlertDialogHeader>
-
-      <ErrorAlert error={mutation.error} />
-
-      <AlertDialogFooter>
-        <AlertDialogCancel disabled={mutation.isPending}>
-          Cancelar
-        </AlertDialogCancel>
-        <AlertDialogAction
-          onClick={handleConfirm}
-          disabled={mutation.isPending}
-        >
-          {mutation.isPending && <Spinner data-icon="inline-start" />}
-          Reactivar
-        </AlertDialogAction>
-      </AlertDialogFooter>
-    </>
+        </>
+      }
+      confirmLabel="Reactivar"
+      isPending={mutation.isPending}
+      error={mutation.error}
+      onConfirm={handleConfirm}
+    />
   );
 }

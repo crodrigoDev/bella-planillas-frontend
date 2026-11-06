@@ -36,7 +36,6 @@ export default function EmpleadosPage() {
     isLoading,
     isFetching,
     isPlaceholderData,
-    isError,
     error,
     refetch,
   } = useEmpleados(filters);
@@ -87,17 +86,11 @@ export default function EmpleadosPage() {
         onClear={clearFilters}
       />
 
-      {isError && (
-        <ErrorAlert
-          error={error}
-          title="No se pudo cargar la lista de empleados"
-          action={
-            <Button variant="outline" size="sm" onClick={() => refetch()}>
-              Reintentar
-            </Button>
-          }
-        />
-      )}
+      <ErrorAlert
+        error={error}
+        title="No se pudo cargar la lista de empleados"
+        onRetry={() => refetch()}
+      />
 
       <DataTable
         columns={empleadosColumns}

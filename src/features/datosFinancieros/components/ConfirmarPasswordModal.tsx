@@ -1,14 +1,11 @@
 import { useState, type FormEvent } from "react";
 
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
-import { LoadingButton } from "@/components/form/LoadingButton";
-import { Button } from "@/components/ui/button";
+import { ModalFormFooter } from "@/components/form/ModalFormFooter";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -96,22 +93,11 @@ function ConfirmarPasswordForm({
 
       <ErrorAlert error={error} />
 
-      <DialogFooter>
-        <DialogClose
-          render={<Button type="button" variant="outline" />}
-          disabled={isPending}
-        >
-          Cancelar
-        </DialogClose>
-        <LoadingButton
-          type="submit"
-          isLoading={isPending}
-          loadingText="Guardando…"
-          disabled={!password}
-        >
-          Guardar cambios
-        </LoadingButton>
-      </DialogFooter>
+      <ModalFormFooter
+        isPending={isPending}
+        submitLabel="Guardar cambios"
+        disabled={!password}
+      />
     </form>
   );
 }

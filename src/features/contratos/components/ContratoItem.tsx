@@ -10,17 +10,16 @@ import {
 } from "lucide-react";
 
 import { AccionButton } from "@/components/page/AccionButton";
-import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/feedback/StatusBadge";
+import { TONE_DOT, TONE_TEXT } from "@/components/feedback/statusTone.config";
 import { Button } from "@/components/ui/button";
 import { getOptionLabel } from "@/lib/catalogos.utils";
 import { getTodayIsoDate } from "@/lib/date.utils";
 import { formatDate } from "@/lib/format.utils";
 import { cn } from "@/lib/utils";
 import {
-  ALERTA_VENCIMIENTO_STYLES,
-  ESTADO_CONTRATO_DOT,
-  ESTADO_CONTRATO_LABELS,
-  ESTADO_CONTRATO_STYLES,
+  ALERTA_VENCIMIENTO_TONE,
+  ESTADO_CONTRATO,
 } from "../config/contratos.config";
 import { useModalidadesContrato } from "../hooks/useCatalogos";
 import type { Contrato } from "../types/contratos.types";
@@ -53,6 +52,7 @@ export function ContratoItem({ contrato, empleadoActivo }: ContratoItemProps) {
   const modalidades = useModalidadesContrato();
 
   const esVigente = contrato.estado === "VIGENTE";
+  const estado = ESTADO_CONTRATO[contrato.estado];
   const hoy = getTodayIsoDate();
   const aunNoEmpieza = contrato.fecha_inicio.slice(0, 10) > hoy;
   const progreso = getProgresoContrato(
@@ -78,14 +78,16 @@ export function ContratoItem({ contrato, empleadoActivo }: ContratoItemProps) {
         aria-hidden
         className={cn(
           "absolute top-5 left-0 size-3.5 rounded-full ring-4 ring-background",
-          ESTADO_CONTRATO_DOT[contrato.estado],
+          TONE_DOT[estado.tone],
+          // Los contratos sin vigencia llevan el punto gris más suave
+          estado.tone === "neutral" && "bg-muted-foreground/40",
         )}
       />
 
       <div
         className={cn(
           "space-y-3 rounded-lg border bg-card p-4",
-          esVigente && "border-emerald-200 shadow-xs",
+          esVigente && "border-success-border shadow-xs",
         )}
       >
         <div className="flex items-start justify-between gap-3">
@@ -101,17 +103,12 @@ export function ContratoItem({ contrato, empleadoActivo }: ContratoItemProps) {
           </div>
 
           <div className="shrink-0">
-            <Badge
-              variant="outline"
-              className={ESTADO_CONTRATO_STYLES[contrato.estado]}
-            >
-              {ESTADO_CONTRATO_LABELS[contrato.estado]}
-            </Badge>
+            <StatusBadge tone={estado.tone}>{estado.label}</StatusBadge>
           </div>
         </div>
 
         {diasVencido !== null && (
-          <p className="text-sm text-red-600">
+          <p className={cn("text-sm", TONE_TEXT.danger)}>
             Venció hace {diasVencido} {diasVencido === 1 ? "día" : "días"}
           </p>
         )}
@@ -132,7 +129,7 @@ export function ContratoItem({ contrato, empleadoActivo }: ContratoItemProps) {
                 className="h-1.5 overflow-hidden rounded-full bg-muted"
               >
                 <div
-                  className="h-full rounded-full bg-emerald-500"
+                  className="h-full rounded-full bg-success"
                   style={{ width: `${progreso}%` }}
                 />
               </div>
@@ -142,7 +139,9 @@ export function ContratoItem({ contrato, empleadoActivo }: ContratoItemProps) {
                 className={cn(
                   "text-sm",
                   contrato.alerta_vencimiento
-                    ? ALERTA_VENCIMIENTO_STYLES[contrato.alerta_vencimiento]
+                    ? TONE_TEXT[
+                        ALERTA_VENCIMIENTO_TONE[contrato.alerta_vencimiento]
+                      ]
                     : "text-muted-foreground",
                 )}
               >
@@ -190,7 +189,7 @@ export function ContratoItem({ contrato, empleadoActivo }: ContratoItemProps) {
                 label="Adjuntar PDF"
                 icon={UploadIcon}
                 onClick={() => setOpenModal("subirPdf")}
-                className="text-sky-600"
+                tone="info"
               />
             )}
             {puedeRenovar(contrato, empleadoActivo) && (
@@ -198,14 +197,14 @@ export function ContratoItem({ contrato, empleadoActivo }: ContratoItemProps) {
                 label="Renovar"
                 icon={RefreshCwIcon}
                 onClick={() => setOpenModal("renovar")}
-                className="text-emerald-600"
+                tone="success"
               />
             )}
             <AccionButton
               label="Anular"
               icon={CircleXIcon}
               onClick={() => setOpenModal("anular")}
-              className="text-red-500"
+              tone="danger"
             />
           </div>
         </div>

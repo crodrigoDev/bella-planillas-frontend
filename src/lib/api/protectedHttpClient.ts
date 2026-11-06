@@ -1,5 +1,5 @@
 import axios, { isAxiosError, type InternalAxiosRequestConfig } from "axios";
-import { publicHttpClient } from "@/lib/api/public-http-client";
+import { publicHttpClient } from "@/lib/api/publicHttpClient";
 /**
  * Funciones que el cliente necesita de la capa de autenticación
  */

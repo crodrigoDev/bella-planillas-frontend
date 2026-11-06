@@ -22,11 +22,11 @@ export const TIPO_EVENTO_ESTILOS: Record<
     icon: BriefcaseBusinessIcon,
     circulo: "bg-primary text-primary-foreground",
   },
-  CONTRATO: { icon: FileTextIcon, circulo: "bg-sky-600 text-white" },
-  FAMILIA: { icon: UsersIcon, circulo: "bg-emerald-600 text-white" },
-  ESTADO: { icon: UserCogIcon, circulo: "bg-amber-600 text-white" },
-  ASISTENCIA: { icon: CalendarCheckIcon, circulo: "bg-teal-600 text-white" },
-  FINANCIERO: { icon: WalletIcon, circulo: "bg-slate-600 text-white" },
+  CONTRATO: { icon: FileTextIcon, circulo: "bg-category-1 text-category-foreground" },
+  FAMILIA: { icon: UsersIcon, circulo: "bg-category-2 text-category-foreground" },
+  ESTADO: { icon: UserCogIcon, circulo: "bg-category-3 text-category-foreground" },
+  ASISTENCIA: { icon: CalendarCheckIcon, circulo: "bg-category-4 text-category-foreground" },
+  FINANCIERO: { icon: WalletIcon, circulo: "bg-category-5 text-category-foreground" },
 };
 
 /**

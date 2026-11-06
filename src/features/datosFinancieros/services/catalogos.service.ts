@@ -1,4 +1,4 @@
-import { protectedHttpClient } from "@/lib/api/protected-http-client";
+import { protectedHttpClient } from "@/lib/api/protectedHttpClient";
 import type {
   ApiResponse,
   PaginationApiResponse,

@@ -1,4 +1,4 @@
-import type { ComponentProps } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { FormField } from "@/components/form/FormField";
@@ -17,6 +17,10 @@ interface TextFieldProps
   description?: string;
   /** Clases de la cuadrícula (`sm:col-span-2`...) para el campo completo */
   fieldClassName?: string;
+  /** Clases de la etiqueta */
+  labelClassName?: string;
+  /** Elemento a la derecha de la etiqueta */
+  labelAside?: ReactNode;
 }
 
 /**
@@ -29,6 +33,8 @@ export function TextField({
   optional = false,
   description,
   fieldClassName,
+  labelClassName,
+  labelAside,
   ...inputProps
 }: TextFieldProps) {
   const { register } = useFormContext();
@@ -40,6 +46,8 @@ export function TextField({
       required={required}
       description={description}
       className={fieldClassName}
+      labelClassName={labelClassName}
+      labelAside={labelAside}
     >
       {(invalid) => (
         <Input

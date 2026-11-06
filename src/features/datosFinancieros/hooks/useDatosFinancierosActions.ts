@@ -1,10 +1,9 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 import type {
   ActualizarDatoFinancieroDto,
   CrearDatoFinancieroDto,
 } from "@jyp/shared-contracts";
 
+import { useMutationConAviso } from "@/hooks/useMutationConAviso";
 import { datosFinancierosService } from "../services/datosFinancieros.service";
 import { datosFinancierosKey } from "./useDatosFinancieros";
 
@@ -17,9 +16,7 @@ interface Guardado<T> {
 
 /** Registra los datos financieros de un empleado, avisa y refresca la ficha */
 export function useCrearDatosFinancieros(empleadoId: string) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  return useMutationConAviso({
     mutationFn: async ({
       dto,
       guardarFiliacion,
@@ -27,13 +24,8 @@ export function useCrearDatosFinancieros(empleadoId: string) {
       await guardarFiliacion?.();
       await datosFinancierosService.crear(empleadoId, dto);
     },
-    onSuccess: () => {
-      toast.success("Los datos financieros se registraron correctamente.");
-
-      return queryClient.invalidateQueries({
-        queryKey: datosFinancierosKey.all,
-      });
-    },
+    successMessage: "Los datos financieros se registraron correctamente.",
+    invalidate: [datosFinancierosKey.all],
   });
 }
 
@@ -45,9 +37,7 @@ export function useCrearDatosFinancieros(empleadoId: string) {
  * error llega a quien usa la mutación.
  */
 export function useEditarDatosFinancieros(empleadoId: string) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  return useMutationConAviso({
     mutationFn: async ({
       dto,
       guardarFiliacion,
@@ -55,12 +45,7 @@ export function useEditarDatosFinancieros(empleadoId: string) {
       await guardarFiliacion?.();
       await datosFinancierosService.editar(empleadoId, dto);
     },
-    onSuccess: () => {
-      toast.success("Los datos financieros se actualizaron correctamente.");
-
-      return queryClient.invalidateQueries({
-        queryKey: datosFinancierosKey.all,
-      });
-    },
+    successMessage: "Los datos financieros se actualizaron correctamente.",
+    invalidate: [datosFinancierosKey.all],
   });
 }

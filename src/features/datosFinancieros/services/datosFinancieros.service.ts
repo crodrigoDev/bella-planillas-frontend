@@ -3,7 +3,7 @@ import type {
   CrearDatoFinancieroDto,
 } from "@jyp/shared-contracts";
 import { isAxiosError } from "axios";
-import { protectedHttpClient } from "@/lib/api/protected-http-client";
+import { protectedHttpClient } from "@/lib/api/protectedHttpClient";
 import type { ApiResponse } from "@/lib/api/types/api.types";
 import type { DatosFinancieros } from "../types/datosFinancieros.types";
 

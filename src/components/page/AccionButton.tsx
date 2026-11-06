@@ -6,14 +6,14 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
+import { TONE_ICON, type StatusTone } from "../feedback/statusTone.config";
 
 interface AccionButtonProps {
   label: string;
   icon: LucideIcon;
   onClick: () => void;
-  /** Color del icono; por defecto, el del texto */
-  className?: string;
+  /** Color del icono; por defecto, gris */
+  tone?: StatusTone;
 }
 
 /**
@@ -23,7 +23,7 @@ export function AccionButton({
   label,
   icon: Icon,
   onClick,
-  className,
+  tone = "neutral",
 }: AccionButtonProps) {
   return (
     <Tooltip>
@@ -35,7 +35,7 @@ export function AccionButton({
             size="icon"
             aria-label={label}
             onClick={onClick}
-            className={cn("text-muted-foreground", className)}
+            className={TONE_ICON[tone]}
           />
         }
       >

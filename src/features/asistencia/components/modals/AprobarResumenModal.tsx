@@ -1,15 +1,7 @@
-import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Spinner } from "@/components/ui/spinner";
+  ConfirmModal,
+  ConfirmModalBody,
+} from "@/components/feedback/ConfirmModal";
 import { useAprobarResumen } from "../../hooks/useAsistenciaActions";
 import { formatPeriodo } from "../../utils/asistencia.utils";
 
@@ -35,15 +27,13 @@ export function AprobarResumenModal({
   onOpenChange,
 }: AprobarResumenModalProps) {
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
-        <AprobarResumenContent
-          empleadoId={empleadoId}
-          periodo={periodo}
-          onClose={() => onOpenChange(false)}
-        />
-      </AlertDialogContent>
-    </AlertDialog>
+    <ConfirmModal open={open} onOpenChange={onOpenChange}>
+      <AprobarResumenContent
+        empleadoId={empleadoId}
+        periodo={periodo}
+        onClose={() => onOpenChange(false)}
+      />
+    </ConfirmModal>
   );
 }
 
@@ -65,31 +55,18 @@ function AprobarResumenContent({
   };
 
   return (
-    <>
-      <AlertDialogHeader>
-        <AlertDialogTitle>
-          Aprobar el resumen de {formatPeriodo(periodo)}
-        </AlertDialogTitle>
-        <AlertDialogDescription>
+    <ConfirmModalBody
+      title={`Aprobar el resumen de ${formatPeriodo(periodo)}`}
+      description={
+        <>
           Con el resumen aprobado ya no se pueden registrar marcaciones ni
           resolver días de este mes. Para cambiar algo habrá que reabrirlo.
-        </AlertDialogDescription>
-      </AlertDialogHeader>
-
-      <ErrorAlert error={mutation.error} />
-
-      <AlertDialogFooter>
-        <AlertDialogCancel disabled={mutation.isPending}>
-          Cancelar
-        </AlertDialogCancel>
-        <AlertDialogAction
-          onClick={handleConfirm}
-          disabled={mutation.isPending}
-        >
-          {mutation.isPending && <Spinner data-icon="inline-start" />}
-          Aprobar
-        </AlertDialogAction>
-      </AlertDialogFooter>
-    </>
+        </>
+      }
+      confirmLabel="Aprobar"
+      isPending={mutation.isPending}
+      error={mutation.error}
+      onConfirm={handleConfirm}
+    />
   );
 }

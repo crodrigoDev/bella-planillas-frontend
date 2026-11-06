@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import type { LoginDTO } from "@jyp/shared-contracts";
-import { getApiErrorMessage } from "@/lib/api/get-api-error-message";
-import { configureAuth } from "@/lib/api/protected-http-client";
+import { getApiErrorMessage } from "@/lib/api/apiError.utils";
+import { configureAuth } from "@/lib/api/protectedHttpClient";
 import type {
   AuthInitializationState,
   LoginResponse,

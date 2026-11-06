@@ -1,13 +1,7 @@
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+  ConfirmModal,
+  ConfirmModalBody,
+} from "@/components/feedback/ConfirmModal";
 
 interface SalirRegistroModalProps {
   open: boolean;
@@ -26,29 +20,20 @@ export function SalirRegistroModal({
   onLeave,
 }: SalirRegistroModalProps) {
   return (
-    <AlertDialog
+    <ConfirmModal
       open={open}
       onOpenChange={(next) => {
         if (!next) onStay();
       }}
     >
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>¿Salir del registro?</AlertDialogTitle>
-          <AlertDialogDescription>
-            El empleado ya se creó, pero faltan datos por guardar. Si sales
-            ahora, su registro quedará incompleto en el sistema y se perderá lo
-            que escribiste.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-
-        <AlertDialogFooter>
-          <AlertDialogCancel>Seguir aquí</AlertDialogCancel>
-          <AlertDialogAction variant="destructive" onClick={onLeave}>
-            Salir de todos modos
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+      <ConfirmModalBody
+        title="¿Salir del registro?"
+        description="El empleado ya se creó, pero faltan datos por guardar. Si sales ahora, su registro quedará incompleto en el sistema y se perderá lo que escribiste."
+        cancelLabel="Seguir aquí"
+        confirmLabel="Salir de todos modos"
+        variant="destructive"
+        onConfirm={onLeave}
+      />
+    </ConfirmModal>
   );
 }

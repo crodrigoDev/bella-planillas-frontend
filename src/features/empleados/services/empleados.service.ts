@@ -13,7 +13,7 @@ import type {
   EmpleadoFilters,
   EmpleadosPage,
 } from "../types/empleados.types";
-import { protectedHttpClient } from "@/lib/api/protected-http-client";
+import { protectedHttpClient } from "@/lib/api/protectedHttpClient";
 
 /**
  * Agrupa las operaciones de empleados que se comunican al backend

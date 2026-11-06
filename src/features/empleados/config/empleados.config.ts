@@ -1,5 +1,27 @@
+import type { StatusTone } from "@/components/feedback/statusTone.config";
 import type { SelectOption } from "@/lib/types/options.types";
-import type { EstadoLaboralEditable } from "../types/empleados.types";
+import type {
+  EstadoLaboral,
+  EstadoLaboralEditable,
+} from "../types/empleados.types";
+
+/**
+ * Nombre y tono de cada estado laboral
+ *
+ * @remarks
+ * Verde = en regla, azul y ámbar = situación temporal, rojo = fuera de la empresa.
+ */
+export const ESTADO_LABORAL: Record<
+  EstadoLaboral,
+  { label: string; tone: StatusTone }
+> = {
+  ACTIVO: { label: "Activo", tone: "success" },
+  VACACIONES: { label: "Vacaciones", tone: "info" },
+  LICENCIA: { label: "Licencia", tone: "warning" },
+  SUSPENDIDO: { label: "Suspendido", tone: "warning" },
+  CESADO: { label: "Cesado", tone: "danger" },
+  DESPEDIDO: { label: "Despedido", tone: "danger" },
+};
 
 /**
  * Estados a los que RRHH puede cambiar a un empleado activo
@@ -10,12 +32,9 @@ import type { EstadoLaboralEditable } from "../types/empleados.types";
 export const ESTADO_LABORAL_OPTIONS: {
   value: EstadoLaboralEditable;
   label: string;
-}[] = [
-  { value: "ACTIVO", label: "Activo" },
-  { value: "VACACIONES", label: "Vacaciones" },
-  { value: "LICENCIA", label: "Licencia" },
-  { value: "SUSPENDIDO", label: "Suspendido" },
-];
+}[] = (
+  ["ACTIVO", "VACACIONES", "LICENCIA", "SUSPENDIDO"] as const satisfies readonly EstadoLaboralEditable[]
+).map((value) => ({ value, label: ESTADO_LABORAL[value].label }));
 
 /**
  * Motivos de baja que propone el diseño de Registrar cese

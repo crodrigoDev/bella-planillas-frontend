@@ -2,14 +2,11 @@ import { useState, type FormEvent } from "react";
 
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { FileDropzone } from "@/components/form/FileDropzone";
-import { LoadingButton } from "@/components/form/LoadingButton";
-import { Button } from "@/components/ui/button";
+import { ModalFormFooter } from "@/components/form/ModalFormFooter";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -104,22 +101,12 @@ function SubirPdfForm({ contrato, onClose }: SubirPdfFormProps) {
 
       <ErrorAlert error={mutation.error} />
 
-      <DialogFooter>
-        <DialogClose
-          render={<Button type="button" variant="outline" />}
-          disabled={mutation.isPending}
-        >
-          Cancelar
-        </DialogClose>
-        <LoadingButton
-          type="submit"
-          isLoading={mutation.isPending}
-          loadingText="Subiendo…"
-          disabled={!file || Boolean(archivoError)}
-        >
-          Adjuntar
-        </LoadingButton>
-      </DialogFooter>
+      <ModalFormFooter
+        isPending={mutation.isPending}
+        submitLabel="Adjuntar"
+        loadingText="Subiendo…"
+        disabled={!file || Boolean(archivoError)}
+      />
     </form>
   );
 }

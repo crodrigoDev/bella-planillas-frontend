@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import RecuperarPasswordForm from "@/features/auth/components/RecuperarPasswordForm";
+import { RecuperarPasswordForm } from "@/features/auth/components/RecuperarPasswordForm";
 import { authService } from "@/features/auth/services/auth.service";
 
 /** Solicita la recuperación y muestra la confirmación o el error del servidor */

@@ -1,44 +1,46 @@
+import type { ComponentType } from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import { ROUTE_PATHS } from "@/app/routes/path";
-import { pendingPages } from "@/app/routes/pending-pages";
+import { pendingPages } from "@/app/routes/pendingPages.config";
 import GuestRoute from "@/features/auth/components/GuestRoute";
 import ProtectedRoute from "@/features/auth/components/ProtectedRoute";
 import RoleRoute from "@/features/auth/components/RoleRoute";
+import SessionLoadingScreen from "@/features/auth/components/SessionLoadingScreen";
 import AuthLayout from "@/app/layouts/AuthLayout";
 import AppLayout from "@/app/layouts/AppLayout";
-import DashboardPage from "@/pages/dashboard/DashboardPage";
 import NotFoundPage from "@/pages/not-found/NotFoundPage";
 import EnConstruccionPage from "@/pages/construccion/EnConstruccionPage";
 import LoginPage from "@/pages/auth/LoginPage";
-import RecuperarPasswordPage from "@/pages/auth/RecuperarPasswordPage";
-import RestablecerPasswordPage from "@/pages/auth/RestablecerPasswordPage";
-import EmpleadosPage from "@/pages/empleados/EmpleadosPage";
-import EmpleadoDetalleLayout from "@/pages/empleados/EmpleadoDetalleLayout";
-import EmpleadoInformacionPage from "@/pages/empleados/detalle/EmpleadoInformacionPage";
-import EmpleadoContratosPage from "@/pages/empleados/detalle/EmpleadoContratosPage";
-import EmpleadoDerechohabientesPage from "@/pages/empleados/detalle/EmpleadoDerechohabientesPage";
-import EmpleadoAsistenciaPage from "@/pages/empleados/detalle/EmpleadoAsistenciaPage";
-import EmpleadoHistorialPage from "@/pages/empleados/detalle/EmpleadoHistorialPage";
-import NuevoEmpleadoPage from "@/pages/empleados/NuevoEmpleadoPage";
-import EditarEmpleadoPage from "@/pages/empleados/EditarEmpleadoPage";
-import EditarDatosFinancierosPage from "@/pages/empleados/EditarDatosFinancierosPage";
+
+/**
+ * Carga una página solo cuando se entra a su ruta
+ *
+ * @remarks
+ * Cada página queda en su propio archivo JS. Mientras llega, React Router
+ * mantiene visible la página anterior.
+ */
+const lazyPage = (load: () => Promise<{ default: ComponentType }>) => async () => ({
+  Component: (await load()).default,
+});
 
 const DETALLE_EMPLEADO_TABS = [
   {
     path: ROUTE_PATHS.gestionPersonal.detalleEmpleadoContratos,
-    element: <EmpleadoContratosPage />,
+    lazy: lazyPage(() => import("@/pages/empleados/detalle/EmpleadoContratosPage")),
   },
   {
     path: ROUTE_PATHS.gestionPersonal.detalleEmpleadoDerechohabientes,
-    element: <EmpleadoDerechohabientesPage />,
+    lazy: lazyPage(
+      () => import("@/pages/empleados/detalle/EmpleadoDerechohabientesPage"),
+    ),
   },
   {
     path: ROUTE_PATHS.gestionPersonal.detalleEmpleadoAsistencia,
-    element: <EmpleadoAsistenciaPage />,
+    lazy: lazyPage(() => import("@/pages/empleados/detalle/EmpleadoAsistenciaPage")),
   },
   {
     path: ROUTE_PATHS.gestionPersonal.detalleEmpleadoHistorial,
-    element: <EmpleadoHistorialPage />,
+    lazy: lazyPage(() => import("@/pages/empleados/detalle/EmpleadoHistorialPage")),
   },
 ];
 
@@ -56,6 +58,8 @@ export const router = createBrowserRouter([
   },
   {
     element: <GuestRoute />,
+    // Si la primera página es diferida, mientras llega se ve la pantalla de carga
+    HydrateFallback: SessionLoadingScreen,
     children: [
       {
         element: <AuthLayout />,
@@ -66,11 +70,11 @@ export const router = createBrowserRouter([
           },
           {
             path: ROUTE_PATHS.auth.recuperarPassword,
-            element: <RecuperarPasswordPage />,
+            lazy: lazyPage(() => import("@/pages/auth/RecuperarPasswordPage")),
           },
           {
             path: ROUTE_PATHS.auth.restablecerPassword,
-            element: <RestablecerPasswordPage />,
+            lazy: lazyPage(() => import("@/pages/auth/RestablecerPasswordPage")),
           },
         ],
       },
@@ -78,6 +82,7 @@ export const router = createBrowserRouter([
   },
   {
     element: <ProtectedRoute />,
+    HydrateFallback: SessionLoadingScreen,
     children: [
       {
         element: <AppLayout />,
@@ -87,7 +92,7 @@ export const router = createBrowserRouter([
             children: [
               {
                 path: ROUTE_PATHS.dashboard,
-                element: <DashboardPage />,
+                lazy: lazyPage(() => import("@/pages/dashboard/DashboardPage")),
               },
             ],
           },
@@ -96,7 +101,7 @@ export const router = createBrowserRouter([
             children: [
               {
                 path: ROUTE_PATHS.gestionPersonal.empleados,
-                element: <EmpleadosPage />,
+                lazy: lazyPage(() => import("@/pages/empleados/EmpleadosPage")),
               },
             ],
           },
@@ -107,7 +112,7 @@ export const router = createBrowserRouter([
             children: [
               {
                 path: ROUTE_PATHS.gestionPersonal.nuevoEmpleado,
-                element: <NuevoEmpleadoPage />,
+                lazy: lazyPage(() => import("@/pages/empleados/NuevoEmpleadoPage")),
               },
             ],
           },
@@ -118,7 +123,7 @@ export const router = createBrowserRouter([
             children: [
               {
                 path: ROUTE_PATHS.gestionPersonal.editarEmpleado,
-                element: <EditarEmpleadoPage />,
+                lazy: lazyPage(() => import("@/pages/empleados/EditarEmpleadoPage")),
               },
             ],
           },
@@ -131,7 +136,9 @@ export const router = createBrowserRouter([
             children: [
               {
                 path: ROUTE_PATHS.gestionPersonal.editarDatosFinancieros,
-                element: <EditarDatosFinancierosPage />,
+                lazy: lazyPage(
+                  () => import("@/pages/empleados/EditarDatosFinancierosPage"),
+                ),
               },
             ],
           },
@@ -142,13 +149,18 @@ export const router = createBrowserRouter([
             children: [
               {
                 path: ROUTE_PATHS.gestionPersonal.detalleEmpleado,
-                element: <EmpleadoDetalleLayout />,
+                lazy: lazyPage(() => import("@/pages/empleados/EmpleadoDetalleLayout")),
                 // Cada pestaña de la ficha es una ruta hija con su propio permiso
                 children: [
-                  { index: true, element: <EmpleadoInformacionPage /> },
-                  ...DETALLE_EMPLEADO_TABS.map(({ path, element }) => ({
+                  {
+                    index: true,
+                    lazy: lazyPage(
+                      () => import("@/pages/empleados/detalle/EmpleadoInformacionPage"),
+                    ),
+                  },
+                  ...DETALLE_EMPLEADO_TABS.map(({ path, lazy }) => ({
                     element: <RoleRoute path={path} />,
-                    children: [{ path, element }],
+                    children: [{ path, lazy }],
                   })),
                 ],
               },

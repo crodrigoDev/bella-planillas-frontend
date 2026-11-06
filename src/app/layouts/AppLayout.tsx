@@ -12,7 +12,7 @@ import { RRHH_SIDEBAR_ITEMS } from "@/features/navigation/config/navigation.conf
 import type { NavigationUser } from "@/features/navigation/types/navigation.types";
 import type { CSSProperties } from "react";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { filterSidebarItems } from "@/features/navigation/utils/filter-sidebar-items";
+import { filterSidebarItems } from "@/features/navigation/utils/sidebar.utils";
 
 /**
  * Comparte el sidebar y la estructura principal entre las páginas internas

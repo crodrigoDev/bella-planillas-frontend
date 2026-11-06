@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
+import { EmptyState } from "@/components/feedback/EmptyState";
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface DetalleTabEstadoProps {
@@ -12,6 +12,8 @@ interface DetalleTabEstadoProps {
   isEmpty: boolean;
   emptyTitle: string;
   emptyDescription: string;
+  /** Botón bajo el mensaje vacío, por ejemplo para crear lo que falta */
+  emptyAction?: ReactNode;
   children: ReactNode;
 }
 
@@ -25,6 +27,7 @@ export function DetalleTabEstado({
   isEmpty,
   emptyTitle,
   emptyDescription,
+  emptyAction,
   children,
 }: DetalleTabEstadoProps) {
   if (isLoading) {
@@ -42,21 +45,18 @@ export function DetalleTabEstado({
       <ErrorAlert
         error={error}
         title="No se pudo cargar la información"
-        action={
-          <Button variant="outline" size="sm" onClick={onRetry}>
-            Reintentar
-          </Button>
-        }
+        onRetry={onRetry}
       />
     );
   }
 
   if (isEmpty) {
     return (
-      <div className="space-y-1 py-12 text-center">
-        <p className="font-medium">{emptyTitle}</p>
-        <p className="text-sm text-muted-foreground">{emptyDescription}</p>
-      </div>
+      <EmptyState
+        title={emptyTitle}
+        description={emptyDescription}
+        action={emptyAction}
+      />
     );
   }
 
