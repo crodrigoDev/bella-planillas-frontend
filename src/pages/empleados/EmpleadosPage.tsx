@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, UploadIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { OnChangeFn, PaginationState } from "@tanstack/react-table";
 import { ROUTE_PATHS } from "@/app/routes/path";
@@ -68,13 +68,23 @@ export default function EmpleadosPage() {
         title="Empleados"
         description="Colaboradores de la empresa"
         action={
-          <Button
-            nativeButton={false}
-            render={<Link to={ROUTE_PATHS.gestionPersonal.nuevoEmpleado} />}
-          >
-            <PlusIcon data-icon="inline-start" />
-            Nuevo empleado
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant="outline"
+              nativeButton={false}
+              render={<Link to={ROUTE_PATHS.gestionPersonal.importarEmpleados} />}
+            >
+              <UploadIcon data-icon="inline-start" />
+              Importar
+            </Button>
+            <Button
+              nativeButton={false}
+              render={<Link to={ROUTE_PATHS.gestionPersonal.nuevoEmpleado} />}
+            >
+              <PlusIcon data-icon="inline-start" />
+              Nuevo empleado
+            </Button>
+          </div>
         }
       />
 
