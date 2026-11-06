@@ -31,6 +31,33 @@ Campo de búsqueda que avisa con `onSearch` solo cuando se deja de escribir (esp
 
 [`src/features/empleados/components/listado/EmpleadosToolbar.tsx`](../../src/features/empleados/components/listado/EmpleadosToolbar.tsx)
 
+## DateRangeFilter
+
+Botón que abre un calendario de dos meses (shadcn `Calendar` en modo rango) para elegir
+desde y hasta. Trabaja con textos `YYYY-MM-DD`, los mismos de la URL; se puede dejar solo
+la fecha inicial.
+
+| Prop | Tipo | Notas |
+| --- | --- | --- |
+| `from` | `string?` | Fecha inicial |
+| `to` | `string?` | Fecha final |
+| `onChange` | `(from?, to?) => void` | Recibe el rango completo en una sola llamada |
+| `ariaLabel` | `string` | |
+| `placeholder` | `string?` | Por defecto "Rango de fechas" |
+| `invalid` | `boolean?` | Borde de error (rango invertido) |
+| `className` | `string?` | |
+
+```tsx
+<DateRangeFilter
+  ariaLabel="Filtrar por rango de fechas"
+  from={filters.fecha_inicio}
+  to={filters.fecha_fin}
+  onChange={onFechasChange}
+/>
+```
+
+[`src/features/asistencia/components/marcaciones/MarcacionesToolbar.tsx`](../../src/features/asistencia/components/marcaciones/MarcacionesToolbar.tsx)
+
 ## FilterSelect
 
 Selector de un filtro con una primera opción "todos" que lo quita (`onChange` recibe
