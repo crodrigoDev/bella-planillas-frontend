@@ -3,8 +3,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { ModalFormFooter } from "@/components/form/ModalFormFooter";
-import { SelectField } from "@/components/form/SelectField";
-import { TextField } from "@/components/form/TextField";
 import {
   Dialog,
   DialogContent,
@@ -14,16 +12,15 @@ import {
 } from "@/components/ui/dialog";
 import { getTodayIsoDate } from "@/lib/date.utils";
 import { zodResolverOptions } from "@/lib/zodMessages.utils";
-import { TIPO_MARCA_OPTIONS } from "../../config/asistencia.config";
 import { useMarcacionManual } from "../../hooks/useAsistenciaActions";
 import { MarcacionManualFormSchema } from "../../schemas/asistencia.schema";
 import {
   formatPeriodo,
   getRangoPeriodo,
-  toFechaHoraLima,
+  toMarcacionManualDto,
 } from "../../utils/asistencia.utils";
 import { AvisoJornada } from "../AvisoJornada";
-import { MotivoField } from "../MotivoField";
+import { MarcacionCampos } from "../MarcacionCampos";
 
 const resolver = zodResolver(MarcacionManualFormSchema, zodResolverOptions);
 
@@ -103,12 +100,7 @@ function MarcacionManualForm({
 
   const onSubmit = (values: MarcacionDatos) =>
     mutation.mutate(
-      {
-        nro_documento: nroDocumento,
-        fecha_hora: toFechaHoraLima(values.fecha, values.hora),
-        tipo_marcacion: values.tipo_marcacion,
-        motivo: values.motivo,
-      },
+      toMarcacionManualDto(nroDocumento, values),
       { onSuccess: onClose },
     );
 
@@ -128,24 +120,7 @@ function MarcacionManualForm({
         </DialogHeader>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <TextField
-            name="fecha"
-            label="Fecha"
-            required
-            type="date"
-            min={rango.inicio}
-            max={maxFecha}
-          />
-          <TextField name="hora" label="Hora" required type="time" />
-          <SelectField
-            name="tipo_marcacion"
-            label="Tipo de marcación"
-            required
-            options={TIPO_MARCA_OPTIONS}
-            placeholder="Selecciona un tipo"
-            fieldClassName="col-span-full"
-          />
-          <MotivoField placeholder="Por qué se registra a mano" />
+          <MarcacionCampos minFecha={rango.inicio} maxFecha={maxFecha} />
         </div>
 
         {sinJornada && (

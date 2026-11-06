@@ -3,8 +3,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { ModalFormFooter } from "@/components/form/ModalFormFooter";
-import { SelectField } from "@/components/form/SelectField";
-import { TextField } from "@/components/form/TextField";
 import {
   Dialog,
   DialogContent,
@@ -14,12 +12,11 @@ import {
 } from "@/components/ui/dialog";
 import { getTodayIsoDate } from "@/lib/date.utils";
 import { zodResolverOptions } from "@/lib/zodMessages.utils";
-import { TIPO_MARCA_OPTIONS } from "../../config/asistencia.config";
 import { useMarcacionManualGlobal } from "../../hooks/useAsistenciaActions";
 import { MarcacionGlobalFormSchema } from "../../schemas/asistencia.schema";
 import type { EmpleadoMarcableOption } from "../../types/marcaciones.types";
-import { toFechaHoraLima } from "../../utils/asistencia.utils";
-import { MotivoField } from "../MotivoField";
+import { toMarcacionManualDto } from "../../utils/asistencia.utils";
+import { MarcacionCampos } from "../MarcacionCampos";
 import { ColaboradorCombobox } from "./ColaboradorCombobox";
 
 const resolver = zodResolver(MarcacionGlobalFormSchema, zodResolverOptions);
@@ -95,12 +92,7 @@ function RegistrarMarcacionForm({
 
     mutation.mutate(
       {
-        dto: {
-          nro_documento: empleado.nro_documento,
-          fecha_hora: toFechaHoraLima(values.fecha, values.hora),
-          tipo_marcacion: values.tipo_marcacion,
-          motivo: values.motivo,
-        },
+        dto: toMarcacionManualDto(empleado.nro_documento, values),
         empleadoId: empleado.value,
         periodo: values.fecha.slice(0, 7),
       },
@@ -133,23 +125,7 @@ function RegistrarMarcacionForm({
             onSearchChange={onSearchChange}
             fieldClassName="col-span-full"
           />
-          <TextField
-            name="fecha"
-            label="Fecha"
-            required
-            type="date"
-            max={getTodayIsoDate()}
-          />
-          <TextField name="hora" label="Hora" required type="time" />
-          <SelectField
-            name="tipo_marcacion"
-            label="Tipo de marcación"
-            required
-            options={TIPO_MARCA_OPTIONS}
-            placeholder="Selecciona un tipo"
-            fieldClassName="col-span-full"
-          />
-          <MotivoField placeholder="Por qué se registra a mano" />
+          <MarcacionCampos maxFecha={getTodayIsoDate()} />
         </div>
 
         <ErrorAlert error={mutation.error} />
