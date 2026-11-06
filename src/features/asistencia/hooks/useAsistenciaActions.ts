@@ -12,6 +12,7 @@ import {
   type MarcacionManualDto,
 } from "../services/asistencia.service";
 import { asistenciaKey } from "./useAsistencia";
+import { marcacionesKey } from "./useMarcaciones";
 
 /**
  * Vuelve a calcular el resumen del mes después de cambiar sus fuentes
@@ -69,6 +70,31 @@ export function useMarcacionManual(empleadoId: string, periodo: string) {
     successMessage: "La marcación se registró correctamente.",
     afterSuccess: () => regenerarResumen(empleadoId, periodo),
     invalidate: [asistenciaKey.all],
+  });
+}
+
+/** Datos para registrar una marcación manual desde el listado global */
+interface MarcacionGlobalVars {
+  dto: MarcacionManualDto;
+  empleadoId: string;
+  /** Mes de la marcación (YYYY-MM), cuyo resumen se actualiza */
+  periodo: string;
+}
+
+/**
+ * Registra una marcación manual de cualquier colaborador (listado global)
+ *
+ * @remarks
+ * El empleado y el mes llegan al enviar, porque se eligen en el formulario.
+ * Actualiza el resumen del mes y refresca el listado y la asistencia.
+ */
+export function useMarcacionManualGlobal() {
+  return useMutationConAviso({
+    mutationFn: ({ dto }: MarcacionGlobalVars) => asistenciaService.marcar(dto),
+    successMessage: "La marcación se registró correctamente.",
+    afterSuccess: (_, { empleadoId, periodo }) =>
+      regenerarResumen(empleadoId, periodo),
+    invalidate: [marcacionesKey.all, asistenciaKey.all],
   });
 }
 

@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { UploadIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import { PlusIcon, UploadIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { OnChangeFn, PaginationState } from "@tanstack/react-table";
 import { ROUTE_PATHS } from "@/app/routes/path";
@@ -8,15 +8,20 @@ import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { PageHeader } from "@/components/page/PageHeader";
 import { Button } from "@/components/ui/button";
 import { MarcacionesToolbar } from "@/features/asistencia/components/marcaciones/MarcacionesToolbar";
+import { RegistrarMarcacionModal } from "@/features/asistencia/components/marcaciones/RegistrarMarcacionModal";
 import { marcacionesColumns } from "@/features/asistencia/config/marcaciones.columns";
 import { useMarcaciones } from "@/features/asistencia/hooks/useMarcaciones";
 import { useMarcacionesFilters } from "@/features/asistencia/hooks/useMarcacionesFilters";
-import type { Marcacion } from "@/features/asistencia/types/marcaciones.types";
+import type {
+  EmpleadoMarcableOption,
+  Marcacion,
+} from "@/features/asistencia/types/marcaciones.types";
 import { useEmpleadosActivos } from "@/features/empleados/hooks/useCatalogos";
 import type { SelectOption } from "@/lib/types/options.types";
 
 const NO_MARCACIONES: Marcacion[] = [];
 const NO_OPTIONS: SelectOption[] = [];
+const NO_EMPLEADOS: EmpleadoMarcableOption[] = [];
 
 /**
  * Lista todas las marcaciones con paginación del servidor y filtros
@@ -37,7 +42,10 @@ export default function MarcacionesPage() {
     setFechas,
     clearFilters,
   } = useMarcacionesFilters();
+  const [registrando, setRegistrando] = useState(false);
+  const [busqueda, setBusqueda] = useState("");
   const empleados = useEmpleadosActivos();
+  const empleadosBusqueda = useEmpleadosActivos(busqueda);
   const { data, isLoading, isFetching, isPlaceholderData, error, refetch } =
     useMarcaciones(queryFilters);
 
@@ -63,20 +71,29 @@ export default function MarcacionesPage() {
   };
 
   return (
-    <section className="flex min-h-0 flex-1 flex-col gap-4" aria-labelledby="marcaciones-title">
+    <section
+      className="flex min-h-0 flex-1 flex-col gap-4"
+      aria-labelledby="marcaciones-title"
+    >
       <PageHeader
         id="marcaciones-title"
         title="Marcaciones"
         description="Registro de entradas y salidas de todos los colaboradores"
         action={
-          <Button
-            variant="outline"
-            nativeButton={false}
-            render={<Link to={ROUTE_PATHS.asistencia.importarMarcaciones} />}
-          >
-            <UploadIcon data-icon="inline-start" />
-            Importar
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant="outline"
+              nativeButton={false}
+              render={<Link to={ROUTE_PATHS.asistencia.importarMarcaciones} />}
+            >
+              <UploadIcon data-icon="inline-start" />
+              Importar
+            </Button>
+            <Button onClick={() => setRegistrando(true)}>
+              <PlusIcon data-icon="inline-start" />
+              Registrar marcación
+            </Button>
+          </div>
         }
       />
 
@@ -111,6 +128,17 @@ export default function MarcacionesPage() {
             : "Todavía no hay marcaciones registradas"
         }
         itemLabel="marcaciones"
+      />
+
+      <RegistrarMarcacionModal
+        empleados={empleadosBusqueda.data ?? NO_EMPLEADOS}
+        empleadosLoading={empleadosBusqueda.isFetching}
+        onSearchChange={setBusqueda}
+        open={registrando}
+        onOpenChange={(open) => {
+          setRegistrando(open);
+          if (!open) setBusqueda("");
+        }}
       />
     </section>
   );

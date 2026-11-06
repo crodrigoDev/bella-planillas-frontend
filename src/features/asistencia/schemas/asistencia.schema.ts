@@ -20,6 +20,29 @@ const motivo = z
   .min(5, "Explica el motivo en al menos 5 caracteres")
   .max(1000, "El motivo no puede pasar de 1000 caracteres");
 
+const marcacionManualCampos = z.object({
+  fecha,
+  hora,
+  tipo_marcacion: z.enum([
+    "ENTRADA",
+    "SALIDA_ALMUERZO",
+    "ENTRADA_ALMUERZO",
+    "SALIDA",
+  ]),
+  motivo,
+});
+
+/** Las marcaciones futuras las rechaza el backend; aquí se avisa antes */
+const noEsFutura = (datos: { fecha: string; hora: string }): boolean =>
+  !REGEX_FECHA.test(datos.fecha) ||
+  !REGEX_HORA.test(datos.hora) ||
+  new Date(toFechaHoraLima(datos.fecha, datos.hora)) <= new Date();
+
+const errorFutura = {
+  message: "No se pueden registrar marcaciones futuras",
+  path: ["hora"],
+};
+
 /**
  * Formulario de una marcación manual
  *
@@ -27,25 +50,15 @@ const motivo = z
  * La fecha y la hora se piden por separado y el servicio las junta con la
  * zona de Lima. El backend rechaza las marcaciones futuras; aquí se avisa antes.
  */
-export const MarcacionManualFormSchema = z
-  .object({
-    fecha,
-    hora,
-    tipo_marcacion: z.enum([
-      "ENTRADA",
-      "SALIDA_ALMUERZO",
-      "ENTRADA_ALMUERZO",
-      "SALIDA",
-    ]),
-    motivo,
-  })
-  .refine(
-    (datos) =>
-      !REGEX_FECHA.test(datos.fecha) ||
-      !REGEX_HORA.test(datos.hora) ||
-      new Date(toFechaHoraLima(datos.fecha, datos.hora)) <= new Date(),
-    { message: "No se pueden registrar marcaciones futuras", path: ["hora"] },
-  );
+export const MarcacionManualFormSchema = marcacionManualCampos.refine(
+  noEsFutura,
+  errorFutura,
+);
+
+/** Marcación manual desde el listado global: además pide el colaborador */
+export const MarcacionGlobalFormSchema = marcacionManualCampos
+  .extend({ empleado_id: z.string().min(1, "Elige un colaborador") })
+  .refine(noEsFutura, errorFutura);
 
 /** Formulario para rechazar o reabrir el resumen de un mes: solo pide el motivo */
 export const ResolverResumenFormSchema = ResolverIncidenciaSchema.pick({

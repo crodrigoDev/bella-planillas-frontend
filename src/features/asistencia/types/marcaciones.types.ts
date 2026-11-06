@@ -74,3 +74,10 @@ export interface ImportacionMarcacionesResultado {
   insertadas: number;
   duplicadas_omitidas: number;
 }
+
+/** Colaborador que se puede elegir al registrar una marcación: el backend la identifica por su documento */
+export interface EmpleadoMarcableOption {
+  value: string;
+  label: string;
+  nro_documento: string;
+}

@@ -49,15 +49,30 @@ export const catalogosService = {
     return toOptions(response.data.data);
   },
 
-  /** Consulta los empleados activos (hasta 100) con su nombre completo como texto */
-  listEmpleados: async (): Promise<SelectOption[]> => {
+  /**
+   * Consulta los empleados activos (hasta 100) con su nombre completo y su documento
+   *
+   * @param search - Si se indica, filtra por nombre o documento
+   */
+  listEmpleados: async (
+    search?: string,
+  ): Promise<(SelectOption & { nro_documento: string })[]> => {
     const response = await protectedHttpClient.get<
-      PaginationApiResponse<Pick<Empleado, "id" | "nombre_completo">>
-    >("/rrhh/empleado", { params: { limit: CATALOGO_LIMIT, activo: true } });
+      PaginationApiResponse<
+        Pick<Empleado, "id" | "nombre_completo" | "nro_documento">
+      >
+    >("/rrhh/empleado", {
+      params: {
+        limit: CATALOGO_LIMIT,
+        activo: true,
+        search: search || undefined,
+      },
+    });
 
-    return response.data.data.map(({ id, nombre_completo }) => ({
+    return response.data.data.map(({ id, nombre_completo, nro_documento }) => ({
       value: id,
       label: nombre_completo,
+      nro_documento,
     }));
   },
 

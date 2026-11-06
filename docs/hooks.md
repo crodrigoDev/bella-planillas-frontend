@@ -15,6 +15,7 @@ lo envuelve en su `useCatalogos.ts`.
 | `key` | `readonly unknown[]` | Va después de `"catalogos"` |
 | `queryFn` | `() => Promise<T>` | Llama al servicio |
 | `staleTime` | `number?` | Por defecto 30 minutos |
+| `keepPrevious` | `boolean?` | Conserva la lista anterior mientras llega la nueva; para catálogos con búsqueda |
 
 ```ts
 export function useModalidadesContrato() {

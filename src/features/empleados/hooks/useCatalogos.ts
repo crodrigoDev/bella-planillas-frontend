@@ -39,11 +39,16 @@ export function useTiposDocumento() {
   );
 }
 
-/** Obtiene los empleados activos para un selector (por ejemplo el filtro de marcaciones) */
-export function useEmpleadosActivos() {
+/**
+ * Obtiene los empleados activos para un selector (filtro y registro de marcaciones)
+ *
+ * @param search - Nombre o documento a buscar; sin texto trae los primeros 100
+ */
+export function useEmpleadosActivos(search?: string) {
   return useCatalogo(
-    ["empleados-activos"],
-    () => catalogosService.listEmpleados(),
+    ["empleados-activos", search ?? ""],
+    () => catalogosService.listEmpleados(search),
     ORGANIZACION_STALE_TIME,
+    true,
   );
 }
