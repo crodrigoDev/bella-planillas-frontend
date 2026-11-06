@@ -1,7 +1,5 @@
-import { useEffect } from "react";
 import { PlusIcon, UploadIcon } from "lucide-react";
 import { Link } from "react-router-dom";
-import type { OnChangeFn, PaginationState } from "@tanstack/react-table";
 import { ROUTE_PATHS } from "@/app/routes/path";
 import { DataTable } from "@/components/data-table/DataTable";
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
@@ -12,6 +10,7 @@ import { empleadosColumns } from "@/features/empleados/config/empleados.columns"
 import { useEmpleados } from "@/features/empleados/hooks/useEmpleados";
 import { useEmpleadosFilters } from "@/features/empleados/hooks/useEmpleadosFilters";
 import type { Empleado } from "@/features/empleados/types/empleados.types";
+import { usePaginacionServidor } from "@/hooks/usePaginacionServidor";
 
 const NO_EMPLEADOS: Empleado[] = [];
 
@@ -40,26 +39,13 @@ export default function EmpleadosPage() {
     refetch,
   } = useEmpleados(filters);
 
-  useEffect(() => {
-    if (!data || isPlaceholderData) return;
-
-    const lastPage = Math.max(data.pagination.totalPages, 1);
-
-    if (filters.page > lastPage) setPage(lastPage, true);
-  }, [data, isPlaceholderData, filters.page, setPage]);
-
-  const pagination: PaginationState = {
-    pageIndex: filters.page - 1,
-    pageSize: filters.limit,
-  };
-
-  const handlePaginationChange: OnChangeFn<PaginationState> = (updater) => {
-    const next = typeof updater === "function" ? updater(pagination) : updater;
-
-    // Cambiar las filas por página reinicia a la primera página
-    if (next.pageSize !== pagination.pageSize) setLimit(next.pageSize);
-    else setPage(next.pageIndex + 1);
-  };
+  const { pagination, onPaginationChange } = usePaginacionServidor({
+    page: filters.page,
+    limit: filters.limit,
+    totalPages: isPlaceholderData ? undefined : data?.pagination.totalPages,
+    setPage,
+    setLimit,
+  });
 
   return (
     <section className="flex min-h-0 flex-1 flex-col gap-4" aria-labelledby="empleados-title">
@@ -107,7 +93,7 @@ export default function EmpleadosPage() {
         data={data?.items ?? NO_EMPLEADOS}
         pagination={pagination}
         rowCount={data?.pagination.total ?? 0}
-        onPaginationChange={handlePaginationChange}
+        onPaginationChange={onPaginationChange}
         isLoading={isLoading}
         isFetching={isFetching}
         emptyMessage="No se encontraron empleados"

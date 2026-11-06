@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { PlusIcon, UploadIcon } from "lucide-react";
 import { Link } from "react-router-dom";
-import type { OnChangeFn, PaginationState } from "@tanstack/react-table";
 import { ROUTE_PATHS } from "@/app/routes/path";
 import { DataTable } from "@/components/data-table/DataTable";
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
@@ -19,6 +18,7 @@ import type {
 import { useEmpleadosActivos } from "@/features/empleados/hooks/useCatalogos";
 import { useEmpleado } from "@/features/empleados/hooks/useEmpleado";
 import { getNombreCompleto } from "@/features/empleados/utils/empleados.utils";
+import { usePaginacionServidor } from "@/hooks/usePaginacionServidor";
 
 const NO_MARCACIONES: Marcacion[] = [];
 const NO_EMPLEADOS: EmpleadoMarcableOption[] = [];
@@ -48,26 +48,13 @@ export default function MarcacionesPage() {
   const { data, isLoading, isFetching, isPlaceholderData, error, refetch } =
     useMarcaciones(filters);
 
-  useEffect(() => {
-    if (!data || isPlaceholderData) return;
-
-    const lastPage = Math.max(data.pagination.totalPages, 1);
-
-    if (filters.page > lastPage) setPage(lastPage, true);
-  }, [data, isPlaceholderData, filters.page, setPage]);
-
-  const pagination: PaginationState = {
-    pageIndex: filters.page - 1,
-    pageSize: filters.limit,
-  };
-
-  const handlePaginationChange: OnChangeFn<PaginationState> = (updater) => {
-    const next = typeof updater === "function" ? updater(pagination) : updater;
-
-    // Cambiar las filas por página reinicia a la primera página
-    if (next.pageSize !== pagination.pageSize) setLimit(next.pageSize);
-    else setPage(next.pageIndex + 1);
-  };
+  const { pagination, onPaginationChange } = usePaginacionServidor({
+    page: filters.page,
+    limit: filters.limit,
+    totalPages: isPlaceholderData ? undefined : data?.pagination.totalPages,
+    setPage,
+    setLimit,
+  });
 
   return (
     <section
@@ -121,7 +108,7 @@ export default function MarcacionesPage() {
         data={data?.items ?? NO_MARCACIONES}
         pagination={pagination}
         rowCount={data?.pagination.total ?? 0}
-        onPaginationChange={handlePaginationChange}
+        onPaginationChange={onPaginationChange}
         isLoading={isLoading}
         isFetching={isFetching}
         emptyMessage={
