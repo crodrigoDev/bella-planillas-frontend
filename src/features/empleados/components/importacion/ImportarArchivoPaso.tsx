@@ -4,6 +4,7 @@ import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { FileDropzone } from "@/components/form/FileDropzone";
 import { LoadingButton } from "@/components/form/LoadingButton";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { formatBytes, getArchivoError, type ReglasArchivo } from "@/lib/archivo.utils";
 import {
   CARGA_MASIVA_EXTENSIONES,
   CARGA_MASIVA_MAX_BYTES,
@@ -20,16 +21,10 @@ interface ImportarArchivoPasoProps {
 }
 
 // Mismas reglas que el backend, para avisar antes de enviar
-const getArchivoError = (file: File | null): string | null => {
-  if (!file) return null;
-
-  const nombre = file.name.toLowerCase();
-  if (!CARGA_MASIVA_EXTENSIONES.split(",").some((ext) => nombre.endsWith(ext)))
-    return "El archivo debe ser de Excel (.xlsx) o CSV (.csv).";
-  if (file.size > CARGA_MASIVA_MAX_BYTES)
-    return "El archivo no puede superar los 5 MB.";
-
-  return null;
+const REGLAS_ARCHIVO: ReglasArchivo = {
+  extensiones: CARGA_MASIVA_EXTENSIONES.split(","),
+  maxBytes: CARGA_MASIVA_MAX_BYTES,
+  descripcionTipo: "de Excel (.xlsx) o CSV (.csv)",
 };
 
 /**
@@ -43,7 +38,7 @@ export function ImportarArchivoPaso({ onValidado }: ImportarArchivoPasoProps) {
   const plantilla = useDescargarPlantilla();
   const validar = useValidarCargaMasiva();
 
-  const archivoError = getArchivoError(file);
+  const archivoError = getArchivoError(file, REGLAS_ARCHIVO);
 
   const handleChange = (next: File | null) => {
     validar.reset();
@@ -85,7 +80,7 @@ export function ImportarArchivoPaso({ onValidado }: ImportarArchivoPasoProps) {
           file={file}
           onChange={handleChange}
           accept={CARGA_MASIVA_EXTENSIONES}
-          hint="Archivos .xlsx o .csv de hasta 5 MB"
+          hint={`Archivos .xlsx o .csv de hasta ${formatBytes(CARGA_MASIVA_MAX_BYTES)}`}
           invalid={Boolean(archivoError)}
           disabled={validar.isPending}
         />

@@ -19,6 +19,7 @@ import {
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getOptionLabel } from "@/lib/catalogos.utils";
+import { getArchivoError, type ReglasArchivo } from "@/lib/archivo.utils";
 import { formatDate } from "@/lib/format.utils";
 import { zodResolverOptions } from "@/lib/zodMessages.utils";
 import {
@@ -146,14 +147,10 @@ interface SustentoFormProps {
 }
 
 // Mismas reglas que el backend, para avisar antes de enviar
-const getArchivoError = (file: File | null): string | null => {
-  if (!file) return null;
-  if (!SUSTENTO_TIPOS_ARCHIVO.includes(file.type))
-    return "El archivo debe ser un PDF o un documento de Word.";
-  if (file.size > SUSTENTO_MAX_BYTES)
-    return "El archivo no puede superar los 5 MB.";
-
-  return null;
+const REGLAS_ARCHIVO: ReglasArchivo = {
+  tipos: SUSTENTO_TIPOS_ARCHIVO,
+  maxBytes: SUSTENTO_MAX_BYTES,
+  descripcionTipo: "un PDF o un documento de Word",
 };
 
 function SustentoForm({ derechohabienteId, onClose }: SustentoFormProps) {
@@ -164,7 +161,7 @@ function SustentoForm({ derechohabienteId, onClose }: SustentoFormProps) {
     resolver,
   });
 
-  const archivoError = getArchivoError(file);
+  const archivoError = getArchivoError(file, REGLAS_ARCHIVO);
 
   const onSubmit = (values: SustentoDatos) => {
     if (!file || archivoError) return;

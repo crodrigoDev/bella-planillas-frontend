@@ -103,8 +103,40 @@ area_id: parseUuid(searchParams.get("area_id")),
 activo: parseBoolean(searchParams.get("activo")),
 ```
 
-[`src/features/empleados/hooks/useEmpleadosFilters.ts`](../src/features/empleados/hooks/useEmpleadosFilters.ts), que también usa
-`setSearchParams((current) => applyParamChanges(current, changes), { replace })`.
+[`src/hooks/usePaginacionUrl.ts`](../src/hooks/usePaginacionUrl.ts) (lee `page` y cambia la URL con
+`setSearchParams((current) => applyParamChanges(current, changes), { replace })`) y
+[`src/features/empleados/hooks/useEmpleadosFilters.ts`](../src/features/empleados/hooks/useEmpleadosFilters.ts) (`area_id`, `activo`).
+
+## archivo.utils.ts
+
+Revisa un archivo antes de enviarlo, con las mismas reglas que el backend. El mensaje de
+tamaño sale de los bytes, así no se escribe "5 MB" a mano.
+
+| Export | Qué hace |
+| --- | --- |
+| `getArchivoError(file, reglas)` | Mensaje de error, o `null` si no hay archivo o cumple |
+| `formatBytes(bytes)` | `"5 MB"`, `"512 KB"`; sirve también para las ayudas de `FileDropzone` |
+| `ReglasArchivo` | Tipo de las reglas (abajo) |
+
+| Regla | Tipo | Notas |
+| --- | --- | --- |
+| `tipos` | `readonly string[]?` | Tipos MIME permitidos (`file.type`) |
+| `extensiones` | `readonly string[]?` | Con punto (`".xlsx"`). Si hay `tipos` y `extensiones`, basta cumplir uno |
+| `maxBytes` | `number` | Tamaño máximo |
+| `descripcionTipo` | `string` | Completa "El archivo debe ser …" (ej. `"un PDF"`) |
+| `nombre` | `string?` | Sujeto del mensaje de tamaño; por defecto `"El archivo"` |
+
+```ts
+const REGLAS_ARCHIVO: ReglasArchivo = {
+  extensiones: [MARCACIONES_EXTENSION],
+  maxBytes: MARCACIONES_MAX_BYTES,
+  descripcionTipo: "de Excel (.xlsx)",
+};
+
+const archivoError = getArchivoError(file, REGLAS_ARCHIVO);
+```
+
+[`src/features/asistencia/components/importacion/ImportarMarcacionesArchivoPaso.tsx`](../src/features/asistencia/components/importacion/ImportarMarcacionesArchivoPaso.tsx)
 
 ## zodMessages.utils.ts
 
