@@ -118,6 +118,19 @@ export const router = createBrowserRouter([
           },
           {
             element: (
+              <RoleRoute path={ROUTE_PATHS.gestionPersonal.importarEmpleados} />
+            ),
+            children: [
+              {
+                path: ROUTE_PATHS.gestionPersonal.importarEmpleados,
+                lazy: lazyPage(
+                  () => import("@/pages/empleados/ImportarEmpleadosPage"),
+                ),
+              },
+            ],
+          },
+          {
+            element: (
               <RoleRoute path={ROUTE_PATHS.gestionPersonal.editarEmpleado} />
             ),
             children: [
