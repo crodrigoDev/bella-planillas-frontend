@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { CheckIcon, ChevronDownIcon, RefreshCwIcon } from "lucide-react";
 
 import { DetalleTabEstado } from "@/components/feedback/DetalleTabEstado";
@@ -24,6 +25,7 @@ import {
   formatPeriodo,
   getMotivoNoAprobable,
   getPeriodoActual,
+  parsePeriodo,
 } from "../utils/asistencia.utils";
 import { AvisoJornada } from "./AvisoJornada";
 import { DetalleDiarioTabla } from "./DetalleDiarioTabla";
@@ -76,7 +78,11 @@ export function AsistenciaEmpleado({
   jornadas,
   isLoadingJornadas,
 }: AsistenciaEmpleadoProps) {
-  const [periodo, setPeriodo] = useState(getPeriodoActual);
+  const [searchParams] = useSearchParams();
+  // El cierre mensual enlaza aquí con `?periodo=YYYY-MM`; si no es válido, el mes actual
+  const [periodo, setPeriodo] = useState(
+    () => parsePeriodo(searchParams.get("periodo")) ?? getPeriodoActual(),
+  );
   const [modal, setModal] = useState<ModalAbierto | null>(null);
 
   const { data, isLoading, error, refetch } = useResumenMes(

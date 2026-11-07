@@ -13,6 +13,7 @@ su nombre en un tooltip y como `aria-label`.
 | `icon` | `LucideIcon` | |
 | `onClick` | `() => void` | |
 | `tone` | `StatusTone?` | Color del icono: `"info"`, `"success"`, `"danger"`...; por defecto `"neutral"` (gris) |
+| `disabledReason` | `string?` | Deshabilita el botón y muestra el motivo en el tooltip |
 
 ```tsx
 <AccionButton
