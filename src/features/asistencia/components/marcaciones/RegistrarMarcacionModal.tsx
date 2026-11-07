@@ -14,10 +14,10 @@ import { getTodayIsoDate } from "@/lib/date.utils";
 import { zodResolverOptions } from "@/lib/zodMessages.utils";
 import { useMarcacionManualGlobal } from "../../hooks/useAsistenciaActions";
 import { MarcacionGlobalFormSchema } from "../../schemas/asistencia.schema";
-import type { EmpleadoMarcableOption } from "../../types/marcaciones.types";
+import type { ColaboradorOption } from "@/lib/types/options.types";
 import { toMarcacionManualDto } from "../../utils/asistencia.utils";
 import { MarcacionCampos } from "../MarcacionCampos";
-import { ColaboradorCombobox } from "./ColaboradorCombobox";
+import { ColaboradorCombobox } from "@/components/form/ColaboradorCombobox";
 
 const resolver = zodResolver(MarcacionGlobalFormSchema, zodResolverOptions);
 
@@ -26,7 +26,7 @@ type MarcacionDatos = typeof MarcacionGlobalFormSchema._output;
 
 interface RegistrarMarcacionModalProps {
   /** Resultado de la búsqueda de colaboradores; lo trae la página para no depender de otra feature */
-  empleados: EmpleadoMarcableOption[];
+  empleados: ColaboradorOption[];
   empleadosLoading: boolean;
   /** Se llama con el texto a buscar cuando el usuario deja de teclear */
   onSearchChange: (search: string) => void;
@@ -65,7 +65,7 @@ export function RegistrarMarcacionModal({
 }
 
 interface RegistrarMarcacionFormProps {
-  empleados: EmpleadoMarcableOption[];
+  empleados: ColaboradorOption[];
   empleadosLoading: boolean;
   onSearchChange: (search: string) => void;
   onClose: () => void;
