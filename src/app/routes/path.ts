@@ -24,6 +24,8 @@ export const ROUTE_PATHS = {
     detalleEmpleadoAsistencia: "/empleados/:id/asistencia",
     detalleEmpleadoHistorial: "/empleados/:id/historial",
     solicitudes: "/solicitudes",
+    nuevaSolicitud: "/solicitudes/nueva",
+    detalleSolicitud: "/solicitudes/:id",
   },
 
   organizacion: {
@@ -70,3 +72,11 @@ export const buildEditarDatosFinancierosPath = (id: string): string =>
  */
 export const buildEditarJornadaPath = (id: string): string =>
   `${ROUTE_PATHS.asistencia.jornadas}/${id}/editar`;
+
+/**
+ * Arma la ruta del detalle de una solicitud
+ *
+ * @param idOCodigo - Id o código (`SOL-2026-001`) de la solicitud
+ */
+export const buildSolicitudPath = (idOCodigo: string): string =>
+  `${ROUTE_PATHS.gestionPersonal.solicitudes}/${idOCodigo}`;
