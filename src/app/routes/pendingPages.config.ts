@@ -6,6 +6,4 @@ import { ROUTE_PATHS } from "./path";
 export const pendingPages = [
   { path: ROUTE_PATHS.organizacion.areas, title: "Áreas" },
   { path: ROUTE_PATHS.organizacion.cargos, title: "Cargos" },
-  { path: ROUTE_PATHS.auditoria, title: "Auditoría" },
-  { path: ROUTE_PATHS.perfil, title: "Mi perfil" },
 ] as const;

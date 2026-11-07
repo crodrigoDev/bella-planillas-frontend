@@ -280,6 +280,24 @@ export const router = createBrowserRouter([
               },
             ],
           },
+          {
+            element: <RoleRoute path={ROUTE_PATHS.auditoria} />,
+            children: [
+              {
+                path: ROUTE_PATHS.auditoria,
+                lazy: lazyPage(() => import("@/pages/auditoria/AuditoriaPage")),
+              },
+            ],
+          },
+          {
+            element: <RoleRoute path={ROUTE_PATHS.perfil} />,
+            children: [
+              {
+                path: ROUTE_PATHS.perfil,
+                lazy: lazyPage(() => import("@/pages/perfil/PerfilPage")),
+              },
+            ],
+          },
           ...pendingPages.map(({ path, title }) => ({
             element: <RoleRoute path={path} />,
             children: [
