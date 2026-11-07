@@ -69,3 +69,19 @@ export const getAge = (
 
   return year - birthYear - (hadBirthday ? 0 : 1);
 };
+
+/**
+ * Escribe una fecha y hora con la zona de Lima, por ejemplo "05/03/2026, 14:30"
+ *
+ * @param iso - Instante completo con zona (el historial y `created_at`)
+ */
+export const formatFechaHoraLima = (iso: string): string =>
+  new Date(iso).toLocaleString("es-PE", {
+    timeZone: "America/Lima",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });

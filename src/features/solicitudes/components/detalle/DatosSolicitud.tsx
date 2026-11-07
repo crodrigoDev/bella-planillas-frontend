@@ -1,4 +1,5 @@
 import { ResumenCampo } from "@/components/form/ResumenCampo";
+import { formatFechaHoraLima } from "@/lib/date.utils";
 import { formatCurrency, formatDate, orDash } from "@/lib/format.utils";
 import {
   getEfectoLabel,
@@ -10,7 +11,6 @@ import {
 } from "../../config/solicitudes.config";
 import type { SolicitudDetalle } from "../../types/solicitudes.types";
 import {
-  formatFechaHoraLima,
   formatRangoFechas,
   formatRangoHoras,
 } from "../../utils/solicitudes.utils";

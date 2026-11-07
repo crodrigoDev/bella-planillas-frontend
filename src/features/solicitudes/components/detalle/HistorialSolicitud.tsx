@@ -1,6 +1,7 @@
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { TONE_DOT } from "@/components/feedback/statusTone.config";
 import { Skeleton } from "@/components/ui/skeleton";
+import { formatFechaHoraLima } from "@/lib/date.utils";
 import { cn } from "@/lib/utils";
 import {
   getAccionHistorialLabel,
@@ -8,7 +9,6 @@ import {
 } from "../../config/solicitudes.config";
 import { useSolicitudHistorial } from "../../hooks/useSolicitudes";
 import type { EventoSolicitud } from "../../types/solicitudes.types";
-import { formatFechaHoraLima } from "../../utils/solicitudes.utils";
 
 /** Eventos cuyo texto (`observacion.nuevo`) es el motivo de la decisión */
 const ACCIONES_CON_OBSERVACION: EventoSolicitud["accion"][] = [

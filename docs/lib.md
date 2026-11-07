@@ -36,6 +36,7 @@ Fechas como texto `YYYY-MM-DD`, seguras frente a la zona horaria.
 | `toIsoDate(date)` | Fecha local a `YYYY-MM-DD`, sin pasar por UTC |
 | `toDateInput(isoDate)` | Recorta a `YYYY-MM-DD` para `<input type="date">`; `""` si no hay fecha |
 | `getAge(birthIsoDate, referenceIsoDate = hoy)` | Años cumplidos; negativo si la fecha es futura |
+| `formatFechaHoraLima(iso)` | Instante completo con zona a `dd/MM/yyyy, HH:mm` en hora de Lima |
 
 ```ts
 const esFechaPasada = Boolean(desde) && desde < getTodayIsoDate();
