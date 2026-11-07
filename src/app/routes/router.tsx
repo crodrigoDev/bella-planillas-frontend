@@ -201,6 +201,17 @@ export const router = createBrowserRouter([
               },
             ],
           },
+          {
+            element: <RoleRoute path={ROUTE_PATHS.asistencia.cierreMensual} />,
+            children: [
+              {
+                path: ROUTE_PATHS.asistencia.cierreMensual,
+                lazy: lazyPage(
+                  () => import("@/pages/asistencia/CierreMensualPage"),
+                ),
+              },
+            ],
+          },
           ...pendingPages.map(({ path, title }) => ({
             element: <RoleRoute path={path} />,
             children: [

@@ -24,6 +24,7 @@ const ROUTE_ROLES: Readonly<Record<string, readonly AuthRol[] | null>> = {
   [ROUTE_PATHS.asistencia.jornadas]: [RRHH],
   [ROUTE_PATHS.asistencia.marcaciones]: [RRHH],
   [ROUTE_PATHS.asistencia.importarMarcaciones]: [RRHH],
+  [ROUTE_PATHS.asistencia.cierreMensual]: [RRHH],
   // Auditoría queda solo para RRHH por ahora
   [ROUTE_PATHS.auditoria]: [RRHH],
 };
