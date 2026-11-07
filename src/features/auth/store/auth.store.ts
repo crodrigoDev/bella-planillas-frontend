@@ -102,8 +102,12 @@ export const useAuthStore = create<AuthState>()(
 
 /**
  * Renueva el token y lo guarda, conservando los datos del usuario
+ *
+ * @remarks
+ * Comparte la petición en curso con `protectedHttpClient`. Lo usa también el
+ * tiempo real de notificaciones cuando el servidor corta por token vencido.
  */
-const renovarAccessToken = async (): Promise<string> => {
+export const renovarAccessToken = async (): Promise<string> => {
   const accessToken = await refreshAccessToken();
   const { session } = useAuthStore.getState();
 
