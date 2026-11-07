@@ -1,6 +1,6 @@
 import { PencilIcon, Trash2Icon } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { AccionButton } from "@/components/page/AccionButton";
 import { getOptionLabel } from "@/lib/catalogos.utils";
 import { VINCULO_OPTIONS } from "@/features/derechohabientes/config/derechohabientes.config";
 import type { DerechohabienteDraft } from "@/features/derechohabientes/schemas/datosDerechohabiente.schema";
@@ -44,25 +44,17 @@ export function DerechohabientesList({
             </div>
 
             <div className="flex gap-1">
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                aria-label={`Editar a ${nombre}`}
+              <AccionButton
+                label={`Editar a ${nombre}`}
+                icon={PencilIcon}
                 onClick={() => onEdit(index)}
-              >
-                <PencilIcon />
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                aria-label={`Quitar a ${nombre}`}
-                className="hover:bg-destructive/10 hover:text-destructive"
+              />
+              <AccionButton
+                label={`Quitar a ${nombre}`}
+                icon={Trash2Icon}
+                tone="danger"
                 onClick={() => onRemove(index)}
-              >
-                <Trash2Icon />
-              </Button>
+              />
             </div>
           </li>
         );

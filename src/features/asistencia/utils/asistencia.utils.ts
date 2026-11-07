@@ -8,6 +8,19 @@ export const esDiaSinJornada = (dia: DiaAsistencia): boolean =>
   dia.alertas.includes(ALERTA_SIN_JORNADA);
 
 /**
+ * Lo mínimo de un resumen que hace falta para saber si se puede aprobar
+ *
+ * @remarks
+ * Lo cumplen el resumen de la ficha (`ResumenMes`) y la fila del cierre
+ * mensual (`Incidencia`), que no trae el detalle día por día.
+ */
+export type ResumenAprobable = Pick<
+  ResumenMes,
+  "estado" | "vigente" | "completo" | "pendientes"
+> &
+  Partial<Pick<ResumenMes, "detalle">>;
+
+/**
  * Por qué no se puede aprobar un resumen pendiente, o null si se puede
  *
  * @remarks
@@ -15,7 +28,9 @@ export const esDiaSinJornada = (dia: DiaAsistencia): boolean =>
  * y sin días por resolver. Los días sin jornada también cuentan como pendientes
  * en el backend, pero no se pueden resolver: el motivo manda a asignar la jornada.
  */
-export const getMotivoNoAprobable = (resumen: ResumenMes): string | null => {
+export const getMotivoNoAprobable = (
+  resumen: ResumenAprobable,
+): string | null => {
   if (resumen.estado !== "PENDIENTE") return null;
   if (!resumen.vigente)
     return "El resumen está desactualizado: actualízalo para poder aprobarlo.";
@@ -32,6 +47,14 @@ export const getMotivoNoAprobable = (resumen: ResumenMes): string | null => {
 
 /** Mes de hoy como YYYY-MM */
 export const getPeriodoActual = (): string => getTodayIsoDate().slice(0, 7);
+
+const PERIODO_REGEX = /^\d{4}-(0[1-9]|1[0-2])$/;
+
+/** Lee un mes (YYYY-MM) de la URL; solo acepta uno válido que no sea futuro */
+export const parsePeriodo = (value: string | null): string | undefined =>
+  value && PERIODO_REGEX.test(value) && value <= getPeriodoActual()
+    ? value
+    : undefined;
 
 /** Mueve un mes (YYYY-MM) hacia adelante o hacia atrás */
 export const shiftPeriodo = (periodo: string, meses: number): string => {

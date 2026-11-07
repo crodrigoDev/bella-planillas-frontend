@@ -4,15 +4,18 @@
 
 ## AccionButton
 
-Botón de icono para una acción de una fila o tarjeta (editar, quitar, adjuntar…), con
-su nombre en un tooltip y como `aria-label`.
+Botón de icono con borde para una acción de una fila o tarjeta (editar, quitar,
+adjuntar…), con su nombre en un tooltip y como `aria-label`. Al pasar el puntero toma el
+fondo y el borde suaves de su tono. Úsalo para toda acción de icono en tablas, listas y
+tarjetas en lugar de un `Button` suelto.
 
 | Prop | Tipo | Notas |
 | --- | --- | --- |
 | `label` | `string` | Tooltip y `aria-label` |
 | `icon` | `LucideIcon` | |
 | `onClick` | `() => void` | |
-| `tone` | `StatusTone?` | Color del icono: `"info"`, `"success"`, `"danger"`...; por defecto `"neutral"` (gris) |
+| `tone` | `StatusTone?` | Color del icono y del hover: `"info"`, `"success"`, `"danger"`...; por defecto `"neutral"` (gris) |
+| `disabledReason` | `string?` | Deshabilita el botón y muestra el motivo en el tooltip |
 
 ```tsx
 <AccionButton

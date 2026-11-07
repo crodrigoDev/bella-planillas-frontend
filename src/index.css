@@ -192,4 +192,9 @@
   html {
     @apply font-sans;
   }
+  /* Tailwind v4 ya no pone la mano en los botones: se devuelve a los habilitados */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
 }

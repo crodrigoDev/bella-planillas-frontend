@@ -1,6 +1,7 @@
 import {
   Briefcase,
   Building2,
+  CalendarCheck,
   CalendarClock,
   CalendarDays,
   ClipboardList,
@@ -73,6 +74,11 @@ export const RRHH_SIDEBAR_ITEMS = [
         label: "Marcaciones",
         to: ROUTE_PATHS.asistencia.marcaciones,
         icon: ScanLine,
+      },
+      {
+        label: "Cierre mensual",
+        to: ROUTE_PATHS.asistencia.cierreMensual,
+        icon: CalendarCheck,
       },
     ],
   },
