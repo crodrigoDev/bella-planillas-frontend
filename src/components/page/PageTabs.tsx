@@ -1,14 +1,16 @@
-import { useLayoutEffect, useRef } from "react";
-import { NavLink, matchPath, useLocation } from "react-router-dom";
+import { useLayoutEffect, useRef, type ReactNode } from "react";
+import { Link, matchPath, useLocation } from "react-router-dom";
 
 import { cn } from "@/lib/utils";
 
 export interface PageTab {
-  /** Ruta a la que lleva la pestaña */
+  /** Ruta a la que lleva la pestaña; puede ser solo `?parametros` para filtrar la página actual */
   to: string;
-  label: string;
+  label: ReactNode;
   /** La pestaña solo está activa con esa ruta exacta (la pestaña inicial) */
   end?: boolean;
+  /** Si se indica, manda sobre la URL: sirve cuando todas las pestañas comparten ruta y cambia un parámetro */
+  active?: boolean;
 }
 
 interface PageTabsProps {
@@ -21,7 +23,7 @@ interface PageTabsProps {
  * Pestañas de una página, donde cada una es una ruta
  *
  * @remarks
- * La pestaña activa sale de la URL. Son enlaces reales (se pueden abrir en
+ * La pestaña activa sale de la URL (o de `active`). Son enlaces reales (se pueden abrir en
  * otra pestaña del navegador) y el subrayado se desliza hasta la activa;
  * se mueve por el DOM directamente para no volver a renderizar al medir.
  */
@@ -30,8 +32,10 @@ export function PageTabs({ tabs, label }: PageTabsProps) {
   const listRef = useRef<HTMLElement>(null);
   const indicatorRef = useRef<HTMLSpanElement>(null);
 
-  const activeIndex = tabs.findIndex((tab) =>
-    matchPath({ path: tab.to, end: tab.end ?? false }, pathname),
+  const activeIndex = tabs.findIndex(
+    (tab) =>
+      tab.active ??
+      Boolean(matchPath({ path: tab.to, end: tab.end ?? false }, pathname)),
   );
 
   useLayoutEffect(() => {
@@ -63,10 +67,10 @@ export function PageTabs({ tabs, label }: PageTabsProps) {
       className="relative flex gap-8 overflow-x-auto border-b"
     >
       {tabs.map((tab, index) => (
-        <NavLink
+        <Link
           key={tab.to}
           to={tab.to}
-          end={tab.end}
+          aria-current={index === activeIndex ? "page" : undefined}
           className={cn(
             "mb-2 inline-flex h-7 shrink-0 items-center rounded-lg px-2.5 text-sm font-medium transition-colors outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring/50",
             index === activeIndex
@@ -75,7 +79,7 @@ export function PageTabs({ tabs, label }: PageTabsProps) {
           )}
         >
           {tab.label}
-        </NavLink>
+        </Link>
       ))}
 
       <span

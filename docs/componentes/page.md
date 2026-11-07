@@ -56,12 +56,13 @@ Encabezado de una página: `h1`, descripción y una acción opcional a la derech
 
 ## PageTabs
 
-Pestañas de una página donde cada una es una ruta (`NavLink`). La activa sale de la
-URL y el subrayado se desliza hasta ella. Exporta el tipo `PageTab`.
+Pestañas de una página donde cada una es un enlace. La activa sale de la URL (o de
+`active`) y el subrayado se desliza hasta ella. Si todas comparten ruta y solo cambia un
+parámetro (`?estado=...`), cada pestaña manda `active`. Exporta el tipo `PageTab`.
 
 | Prop | Tipo | Notas |
 | --- | --- | --- |
-| `tabs` | `PageTab[]` | `{ to: string; label: string; end?: boolean }`. `end` = activa solo con la ruta exacta |
+| `tabs` | `PageTab[]` | `{ to: string; label: ReactNode; end?: boolean; active?: boolean }`. `end` = activa solo con la ruta exacta; `active` manda sobre la URL |
 | `label` | `string` | Descripción de la navegación para lectores de pantalla |
 
 ```tsx
