@@ -11,17 +11,15 @@ import { RegistrarMarcacionModal } from "@/features/asistencia/components/marcac
 import { marcacionesColumns } from "@/features/asistencia/config/marcaciones.columns";
 import { useMarcaciones } from "@/features/asistencia/hooks/useMarcaciones";
 import { useMarcacionesFilters } from "@/features/asistencia/hooks/useMarcacionesFilters";
-import type {
-  EmpleadoMarcableOption,
-  Marcacion,
-} from "@/features/asistencia/types/marcaciones.types";
+import type { Marcacion } from "@/features/asistencia/types/marcaciones.types";
 import { useEmpleadosActivos } from "@/features/empleados/hooks/useCatalogos";
 import { useEmpleado } from "@/features/empleados/hooks/useEmpleado";
 import { getNombreCompleto } from "@/features/empleados/utils/empleados.utils";
 import { usePaginacionServidor } from "@/hooks/usePaginacionServidor";
+import type { ColaboradorOption } from "@/lib/types/options.types";
 
 const NO_MARCACIONES: Marcacion[] = [];
-const NO_EMPLEADOS: EmpleadoMarcableOption[] = [];
+const NO_EMPLEADOS: ColaboradorOption[] = [];
 
 /**
  * Lista todas las marcaciones con paginación del servidor y filtros

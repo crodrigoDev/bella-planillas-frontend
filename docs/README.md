@@ -34,7 +34,7 @@ Cada pieza es una subsección `##` de su archivo, con este formato:
 
 | Archivo | Piezas |
 | --- | --- |
-| [componentes/form.md](componentes/form.md) | [FormField](componentes/form.md#formfield) · [TextField](componentes/form.md#textfield) · [SelectField](componentes/form.md#selectfield) · [OptionSelect](componentes/form.md#optionselect) · [FormSection](componentes/form.md#formsection) · [RequiredMark](componentes/form.md#requiredmark) · [LoadingButton](componentes/form.md#loadingbutton) · [ModalFormFooter](componentes/form.md#modalformfooter) · [FileDropzone](componentes/form.md#filedropzone) · [ResumenCampo](componentes/form.md#resumencampo) |
+| [componentes/form.md](componentes/form.md) | [FormField](componentes/form.md#formfield) · [TextField](componentes/form.md#textfield) · [SelectField](componentes/form.md#selectfield) · [OptionSelect](componentes/form.md#optionselect) · [FormSection](componentes/form.md#formsection) · [RequiredMark](componentes/form.md#requiredmark) · [LoadingButton](componentes/form.md#loadingbutton) · [ModalFormFooter](componentes/form.md#modalformfooter) · [FileDropzone](componentes/form.md#filedropzone) · [ColaboradorSelect](componentes/form.md#colaboradorselect) · [ColaboradorCombobox](componentes/form.md#colaboradorcombobox) · [ResumenCampo](componentes/form.md#resumencampo) |
 | [componentes/feedback.md](componentes/feedback.md) | [ErrorAlert](componentes/feedback.md#erroralert) · [DetalleTabEstado](componentes/feedback.md#detalletabestado) · [EmptyState](componentes/feedback.md#emptystate) · [ConfirmModal](componentes/feedback.md#confirmmodal) · [StatusBadge](componentes/feedback.md#statusbadge) · [statusTone.config.ts](componentes/feedback.md#statustoneconfigts) |
 | [componentes/page.md](componentes/page.md) | [AccionButton](componentes/page.md#accionbutton) · [PageHeader](componentes/page.md#pageheader) · [PageTabs](componentes/page.md#pagetabs) · [BackLink](componentes/page.md#backlink) · [ResumenCifra](componentes/page.md#resumencifra) |
 | [componentes/filters.md](componentes/filters.md) | [SearchInput](componentes/filters.md#searchinput) · [FilterSelect](componentes/filters.md#filterselect) · [DateRangeFilter](componentes/filters.md#daterangefilter) · [FilterChip](componentes/filters.md#filterchip) · [filters.config.ts](componentes/filters.md#filtersconfigts) |
@@ -57,6 +57,7 @@ Cada pieza es una subsección `##` de su archivo, con este formato:
 | Agrupar campos de un formulario en bloques | [FormSection](componentes/form.md#formsection) |
 | Un botón que espera una petición | [LoadingButton](componentes/form.md#loadingbutton) |
 | Los botones de un formulario en un modal (cancelar y enviar) | [ModalFormFooter](componentes/form.md#modalformfooter) |
+| Elegir un colaborador con búsqueda (suelto o en un formulario) | [ColaboradorSelect](componentes/form.md#colaboradorselect), [ColaboradorCombobox](componentes/form.md#colaboradorcombobox) |
 | Subir un archivo | [FileDropzone](componentes/form.md#filedropzone) |
 | Un modal para confirmar una acción (anular, quitar, aprobar...) | [ConfirmModal](componentes/feedback.md#confirmmodal) |
 | Mostrar el error de una petición, con "Reintentar" | [ErrorAlert](componentes/feedback.md#erroralert) |

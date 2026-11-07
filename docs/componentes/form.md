@@ -239,6 +239,64 @@ la usa valida tipo y tamaño.
 
 [`src/features/contratos/components/modals/SubirPdfModal.tsx`](../../src/features/contratos/components/modals/SubirPdfModal.tsx)
 
+## ColaboradorSelect
+
+Selector de colaborador con búsqueda en el servidor, sin react-hook-form (sirve de filtro
+suelto). No filtra en el navegador: avisa el texto escrito (con espera de 400 ms) y muestra
+lo que se le pasa en `options`. El elegido no desaparece de la lista aunque la búsqueda
+siguiente no lo incluya. Quien lo usa trae las opciones (la página las pide a `empleados`,
+porque una feature no importa de otra).
+
+| Prop | Tipo | Notas |
+| --- | --- | --- |
+| `value` | `string \| undefined` | Id del colaborador elegido |
+| `onChange` | `(value: string \| undefined) => void` | `undefined` al vaciar |
+| `options` | `ColaboradorOption[]` | `{ value, label, nro_documento }` (`lib/types/options.types.ts`) |
+| `onSearchChange` | `(search: string) => void` | Texto escrito, ya con espera |
+| `isLoading` | `boolean?` | Cambia el mensaje de "sin resultados" |
+| `selectedLabel` | `string?` | Nombre del elegido si no está en `options` (el id viene de la URL) |
+| `placeholder`, `id`, `ariaLabel`, `invalid`, `className` | | |
+
+```tsx
+<ColaboradorSelect
+  value={filters.empleado_id}
+  onChange={(value) => onFilterChange("empleado_id", value)}
+  options={empleados}
+  isLoading={empleadosLoading}
+  onSearchChange={onEmpleadoSearchChange}
+  selectedLabel={colaboradorNombre}
+/>
+```
+
+[`src/features/asistencia/components/marcaciones/MarcacionesToolbar.tsx`](../../src/features/asistencia/components/marcaciones/MarcacionesToolbar.tsx)
+
+## ColaboradorCombobox
+
+`ColaboradorSelect` enlazado a un formulario: envuelve el selector con `FormField` y
+`Controller` y guarda solo el id (al vaciar guarda `""`, para que el esquema avise). Debe
+usarse dentro de un `FormProvider`.
+
+| Prop | Tipo | Notas |
+| --- | --- | --- |
+| `name` | `string` | Campo del formulario |
+| `label` | `string` | |
+| `required` | `boolean?` | |
+| `options`, `isLoading`, `onSearchChange`, `placeholder` | | Igual que `ColaboradorSelect` |
+| `fieldClassName` | `string?` | |
+
+```tsx
+<ColaboradorCombobox
+  name="empleado_id"
+  label="Colaborador"
+  required
+  options={empleados}
+  isLoading={empleadosLoading}
+  onSearchChange={onSearchChange}
+/>
+```
+
+[`src/features/asistencia/components/marcaciones/RegistrarMarcacionModal.tsx`](../../src/features/asistencia/components/marcaciones/RegistrarMarcacionModal.tsx)
+
 ## ResumenCampo
 
 Un dato de solo lectura: su nombre y su valor. Va dentro de una `FormSection`.

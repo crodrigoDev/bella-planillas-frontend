@@ -3,12 +3,12 @@ import { DateRangeFilter } from "@/components/filters/DateRangeFilter";
 import { FilterChip } from "@/components/filters/FilterChip";
 import { FilterSelect } from "@/components/filters/FilterSelect";
 import { Button } from "@/components/ui/button";
+import type { ColaboradorOption } from "@/lib/types/options.types";
 import { getOptionLabel } from "@/lib/catalogos.utils";
 import { formatDate } from "@/lib/format.utils";
 import { TIPO_MARCA_FILTRO_OPTIONS } from "../../config/marcaciones.config";
-import { ColaboradorSelect } from "./ColaboradorSelect";
+import { ColaboradorSelect } from "@/components/form/ColaboradorSelect";
 import type {
-  EmpleadoMarcableOption,
   MarcacionFilterKey,
   MarcacionFilters,
 } from "../../types/marcaciones.types";
@@ -17,7 +17,7 @@ interface MarcacionesToolbarProps {
   filters: MarcacionFilters;
   hasActiveFilters: boolean;
   /** Resultado de la búsqueda de colaboradores; lo trae la página para no depender de otra feature */
-  empleados: EmpleadoMarcableOption[];
+  empleados: ColaboradorOption[];
   empleadosLoading: boolean;
   /** Nombre del colaborador filtrado, que la página busca por su id */
   colaboradorNombre: string | undefined;

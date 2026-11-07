@@ -9,7 +9,7 @@ import {
   ComboboxList,
 } from "@/components/ui/combobox";
 import { useDebouncedCallback } from "@/hooks/useDebouncedCallback";
-import type { EmpleadoMarcableOption } from "../../types/marcaciones.types";
+import type { ColaboradorOption } from "@/lib/types/options.types";
 
 /** Espera, en milisegundos, desde la última tecla antes de buscar */
 const BUSQUEDA_DELAY_MS = 400;
@@ -20,7 +20,7 @@ interface ColaboradorSelectProps {
   /** Se llama con el id elegido, o `undefined` al vaciar el campo */
   onChange: (value: string | undefined) => void;
   /** Resultado de la búsqueda vigente; lo trae quien lo usa */
-  options: EmpleadoMarcableOption[];
+  options: ColaboradorOption[];
   isLoading?: boolean;
   /** Se llama con el texto escrito cuando se deja de teclear */
   onSearchChange: (search: string) => void;
@@ -59,7 +59,7 @@ export function ColaboradorSelect({
   // de colaborador. Base UI toma un objeto nuevo como una selección nueva y
   // reescribe el texto del campo: si se armara en cada render, al llegar los
   // resultados de una búsqueda borraría lo que el usuario está escribiendo.
-  const [chosen, setChosen] = useState<EmpleadoMarcableOption | null>(null);
+  const [chosen, setChosen] = useState<ColaboradorOption | null>(null);
   const { run: sendSearch } = useDebouncedCallback(
     onSearchChange,
     BUSQUEDA_DELAY_MS,
@@ -115,7 +115,7 @@ export function ColaboradorSelect({
             : "No se encontraron colaboradores"}
         </ComboboxEmpty>
         <ComboboxList>
-          {(item: EmpleadoMarcableOption) => (
+          {(item: ColaboradorOption) => (
             <ComboboxItem key={item.value} value={item}>
               <span className="flex min-w-0 flex-col">
                 <span className="truncate">{item.label}</span>

@@ -243,6 +243,43 @@ export const router = createBrowserRouter([
               },
             ],
           },
+          {
+            element: <RoleRoute path={ROUTE_PATHS.gestionPersonal.solicitudes} />,
+            children: [
+              {
+                path: ROUTE_PATHS.gestionPersonal.solicitudes,
+                lazy: lazyPage(
+                  () => import("@/pages/solicitudes/SolicitudesPage"),
+                ),
+              },
+            ],
+          },
+          {
+            element: (
+              <RoleRoute path={ROUTE_PATHS.gestionPersonal.nuevaSolicitud} />
+            ),
+            children: [
+              {
+                path: ROUTE_PATHS.gestionPersonal.nuevaSolicitud,
+                lazy: lazyPage(
+                  () => import("@/pages/solicitudes/NuevaSolicitudPage"),
+                ),
+              },
+            ],
+          },
+          {
+            element: (
+              <RoleRoute path={ROUTE_PATHS.gestionPersonal.detalleSolicitud} />
+            ),
+            children: [
+              {
+                path: ROUTE_PATHS.gestionPersonal.detalleSolicitud,
+                lazy: lazyPage(
+                  () => import("@/pages/solicitudes/SolicitudDetallePage"),
+                ),
+              },
+            ],
+          },
           ...pendingPages.map(({ path, title }) => ({
             element: <RoleRoute path={path} />,
             children: [

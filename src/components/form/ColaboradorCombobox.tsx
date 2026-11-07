@@ -1,7 +1,7 @@
 import { Controller, useFormContext } from "react-hook-form";
 
 import { FormField } from "@/components/form/FormField";
-import type { EmpleadoMarcableOption } from "../../types/marcaciones.types";
+import type { ColaboradorOption } from "@/lib/types/options.types";
 import { ColaboradorSelect } from "./ColaboradorSelect";
 
 interface ColaboradorComboboxProps {
@@ -9,7 +9,7 @@ interface ColaboradorComboboxProps {
   label: string;
   required?: boolean;
   /** Resultado de la búsqueda vigente; lo trae la página */
-  options: EmpleadoMarcableOption[];
+  options: ColaboradorOption[];
   isLoading?: boolean;
   /** Se llama con el texto escrito cuando se deja de teclear */
   onSearchChange: (search: string) => void;
