@@ -33,6 +33,8 @@ export const ROUTE_PATHS = {
 
   asistencia: {
     jornadas: "/jornadas",
+    nuevaJornada: "/jornadas/nueva",
+    editarJornada: "/jornadas/:id/editar",
     marcaciones: "/marcaciones",
     importarMarcaciones: "/marcaciones/importar",
     cierreMensual: "/cierre-mensual",
@@ -62,3 +64,9 @@ export const buildEditarEmpleadoPath = (id: string): string =>
  */
 export const buildEditarDatosFinancierosPath = (id: string): string =>
   buildEmpleadoPath(id, "editar-datos-financieros");
+
+/**
+ * Arma la ruta de la edición de una jornada
+ */
+export const buildEditarJornadaPath = (id: string): string =>
+  `${ROUTE_PATHS.asistencia.jornadas}/${id}/editar`;
