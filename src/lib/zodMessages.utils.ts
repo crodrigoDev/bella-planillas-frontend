@@ -29,11 +29,24 @@ export const zodEsErrorMap: ZodErrorMap = (issue, ctx) => {
               : `Debe tener al menos ${issue.minimum} caracteres`,
         };
 
+      if (issue.type === "array")
+        return { message: "Selecciona al menos una opción" };
+
+      if (issue.type === "number")
+        return {
+          message: issue.inclusive
+            ? `Debe ser como mínimo ${issue.minimum}`
+            : `Debe ser mayor que ${issue.minimum}`,
+        };
+
       return { message: ctx.defaultError };
 
     case "too_big":
       if (issue.type === "string")
         return { message: `No puede superar los ${issue.maximum} caracteres` };
+
+      if (issue.type === "number")
+        return { message: `Debe ser como máximo ${issue.maximum}` };
 
       return { message: ctx.defaultError };
 

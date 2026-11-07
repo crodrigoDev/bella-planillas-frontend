@@ -212,6 +212,37 @@ export const router = createBrowserRouter([
               },
             ],
           },
+          {
+            element: <RoleRoute path={ROUTE_PATHS.asistencia.jornadas} />,
+            children: [
+              {
+                path: ROUTE_PATHS.asistencia.jornadas,
+                lazy: lazyPage(() => import("@/pages/jornadas/JornadasPage")),
+              },
+            ],
+          },
+          {
+            element: <RoleRoute path={ROUTE_PATHS.asistencia.nuevaJornada} />,
+            children: [
+              {
+                path: ROUTE_PATHS.asistencia.nuevaJornada,
+                lazy: lazyPage(
+                  () => import("@/pages/jornadas/NuevaJornadaPage"),
+                ),
+              },
+            ],
+          },
+          {
+            element: <RoleRoute path={ROUTE_PATHS.asistencia.editarJornada} />,
+            children: [
+              {
+                path: ROUTE_PATHS.asistencia.editarJornada,
+                lazy: lazyPage(
+                  () => import("@/pages/jornadas/EditarJornadaPage"),
+                ),
+              },
+            ],
+          },
           ...pendingPages.map(({ path, title }) => ({
             element: <RoleRoute path={path} />,
             children: [

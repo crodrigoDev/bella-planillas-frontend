@@ -22,6 +22,8 @@ const ROUTE_ROLES: Readonly<Record<string, readonly AuthRol[] | null>> = {
   [ROUTE_PATHS.organizacion.areas]: [RRHH],
   [ROUTE_PATHS.organizacion.cargos]: [RRHH],
   [ROUTE_PATHS.asistencia.jornadas]: [RRHH],
+  [ROUTE_PATHS.asistencia.nuevaJornada]: [RRHH],
+  [ROUTE_PATHS.asistencia.editarJornada]: [RRHH],
   [ROUTE_PATHS.asistencia.marcaciones]: [RRHH],
   [ROUTE_PATHS.asistencia.importarMarcaciones]: [RRHH],
   [ROUTE_PATHS.asistencia.cierreMensual]: [RRHH],

@@ -142,6 +142,7 @@ const archivoError = getArchivoError(file, REGLAS_ARCHIVO);
 
 Mensajes en español para los esquemas de `@jyp/shared-contracts` (zod 3).
 `zodEsErrorMap` traduce los mensajes por defecto y deja los que el contrato ya escribió.
+Cubre campos vacíos, textos largos o cortos, números fuera de rango y listas sin elegir.
 `zodResolverOptions` es lo que se pasa siempre a `zodResolver`.
 
 ```ts
