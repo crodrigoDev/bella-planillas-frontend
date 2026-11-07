@@ -13,6 +13,15 @@ import type { NavigationUser } from "@/features/navigation/types/navigation.type
 import type { CSSProperties } from "react";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { filterSidebarItems } from "@/features/navigation/utils/sidebar.utils";
+import {
+  renovarAccessToken,
+  useAuthStore,
+} from "@/features/auth/store/auth.store";
+import { NotificacionesButton } from "@/features/notificaciones/components/NotificacionesButton";
+
+// Lee el token al momento de conectar el tiempo real, no el del primer render
+const getAccessToken = (): string | null =>
+  useAuthStore.getState().session?.accessToken ?? null;
 
 /**
  * Comparte el sidebar y la estructura principal entre las páginas internas
@@ -63,8 +72,13 @@ export default function AppLayout() {
       />
 
       <SidebarInset className="min-h-0 overflow-hidden">
-        <header className="flex h-14 items-center border-b border-sidebar-border px-4 sm:px-6 lg:px-8">
+        <header className="flex h-14 items-center justify-between border-b border-sidebar-border px-4 sm:px-6 lg:px-8">
           <SidebarTrigger />
+          <NotificacionesButton
+            userId={session.usuario.id}
+            getToken={getAccessToken}
+            renovarToken={renovarAccessToken}
+          />
         </header>
 
         <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4 sm:p-6 lg:p-10">
