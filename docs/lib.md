@@ -15,6 +15,7 @@ Formato para mostrar datos. Ninguna función modifica el dato original.
 | `toTitleCase(name)` | `"MARÍA DE LOS ÁNGELES"` → `"María de los Ángeles"` |
 | `formatCurrency(amount)` | Soles: `S/ 1,500.00`; `--` si no hay monto |
 | `maskEnd(value, visible = 4)` | `•••• 1234`; `--` si no hay dato |
+| `formatValorCambio(valor, protegido = false)` | Valor de un campo auditado: `--` si es nulo, Sí/No, fechas legibles (con hora en Lima), JSON para objetos; `Valor protegido` si `protegido`. El tipo `CambioCampo` (`lib/types/cambios.types.ts`) describe un cambio del backend |
 
 ```tsx
 <ResumenCampo label="Entidad EPS" value={orDash(data.eps_nombre)} />
@@ -23,7 +24,8 @@ Formato para mostrar datos. Ninguna función modifica el dato original.
 [`src/features/datosFinancieros/components/DatosFinancierosEmpleado.tsx`](../src/features/datosFinancieros/components/DatosFinancierosEmpleado.tsx). Otros usos:
 `formatDate(contrato.fecha_inicio)` en `ContratoItem.tsx`,
 `formatCurrency(data.sueldo_basico)` en `DatosFinancierosEmpleado.tsx`,
-`toTitleCase(nombre_completo)` en `empleados.utils.ts`.
+`toTitleCase(nombre_completo)` en `empleados.utils.ts`,
+`formatValorCambio(cambio.antes, cambio.protegido)` en `CambiosAuditoriaModal.tsx` y `EventoHistorialItem.tsx`.
 
 ## date.utils.ts
 
@@ -213,7 +215,7 @@ Los tipos de las respuestas están en `lib/api/types/api.types.ts`: `ApiResponse
 
 ```ts
 const response = await publicHttpClient.post<ApiResponse<LoginResponse>>(
-  "/auth/login",
+  "/core/auth/login",
   credentials,
 );
 
