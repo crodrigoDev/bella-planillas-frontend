@@ -76,7 +76,8 @@ export function FileDropzone({
       {file ? (
         <>
           <FileTextIcon className="size-8 text-muted-foreground" aria-hidden />
-          <p className="max-w-full truncate text-sm font-medium">
+          {/* `w-0 min-w-full`: el nombre largo no ensancha el modal; se corta con "…" */}
+          <p className="w-0 min-w-full truncate text-sm font-medium">
             {file.name}
           </p>
           <p className="text-xs text-muted-foreground">
