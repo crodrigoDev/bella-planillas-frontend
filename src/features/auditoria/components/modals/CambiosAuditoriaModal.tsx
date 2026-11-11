@@ -20,6 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatFechaHoraLima } from "@/lib/date.utils";
+import { formatValorCambio } from "@/lib/format.utils";
 import {
   getAccionLabel,
   getAccionTone,
@@ -27,12 +28,7 @@ import {
 } from "../../config/auditoria.config";
 import { useAuditoriaRegistro } from "../../hooks/useAuditoria";
 import type { AuditoriaLog } from "../../types/auditoria.types";
-import {
-  formatCampoAuditoria,
-  formatValorAuditoria,
-  getCambiosAuditoria,
-  getUsuarioNombre,
-} from "../../utils/auditoria.utils";
+import { getUsuarioNombre } from "../../utils/auditoria.utils";
 
 interface CambiosAuditoriaModalProps {
   /** Fila elegida; sin fila el modal está cerrado */
@@ -44,8 +40,9 @@ interface CambiosAuditoriaModalProps {
  * Modal con lo que cambió en un registro auditado
  *
  * @remarks
- * El listado no trae los valores: el detalle se pide al abrir. En una creación
- * se muestran todos los campos; en una modificación, solo los que cambiaron.
+ * El listado no trae los valores: el detalle se pide al abrir. Los cambios los
+ * calcula el backend (todos los campos en una creación, solo los que cambiaron
+ * en una modificación) y los campos protegidos no muestran su valor.
  */
 export function CambiosAuditoriaModal({
   log,
@@ -73,9 +70,7 @@ interface CambiosContentProps {
 function CambiosContent({ log, onClose }: CambiosContentProps) {
   const { data, error, isLoading, refetch } = useAuditoriaRegistro(log.id);
 
-  const cambios = data
-    ? getCambiosAuditoria(data.valores_antes, data.valores_despues)
-    : [];
+  const cambios = data?.cambios ?? [];
 
   return (
     <>
@@ -125,13 +120,13 @@ function CambiosContent({ log, onClose }: CambiosContentProps) {
               {cambios.map((cambio) => (
                 <TableRow key={cambio.campo}>
                   <TableCell className="align-top font-medium whitespace-normal">
-                    {formatCampoAuditoria(cambio.campo)}
+                    {cambio.etiqueta}
                   </TableCell>
                   <TableCell className="max-w-56 align-top whitespace-normal wrap-break-word text-muted-foreground">
-                    {formatValorAuditoria(cambio.anterior)}
+                    {formatValorCambio(cambio.antes, cambio.protegido)}
                   </TableCell>
                   <TableCell className="max-w-56 align-top whitespace-normal wrap-break-word">
-                    {formatValorAuditoria(cambio.nuevo)}
+                    {formatValorCambio(cambio.despues, cambio.protegido)}
                   </TableCell>
                 </TableRow>
               ))}

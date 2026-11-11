@@ -1,4 +1,12 @@
+import { formatFechaHoraLima } from "@/lib/date.utils";
+
 const EMPTY_VALUE = "--";
+
+/** Fecha con hora, como la manda Postgres (`2026-03-05T14:30:00.000Z`) */
+const ISO_FECHA_HORA_REGEX = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/;
+
+/** Fecha sin hora (`2026-03-05`) */
+const ISO_FECHA_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
 /**
  * Convierte una fecha ISO a formato dd/MM/yyyy
@@ -72,3 +80,29 @@ export const maskEnd = (
   value: string | null | undefined,
   visible = 4,
 ): string => (value ? `•••• ${value.slice(-visible)}` : EMPTY_VALUE);
+
+/**
+ * Escribe el valor de un campo auditado para leerlo
+ *
+ * @param valor - Valor antes o después de un cambio
+ * @param protegido - Si el backend lo marcó como protegido, no se muestra el valor
+ *
+ * @remarks
+ * Nulo es "--", los booleanos son Sí/No, las fechas con hora se pasan a Lima y
+ * los objetos y listas se dejan como JSON compacto.
+ */
+export const formatValorCambio = (valor: unknown, protegido = false): string => {
+  if (protegido) return "Valor protegido";
+  if (valor === null || valor === undefined || valor === "") return EMPTY_VALUE;
+  if (typeof valor === "boolean") return valor ? "Sí" : "No";
+  if (typeof valor === "string") {
+    if (ISO_FECHA_HORA_REGEX.test(valor) && !Number.isNaN(Date.parse(valor)))
+      return formatFechaHoraLima(valor);
+    if (ISO_FECHA_REGEX.test(valor)) return formatDate(valor);
+
+    return valor;
+  }
+  if (typeof valor === "object") return JSON.stringify(valor);
+
+  return String(valor);
+};
