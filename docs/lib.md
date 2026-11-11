@@ -15,7 +15,8 @@ Formato para mostrar datos. Ninguna función modifica el dato original.
 | `toTitleCase(name)` | `"MARÍA DE LOS ÁNGELES"` → `"María de los Ángeles"` |
 | `formatCurrency(amount)` | Soles: `S/ 1,500.00`; `--` si no hay monto |
 | `maskEnd(value, visible = 4)` | `•••• 1234`; `--` si no hay dato |
-| `formatValorCambio(valor, protegido = false)` | Valor de un campo auditado: `--` si es nulo, Sí/No, fechas legibles (con hora en Lima), JSON para objetos; `Valor protegido` si `protegido`. El tipo `CambioCampo` (`lib/types/cambios.types.ts`) describe un cambio del backend |
+| `formatEtiquetaCambio(campo, etiqueta)` | La etiqueta del backend; si viene igual al campo (no la conoce), lo escribe legible: `fecha_inicio` → `Fecha inicio` |
+| `formatValorCambio(valor, protegido = false)` | Valor de un campo auditado: `--` si es nulo, Sí/No, fechas legibles (con hora en Lima); un objeto o lista (también si llega como texto JSON, como lo manda el backend): una relación `{ id, nombre }` se muestra por su nombre, una lista separada por comas y otro objeto como `campo: valor` (nunca JSON); `Valor protegido` si `protegido`. El tipo `CambioCampo` (`lib/types/cambios.types.ts`) describe un cambio del backend |
 
 ```tsx
 <ResumenCampo label="Entidad EPS" value={orDash(data.eps_nombre)} />

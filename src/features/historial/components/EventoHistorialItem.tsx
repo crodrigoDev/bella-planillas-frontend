@@ -1,7 +1,7 @@
 import { ArrowRightIcon } from "lucide-react";
 
 import { formatFechaHoraLima } from "@/lib/date.utils";
-import { formatValorCambio } from "@/lib/format.utils";
+import { formatEtiquetaCambio, formatValorCambio } from "@/lib/format.utils";
 import { cn } from "@/lib/utils";
 import { getAccionEstilo } from "../config/historial.config";
 import type { EventoHistorial } from "../types/historial.types";
@@ -49,7 +49,9 @@ export function EventoHistorialItem({ evento }: EventoHistorialItemProps) {
                     key={campo}
                     className="grid gap-1 sm:grid-cols-[10rem_minmax(0,1fr)_1.5rem_minmax(0,1fr)] sm:items-start sm:gap-3"
                   >
-                    <dt className="text-muted-foreground">{etiqueta}</dt>
+                    <dt className="text-muted-foreground">
+                      {formatEtiquetaCambio(campo, etiqueta)}
+                    </dt>
                     <dd className="wrap-break-word text-muted-foreground">
                       {formatValorCambio(antes, protegido)}
                     </dd>

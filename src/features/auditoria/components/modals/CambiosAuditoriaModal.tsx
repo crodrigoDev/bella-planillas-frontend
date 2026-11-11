@@ -20,7 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatFechaHoraLima } from "@/lib/date.utils";
-import { formatValorCambio } from "@/lib/format.utils";
+import { formatEtiquetaCambio, formatValorCambio } from "@/lib/format.utils";
 import {
   getAccionLabel,
   getAccionTone,
@@ -120,7 +120,7 @@ function CambiosContent({ log, onClose }: CambiosContentProps) {
               {cambios.map((cambio) => (
                 <TableRow key={cambio.campo}>
                   <TableCell className="align-top font-medium whitespace-normal">
-                    {cambio.etiqueta}
+                    {formatEtiquetaCambio(cambio.campo, cambio.etiqueta)}
                   </TableCell>
                   <TableCell className="max-w-56 align-top whitespace-normal wrap-break-word text-muted-foreground">
                     {formatValorCambio(cambio.antes, cambio.protegido)}
