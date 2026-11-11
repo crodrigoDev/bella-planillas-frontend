@@ -1,70 +1,87 @@
-import { useState } from "react";
-
-import { Button } from "@/components/ui/button";
-import {
-  FILTRO_HISTORIAL_OPTIONS,
-  FILTRO_TIPOS,
-} from "../config/historial.config";
-import type { EventoHistorial } from "../types/historial.types";
+import { EmptyState } from "@/components/feedback/EmptyState";
+import { ErrorAlert } from "@/components/feedback/ErrorAlert";
+import { LoadingButton } from "@/components/form/LoadingButton";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useHistorial } from "../hooks/useHistorial";
 import { EventoHistorialItem } from "./EventoHistorialItem";
 
 interface HistorialEmpleadoProps {
-  /** Hechos del empleado, en cualquier orden: se muestran del más reciente al más antiguo */
-  eventos: EventoHistorial[];
+  empleadoId: string;
 }
 
+/** Tabla de auditoría donde se guardan los cambios de un empleado */
+const TABLA_EMPLEADOS = "empleados";
+
 /**
- * Pestaña Historial de la ficha: línea de tiempo de lo que le pasó al empleado
+ * Pestaña Historial de la ficha: línea de tiempo de los cambios del empleado
  *
  * @remarks
- * Recibe los eventos ya armados. Por ahora salen de datos de ejemplo
- * (`historial.mock.ts`) hasta que el backend entregue el historial por empleado.
+ * Lee la auditoría del backend, del cambio más reciente al más antiguo, de a
+ * 20 por vez ("Cargar más").
  */
-export function HistorialEmpleado({ eventos }: HistorialEmpleadoProps) {
-  const [filtro, setFiltro] = useState("TODOS");
+export function HistorialEmpleado({ empleadoId }: HistorialEmpleadoProps) {
+  const {
+    data,
+    error,
+    isLoading,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useHistorial(TABLA_EMPLEADOS, empleadoId);
 
-  const tipos = FILTRO_TIPOS[filtro];
-  const visibles = [...eventos]
-    .filter((evento) => !tipos || tipos.includes(evento.tipo))
-    // Del más reciente al más antiguo; los del mismo día conservan su orden inverso
-    .sort((a, b) => b.fecha.localeCompare(a.fecha) || b.id.localeCompare(a.id));
+  if (isLoading) return <Skeleton className="h-64 w-full" />;
+
+  if (error && !data)
+    return (
+      <ErrorAlert
+        error={error}
+        title="No se pudo cargar el historial"
+        onRetry={() => refetch()}
+      />
+    );
+
+  const eventos = data?.pages.flatMap((page) => page.items) ?? [];
+  const total = data?.pages[0]?.pagination.total ?? 0;
+
+  if (!eventos.length)
+    return (
+      <EmptyState
+        title="Sin cambios registrados"
+        description="Todavía no hay nada guardado en el historial de este colaborador."
+      />
+    );
 
   return (
     <div className="space-y-5">
-      <div
-        role="group"
-        aria-label="Filtrar el historial"
-        className="flex flex-wrap items-center gap-2"
-      >
-        {FILTRO_HISTORIAL_OPTIONS.map(({ value, label }) => (
-          <Button
-            key={value}
-            type="button"
-            size="sm"
-            variant={filtro === value ? "default" : "outline"}
-            aria-pressed={filtro === value}
-            onClick={() => setFiltro(value)}
-          >
-            {label}
-          </Button>
-        ))}
-        <p className="ml-auto text-sm text-muted-foreground">
-          {visibles.length === 1 ? "1 hecho" : `${visibles.length} hechos`}
-        </p>
-      </div>
+      <p className="text-sm text-muted-foreground">
+        {total === 1 ? "1 cambio" : `${total} cambios`}
+      </p>
 
-      {visibles.length ? (
-        <ol className="relative space-y-6 before:absolute before:top-2 before:bottom-2 before:left-5 before:w-px before:bg-border">
-          {visibles.map((evento) => (
-            <EventoHistorialItem key={evento.id} evento={evento} />
-          ))}
-        </ol>
-      ) : (
-        <div className="space-y-1 py-12 text-center">
-          <p className="font-medium">Sin hechos de este tipo</p>
-          <p className="text-sm text-muted-foreground">
-            Todavía no hay nada registrado en esta categoría.
-          </p>
+      <ol className="relative space-y-6 before:absolute before:top-2 before:bottom-2 before:left-5 before:w-px before:bg-border">
+        {eventos.map((evento) => (
+          <EventoHistorialItem key={evento.id} evento={evento} />
+        ))}
+      </ol>
+
+      {/* Un error al pedir otra página no borra lo ya cargado */}
+      {error && (
+        <ErrorAlert
+          error={error}
+          title="No se pudieron cargar más cambios"
+        />
+      )}
+
+      {hasNextPage && (
+        <div className="flex justify-center">
+          <LoadingButton
+            variant="outline"
+            isLoading={isFetchingNextPage}
+            loadingText="Cargando..."
+            onClick={() => fetchNextPage()}
+          >
+            Cargar más
+          </LoadingButton>
         </div>
       )}
     </div>

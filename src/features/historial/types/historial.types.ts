@@ -1,59 +1,34 @@
-/**
- * Clases de hechos que registra el historial de un empleado
- *
- * @remarks
- * `ROTACION` agrupa los cambios de cargo, área, sueldo y jornada. El resto sale
- * de lo que el backend ya audita: ingreso, contratos, familia, estado laboral,
- * asistencia y datos financieros.
- */
-export type TipoEvento =
-  | "INGRESO"
-  | "ROTACION"
-  | "CONTRATO"
-  | "FAMILIA"
-  | "ESTADO"
-  | "ASISTENCIA"
-  | "FINANCIERO";
+import type { PaginationMeta } from "@/lib/api/types/api.types";
+import type { CambioCampo } from "@/lib/types/cambios.types";
 
-/** Un campo que cambió: su valor de antes y el de después */
-export interface CambioCampo {
-  campo: string;
-  antes: string | null;
-  despues: string | null;
-}
-
-/** Un campo que no cambió en un evento, pero ayuda a entender su contexto */
-export interface CampoSinCambio {
-  campo: string;
-  valor: string;
-}
-
-/** Quién hizo el cambio, tal como lo registra la auditoría */
-export interface ActorEvento {
+/** Quién hizo el cambio; el backend usa "Sistema" de nombre si el usuario no tiene colaborador */
+export interface UsuarioHistorial {
+  id: string;
   nombre: string;
   rol: string;
 }
 
 /**
- * Un hecho del historial del empleado, ya traducido a lenguaje de negocio
+ * Un hecho del historial de un registro (`GET /core/audit/historial/:tabla/:registroId`)
  *
  * @remarks
- * Es la forma que debería entregar el backend: el título y la descripción
- * vienen escritos y los campos con su nombre en español, no el de la columna.
+ * Sale de una fila de auditoría. `cambios` ya viene calculado por el backend
+ * con la etiqueta de cada campo; `usuario` es null si lo hizo el sistema.
  */
 export interface EventoHistorial {
   id: string;
-  /** Fecha del hecho como YYYY-MM-DD */
+  /** Instante completo con zona (ISO) */
   fecha: string;
-  tipo: TipoEvento;
-  titulo: string;
-  descripcion?: string;
-  cambios?: CambioCampo[];
-  sinCambios?: CampoSinCambio[];
-  /**
-   * Hasta cuándo rigió lo que cambió este evento (YYYY-MM-DD). `null` si sigue
-   * vigente; sin este campo no se muestra la duración.
-   */
-  vigenteHasta?: string | null;
-  actor: ActorEvento;
+  accion: string;
+  tabla_afectada: string;
+  registro_id: string;
+  usuario: UsuarioHistorial | null;
+  cambios: CambioCampo[];
+  campos_modificados: string[];
+}
+
+/** Página del historial con sus datos de paginación */
+export interface HistorialPage {
+  items: EventoHistorial[];
+  pagination: PaginationMeta;
 }
