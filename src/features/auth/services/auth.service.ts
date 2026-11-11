@@ -30,7 +30,7 @@ export const authService = {
    */
   login: async (credentials: LoginDTO): Promise<LoginResponse> => {
     const response = await publicHttpClient.post<ApiResponse<LoginResponse>>(
-      "/auth/login",
+      "/core/auth/login",
       credentials,
     );
 
@@ -46,7 +46,7 @@ export const authService = {
    */
   logout: async (): Promise<void> => {
     // Envia el acceso en los encabezados y la cookie viaja con la petición
-    await protectedHttpClient.post("/auth/logout");
+    await protectedHttpClient.post("/core/auth/logout");
   },
 
   /**
@@ -58,7 +58,7 @@ export const authService = {
   refresh: async (): Promise<RefreshResponse> => {
     const response =
       await publicHttpClient.post<ApiResponse<RefreshResponse>>(
-        "/auth/refresh",
+        "/core/auth/refresh",
       );
 
     return response.data.data;
@@ -94,7 +94,7 @@ export const authService = {
   ): Promise<PasswordRecoveryResponse> => {
     const response = await publicHttpClient.post<
       ApiResponse<PasswordRecoveryResponse>
-    >("/auth/recuperar-password", values);
+    >("/core/auth/recuperar-password", values);
 
     return response.data.data;
   },
@@ -110,7 +110,7 @@ export const authService = {
   ): Promise<PasswordResetResponse> => {
     const response = await publicHttpClient.post<
       ApiResponse<PasswordResetResponse>
-    >("/auth/restablecer-password", values);
+    >("/core/auth/restablecer-password", values);
 
     return response.data.data;
   },
