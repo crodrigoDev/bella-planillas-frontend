@@ -126,6 +126,7 @@ lista ya muestra el cambio. Los errores no se avisan aquí: los muestra quien la
 | `successMessage` | `string \| (data, vars) => string` | Texto del aviso; la función sirve cuando depende de lo enviado |
 | `invalidate` | `QueryKey[]` | Consultas que se refrescan al terminar; usa las `*Key.all` de la feature |
 | `afterSuccess` | `(data, vars) => Promise<void>?` | Paso extra tras el aviso y antes de refrescar |
+| `successAction` | `(data, vars) => { label, onClick }?` | Botón dentro del aviso (el aviso dura 8 s). Cuando se pulsa, el componente que lanzó la mutación puede haberse desmontado: `onClick` no debe depender de él |
 
 ```ts
 export function useEditarContrato(id: string) {
@@ -152,6 +153,19 @@ useMutationConAviso({
 ```
 
 [`src/features/asistencia/hooks/useAsistenciaActions.ts`](../src/features/asistencia/hooks/useAsistenciaActions.ts)
+
+Con un botón de acción en el aviso (por ejemplo, deshacer una baja):
+
+```ts
+useMutationConAviso({
+  mutationFn: () => derechohabientesService.desactivar(id),
+  successMessage: "El derechohabiente se quitó correctamente.",
+  successAction: () => ({ label: "Deshacer", onClick: () => reactivar(id) }),
+  invalidate: [derechohabientesKey.all],
+})
+```
+
+[`src/features/derechohabientes/hooks/useDerechohabienteActions.ts`](../src/features/derechohabientes/hooks/useDerechohabienteActions.ts)
 
 ## usePaginacionLocal
 

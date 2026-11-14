@@ -53,9 +53,10 @@ function QuitarDerechohabienteContent({
       title="Quitar derechohabiente"
       description={
         <>
-          {derechohabiente.nombres} {derechohabiente.apellidos} dejará de verse
-          en la lista. La asignación familiar del empleado no cambia sola:
-          revísala si era el único hijo que la generaba.
+          {derechohabiente.nombres} {derechohabiente.apellidos} dejará de contar
+          entre los derechohabientes activos. Puedes deshacerlo desde el aviso
+          que aparece al quitarlo. La asignación familiar del empleado no
+          cambia sola: revísala si era el único hijo que la generaba.
         </>
       }
       confirmLabel="Quitar"

@@ -1,9 +1,10 @@
 import type { Derechohabiente } from "../../types/derechohabientes.types";
 import { QuitarDerechohabienteModal } from "./QuitarDerechohabienteModal";
+import { ReactivarDerechohabienteModal } from "./ReactivarDerechohabienteModal";
 import { SustentosModal } from "./SustentosModal";
 
 /** Modales que se abren desde las acciones de un derechohabiente */
-export type DerechohabienteModal = "sustentos" | "quitar";
+export type DerechohabienteModal = "sustentos" | "quitar" | "reactivar";
 
 interface DerechohabienteModalesProps {
   derechohabiente: Derechohabiente;
@@ -13,7 +14,7 @@ interface DerechohabienteModalesProps {
 }
 
 /**
- * Los modales de un derechohabiente: sustentos y quitar
+ * Los modales de un derechohabiente: sustentos, quitar y reactivar
  */
 export function DerechohabienteModales({
   derechohabiente,
@@ -34,6 +35,11 @@ export function DerechohabienteModales({
       <QuitarDerechohabienteModal
         derechohabiente={derechohabiente}
         open={openModal === "quitar"}
+        onOpenChange={handleOpenChange}
+      />
+      <ReactivarDerechohabienteModal
+        derechohabiente={derechohabiente}
+        open={openModal === "reactivar"}
         onOpenChange={handleOpenChange}
       />
     </>

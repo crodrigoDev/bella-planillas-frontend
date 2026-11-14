@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { PaperclipIcon, UserMinusIcon } from "lucide-react";
+import { PaperclipIcon, UserCheckIcon, UserMinusIcon } from "lucide-react";
 
 import { AccionButton } from "@/components/page/AccionButton";
 import { Badge } from "@/components/ui/badge";
 import { getOptionLabel } from "@/lib/catalogos.utils";
+import { cn } from "@/lib/utils";
 import { getAge, toDateInput } from "@/lib/date.utils";
 import { formatDate } from "@/lib/format.utils";
 import { VINCULO_OPTIONS } from "../config/derechohabientes.config";
@@ -16,6 +17,10 @@ import {
 
 interface DerechohabienteItemProps {
   derechohabiente: Derechohabiente;
+  /** Si es un derechohabiente quitado: se ve atenuado y solo se puede reactivar */
+  quitado?: boolean;
+  /** Si se indica, "Reactivar" queda deshabilitado y el tooltip dice por qué */
+  reactivarDisabledReason?: string;
 }
 
 /**
@@ -23,6 +28,8 @@ interface DerechohabienteItemProps {
  */
 export function DerechohabienteItem({
   derechohabiente,
+  quitado = false,
+  reactivarDisabledReason,
 }: DerechohabienteItemProps) {
   const [openModal, setOpenModal] = useState<DerechohabienteModal | null>(null);
 
@@ -31,7 +38,12 @@ export function DerechohabienteItem({
   const edad = getAge(nacimiento);
 
   return (
-    <li className="space-y-3 rounded-lg border bg-card p-4">
+    <li
+      className={cn(
+        "space-y-3 rounded-lg border bg-card p-4",
+        quitado && "bg-muted/40 opacity-75",
+      )}
+    >
       <div className="flex items-start gap-3">
         <span
           aria-hidden
@@ -48,9 +60,12 @@ export function DerechohabienteItem({
           </p>
         </div>
 
-        <Badge variant="outline" className="shrink-0">
-          {getOptionLabel(VINCULO_OPTIONS, derechohabiente.vinculo)}
-        </Badge>
+        <div className="flex shrink-0 flex-col items-end gap-1">
+          <Badge variant="outline">
+            {getOptionLabel(VINCULO_OPTIONS, derechohabiente.vinculo)}
+          </Badge>
+          {quitado && <Badge variant="secondary">Quitado</Badge>}
+        </div>
       </div>
 
       <div className="flex items-center justify-between gap-2 border-t pt-3">
@@ -59,18 +74,30 @@ export function DerechohabienteItem({
         </p>
 
         <div className="flex items-center gap-1">
-          <AccionButton
-            label="Sustentos"
-            icon={PaperclipIcon}
-            onClick={() => setOpenModal("sustentos")}
-            tone="info"
-          />
-          <AccionButton
-            label="Quitar"
-            icon={UserMinusIcon}
-            onClick={() => setOpenModal("quitar")}
-            tone="danger"
-          />
+          {quitado ? (
+            <AccionButton
+              label="Reactivar"
+              icon={UserCheckIcon}
+              onClick={() => setOpenModal("reactivar")}
+              tone="success"
+              disabledReason={reactivarDisabledReason}
+            />
+          ) : (
+            <>
+              <AccionButton
+                label="Sustentos"
+                icon={PaperclipIcon}
+                onClick={() => setOpenModal("sustentos")}
+                tone="info"
+              />
+              <AccionButton
+                label="Quitar"
+                icon={UserMinusIcon}
+                onClick={() => setOpenModal("quitar")}
+                tone="danger"
+              />
+            </>
+          )}
         </div>
       </div>
 

@@ -19,6 +19,11 @@ export interface Derechohabiente {
   vinculo: Vinculo;
   fecha_nacimiento: string;
   tipo_documento: { id: string; tipo_documento: string };
+  /**
+   * El listado aún no lo trae (mejora DH-F3 del backend). Si falta, el
+   * derechohabiente se considera activo.
+   */
+  activo?: boolean;
 }
 
 /** Documento de sustento de un derechohabiente (partida, constancia...) */
