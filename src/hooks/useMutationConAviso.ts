@@ -13,7 +13,15 @@ interface MutationConAvisoOptions<TData, TVars> {
   invalidate: QueryKey[];
   /** Paso extra después del aviso y antes de refrescar, por ejemplo recalcular un resumen */
   afterSuccess?: (data: TData, vars: TVars) => Promise<void>;
+  /** Botón dentro del aviso (por ejemplo "Deshacer"); con él, el aviso dura más */
+  successAction?: (
+    data: TData,
+    vars: TVars,
+  ) => { label: string; onClick: () => void };
 }
+
+/** Tiempo del aviso con botón de acción, para dar chance de pulsarlo */
+const ACTION_TOAST_DURATION = 8000;
 
 /**
  * Mutación que, al terminar bien, avisa con un toast y refresca consultas de la caché
@@ -28,6 +36,7 @@ export function useMutationConAviso<TData, TVars = void>({
   successMessage,
   invalidate,
   afterSuccess,
+  successAction,
 }: MutationConAvisoOptions<TData, TVars>) {
   const queryClient = useQueryClient();
 
@@ -38,6 +47,9 @@ export function useMutationConAviso<TData, TVars = void>({
         typeof successMessage === "function"
           ? successMessage(data, vars)
           : successMessage,
+        successAction
+          ? { action: successAction(data, vars), duration: ACTION_TOAST_DURATION }
+          : undefined,
       );
       await afterSuccess?.(data, vars);
 
