@@ -13,11 +13,20 @@ import type {
  * Agrupa las operaciones de derechohabientes que se comunican al backend
  */
 export const derechohabientesService = {
-  /** Lista los derechohabientes activos de un empleado */
+  /**
+   * Lista los derechohabientes de un empleado
+   *
+   * @remarks
+   * Se envía `incluir_inactivos` para cuando el backend implemente la mejora
+   * DH-F3 (listar también los quitados, con `activo` en cada fila). Hoy lo
+   * ignora y solo devuelve los activos.
+   */
   listByEmpleado: async (empleadoId: string): Promise<Derechohabiente[]> => {
     const response = await protectedHttpClient.get<
       ApiResponse<Derechohabiente[]>
-    >(`/rrhh/derechohabientes/empleado/${empleadoId}`);
+    >(`/rrhh/derechohabientes/empleado/${empleadoId}`, {
+      params: { incluir_inactivos: true },
+    });
 
     return response.data.data;
   },
@@ -50,9 +59,21 @@ export const derechohabientesService = {
     await protectedHttpClient.post("/rrhh/derechohabientes/registrar", dto);
   },
 
-  /** Da de baja a un derechohabiente; deja de aparecer en el listado */
+  /** Da de baja a un derechohabiente; deja de aparecer entre los activos */
   desactivar: async (id: string): Promise<void> => {
     await protectedHttpClient.delete(`/rrhh/derechohabientes/${id}/desactivar`);
+  },
+
+  /**
+   * Reactiva a un derechohabiente quitado
+   *
+   * @remarks
+   * El backend responde 400 si ya está activo, pero no valida que el titular
+   * siga activo ni que no haya otro activo con el mismo documento: lo hace el
+   * frontend antes de ofrecer la acción.
+   */
+  reactivar: async (id: string): Promise<void> => {
+    await protectedHttpClient.patch(`/rrhh/derechohabientes/${id}/reactivar`);
   },
 
   /**
