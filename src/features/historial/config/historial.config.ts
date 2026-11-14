@@ -1,56 +1,57 @@
 import {
-  BriefcaseBusinessIcon,
-  CalendarCheckIcon,
-  FileTextIcon,
-  UserCogIcon,
-  UserPlusIcon,
-  UsersIcon,
-  WalletIcon,
+  HistoryIcon,
+  PencilIcon,
+  PlusIcon,
+  Trash2Icon,
   type LucideIcon,
 } from "lucide-react";
 
-import type { SelectOption } from "@/lib/types/options.types";
-import type { TipoEvento } from "../types/historial.types";
+/** Título, icono y color del círculo de cada acción en la línea de tiempo */
+interface AccionEstilo {
+  titulo: string;
+  icon: LucideIcon;
+  circulo: string;
+}
 
-/** Icono y color del círculo de cada clase de evento en la línea de tiempo */
-export const TIPO_EVENTO_ESTILOS: Record<
-  TipoEvento,
-  { icon: LucideIcon; circulo: string }
-> = {
-  INGRESO: { icon: UserPlusIcon, circulo: "bg-primary text-primary-foreground" },
-  ROTACION: {
-    icon: BriefcaseBusinessIcon,
-    circulo: "bg-primary text-primary-foreground",
-  },
-  CONTRATO: { icon: FileTextIcon, circulo: "bg-category-1 text-category-foreground" },
-  FAMILIA: { icon: UsersIcon, circulo: "bg-category-2 text-category-foreground" },
-  ESTADO: { icon: UserCogIcon, circulo: "bg-category-3 text-category-foreground" },
-  ASISTENCIA: { icon: CalendarCheckIcon, circulo: "bg-category-4 text-category-foreground" },
-  FINANCIERO: { icon: WalletIcon, circulo: "bg-category-5 text-category-foreground" },
+const CREACION: AccionEstilo = {
+  titulo: "Registro creado",
+  icon: PlusIcon,
+  circulo: "bg-primary text-primary-foreground",
+};
+
+const MODIFICACION: AccionEstilo = {
+  titulo: "Datos modificados",
+  icon: PencilIcon,
+  circulo: "bg-category-3 text-category-foreground",
+};
+
+const ELIMINACION: AccionEstilo = {
+  titulo: "Registro eliminado",
+  icon: Trash2Icon,
+  circulo: "bg-destructive text-category-foreground",
 };
 
 /**
- * Filtros del historial: cada uno agrupa una o más clases de evento
+ * Estilo de cada acción que guarda la auditoría
  *
  * @remarks
- * El valor `TODOS` no filtra. Rotación y estado se juntan en "Laboral" para
- * no llenar la barra de filtros con una opción por clase.
+ * Los triggers solo escriben `CREATE` y `UPDATE`; la capa de datos del backend
+ * usa el nombre de la operación, con sus variantes masivas.
  */
-export const FILTRO_HISTORIAL_OPTIONS: SelectOption[] = [
-  { value: "TODOS", label: "Todo" },
-  { value: "LABORAL", label: "Laboral" },
-  { value: "CONTRATO", label: "Contratos" },
-  { value: "FAMILIA", label: "Familia" },
-  { value: "ASISTENCIA", label: "Asistencia" },
-  { value: "FINANCIERO", label: "Financiero" },
-];
-
-/** Clases de evento que cubre cada filtro */
-export const FILTRO_TIPOS: Record<string, TipoEvento[] | null> = {
-  TODOS: null,
-  LABORAL: ["INGRESO", "ROTACION", "ESTADO"],
-  CONTRATO: ["CONTRATO"],
-  FAMILIA: ["FAMILIA"],
-  ASISTENCIA: ["ASISTENCIA"],
-  FINANCIERO: ["FINANCIERO"],
+const ACCION_ESTILOS: Record<string, AccionEstilo> = {
+  CREATE: CREACION,
+  CREATEMANY: CREACION,
+  UPDATE: MODIFICACION,
+  UPSERT: MODIFICACION,
+  UPDATEMANY: MODIFICACION,
+  DELETE: ELIMINACION,
+  DELETEMANY: ELIMINACION,
 };
+
+/** Estilo de una acción; una desconocida se muestra con su nombre y un icono neutro */
+export const getAccionEstilo = (accion: string): AccionEstilo =>
+  ACCION_ESTILOS[accion] ?? {
+    titulo: accion,
+    icon: HistoryIcon,
+    circulo: "bg-muted text-muted-foreground",
+  };

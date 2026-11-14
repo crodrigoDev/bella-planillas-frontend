@@ -1,4 +1,12 @@
+import { formatFechaHoraLima } from "@/lib/date.utils";
+
 const EMPTY_VALUE = "--";
+
+/** Fecha con hora, como la manda Postgres (`2026-03-05T14:30:00.000Z`) */
+const ISO_FECHA_HORA_REGEX = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/;
+
+/** Fecha sin hora (`2026-03-05`) */
+const ISO_FECHA_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
 /**
  * Convierte una fecha ISO a formato dd/MM/yyyy
@@ -72,3 +80,93 @@ export const maskEnd = (
   value: string | null | undefined,
   visible = 4,
 ): string => (value ? `•••• ${value.slice(-visible)}` : EMPTY_VALUE);
+
+/** Interpreta un texto `{...}` o `[...]`; `undefined` si no es un JSON de ese tipo */
+const parseEstructura = (texto: string): object | undefined => {
+  const limpio = texto.trim();
+
+  if (!/^[{[]/.test(limpio)) return undefined;
+
+  try {
+    const resultado: unknown = JSON.parse(limpio);
+
+    return typeof resultado === "object" && resultado !== null
+      ? resultado
+      : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
+/**
+ * Escribe el valor de un campo auditado para leerlo
+ *
+ * @param valor - Valor antes o después de un cambio
+ * @param protegido - Si el backend lo marcó como protegido, no se muestra el valor
+ *
+ * @remarks
+ * Nulo es "--", los booleanos son Sí/No y las fechas con hora se pasan a Lima.
+ * Los textos que son un objeto o una lista en JSON (así los manda el backend) se
+ * leen como tales.
+ * Una relación (`{ id, nombre }`) se muestra por su nombre; una lista, con sus
+ * elementos separados por coma; cualquier otro objeto, como "campo: valor" sin el
+ * `id`. Nunca se muestra JSON.
+ */
+export const formatValorCambio = (valor: unknown, protegido = false): string => {
+  if (protegido) return "Valor protegido";
+  if (valor === null || valor === undefined || valor === "") return EMPTY_VALUE;
+  if (typeof valor === "boolean") return valor ? "Sí" : "No";
+  if (typeof valor === "string") {
+    // El backend manda los objetos y listas como texto JSON: se interpretan
+    const estructura = parseEstructura(valor);
+
+    if (estructura !== undefined) return formatValorCambio(estructura);
+    if (ISO_FECHA_HORA_REGEX.test(valor) && !Number.isNaN(Date.parse(valor)))
+      return formatFechaHoraLima(valor);
+    if (ISO_FECHA_REGEX.test(valor)) return formatDate(valor);
+
+    return valor;
+  }
+  if (Array.isArray(valor))
+    return valor.length
+      ? valor.map((item) => formatValorCambio(item)).join(", ")
+      : EMPTY_VALUE;
+  if (typeof valor === "object") {
+    const campos = valor as Record<string, unknown>;
+
+    if (typeof campos.nombre === "string" && campos.nombre)
+      return campos.nombre;
+
+    const pares = Object.entries(campos)
+      .filter(([clave]) => clave !== "id")
+      .map(([clave, dato]) => `${humanizeCampo(clave)}: ${formatValorCambio(dato)}`);
+
+    return pares.length ? pares.join("; ") : EMPTY_VALUE;
+  }
+
+  return String(valor);
+};
+
+/** Nombres de campos que el backend manda sin etiqueta (relaciones) */
+const ETIQUETAS_CONOCIDAS: Record<string, string> = {
+  area: "Área",
+  cargo: "Cargo",
+  jornada: "Jornada",
+};
+
+/** Pasa un nombre de columna a texto legible: `fecha_inicio` → "Fecha inicio" */
+const humanizeCampo = (campo: string): string => {
+  const texto = ETIQUETAS_CONOCIDAS[campo] ?? campo.replace(/_/g, " ").trim();
+
+  return texto.charAt(0).toLocaleUpperCase("es-PE") + texto.slice(1);
+};
+
+/**
+ * Nombre en español de un campo auditado
+ *
+ * @param campo - Nombre de la columna
+ * @param etiqueta - Etiqueta que calculó el backend; si es igual al campo, no
+ * la conoce y se escribe legible desde el nombre de la columna
+ */
+export const formatEtiquetaCambio = (campo: string, etiqueta: string): string =>
+  etiqueta === campo ? humanizeCampo(campo) : etiqueta;

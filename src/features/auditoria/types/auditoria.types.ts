@@ -1,4 +1,5 @@
 import type { PaginationMeta } from "@/lib/api/types/api.types";
+import type { CambioCampo } from "@/lib/types/cambios.types";
 
 /** Empleado vinculado al usuario que hizo la acción */
 export interface AuditoriaEmpleado {
@@ -31,14 +32,13 @@ export interface AuditoriaLog {
   usuarios: AuditoriaUsuario | null;
 }
 
-/** Valores de un registro auditado: un objeto JSON, o null si no aplica */
-export type AuditoriaValores = Record<string, unknown> | null;
-
 /**
  * Detalle de una fila de auditoría (`GET logs/:id`)
  *
  * @remarks
- * Trae los valores, pero no el usuario.
+ * Trae los valores, pero no el usuario. `cambios` los calcula el backend: todos
+ * los campos en una creación y solo los que cambian en una modificación, con su
+ * etiqueta en español y sin los campos técnicos.
  */
 export interface AuditoriaDetalle {
   id: string;
@@ -48,8 +48,10 @@ export interface AuditoriaDetalle {
   registro_id: string;
   direccion_ip: string;
   created_at: string;
-  valores_antes: AuditoriaValores;
-  valores_despues: AuditoriaValores;
+  valores_antes: Record<string, unknown> | null;
+  valores_despues: Record<string, unknown> | null;
+  cambios: CambioCampo[];
+  campos_modificados: string[];
 }
 
 /** Filtros del listado de auditoría */
@@ -64,13 +66,6 @@ export interface AuditoriaFilters {
 
 /** Filtros que se cambian de uno en uno */
 export type AuditoriaFilterKey = "tabla_afectada" | "accion";
-
-/** Un campo que cambió entre el valor anterior y el nuevo */
-export interface CambioAuditoria {
-  campo: string;
-  anterior: unknown;
-  nuevo: unknown;
-}
 
 /** Página de auditoría con sus datos de paginación */
 export interface AuditoriaPage {

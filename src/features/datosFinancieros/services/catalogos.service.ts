@@ -20,7 +20,7 @@ export const datosFinancierosCatalogosService = {
   listAfps: async (): Promise<SelectOption[]> => {
     const response = await protectedHttpClient.get<
       PaginationApiResponse<RegimenPension>
-    >("/payroll/afp/tipos", { params: { limit: CATALOGO_LIMIT } });
+    >("/nomina/afp/tipos", { params: { limit: CATALOGO_LIMIT } });
 
     return toOptions(response.data.data);
   },
@@ -29,7 +29,7 @@ export const datosFinancierosCatalogosService = {
   listBancos: async (): Promise<SelectOption[]> => {
     const response = await protectedHttpClient.get<
       ApiResponse<RegimenPension[]>
-    >("/payroll/bancos");
+    >("/nomina/bancos");
 
     return toOptions(response.data.data);
   },
