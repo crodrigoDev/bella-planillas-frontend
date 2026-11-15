@@ -1,14 +1,37 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import { contratosService } from "../services/contratos.service";
+import type { ContratoFilters } from "../types/contratos.types";
 
-/** Claves de caché de contratos */
+/**
+ * Claves de caché de contratos
+ *
+ * @remarks
+ * Invalidar `all` refresca también el listado global, sin importar sus filtros.
+ */
 export const contratosKey = {
   all: ["contratos"] as const,
+  list: (filters: ContratoFilters) => ["contratos", "list", filters] as const,
   byEmpleado: (empleadoId: string) =>
     ["contratos", "empleado", empleadoId] as const,
   detail: (id: string) => ["contratos", "detalle", id] as const,
 };
+
+/**
+ * Una página de contratos de todos los colaboradores según los filtros
+ *
+ * @param filters - Página y filtros del listado
+ *
+ * @remarks
+ * Mantiene la página anterior visible mientras llega la nueva.
+ */
+export function useContratos(filters: ContratoFilters) {
+  return useQuery({
+    queryKey: contratosKey.list(filters),
+    queryFn: () => contratosService.list(filters),
+    placeholderData: keepPreviousData,
+  });
+}
 
 /** Contratos de un empleado, para la pestaña Contratos de la ficha */
 export function useContratosEmpleado(empleadoId: string) {
