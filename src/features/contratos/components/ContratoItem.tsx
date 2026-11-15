@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   CircleXIcon,
-  CornerDownRightIcon,
   FileTextIcon,
   FileXIcon,
   PencilIcon,
@@ -11,24 +10,24 @@ import {
 
 import { AccionButton } from "@/components/page/AccionButton";
 import { StatusBadge } from "@/components/feedback/StatusBadge";
-import { TONE_DOT, TONE_TEXT } from "@/components/feedback/statusTone.config";
+import { TONE_DOT } from "@/components/feedback/statusTone.config";
 import { Button } from "@/components/ui/button";
 import { getOptionLabel } from "@/lib/catalogos.utils";
 import { getTodayIsoDate } from "@/lib/date.utils";
 import { formatDate } from "@/lib/format.utils";
 import { cn } from "@/lib/utils";
-import {
-  ALERTA_VENCIMIENTO_TONE,
-  ESTADO_CONTRATO,
-} from "../config/contratos.config";
+import { ESTADO_CONTRATO } from "../config/contratos.config";
 import { useModalidadesContrato } from "../hooks/useCatalogos";
 import type { Contrato } from "../types/contratos.types";
 import {
   getProgresoContrato,
+  getVencimientoContrato,
   puedeEditar,
   puedeRenovar,
   puedeSubirPdf,
 } from "../utils/contratos.utils";
+import { ContratoProrroga } from "./ContratoProrroga";
+import { ContratoVencimiento } from "./ContratoVencimiento";
 import {
   ContratoModales,
   type ContratoModal,
@@ -60,16 +59,7 @@ export function ContratoItem({ contrato, empleadoActivo }: ContratoItemProps) {
     contrato.fecha_fin,
     hoy,
   );
-  // El backend no cambia el estado al pasar la fecha de fin: un contrato
-  // sigue Vigente aunque ya haya vencido
-  const diasVencido =
-    esVigente && contrato.dias_restantes !== null && contrato.dias_restantes < 0
-      ? Math.abs(contrato.dias_restantes)
-      : null;
-  const mostrarVencimiento =
-    esVigente &&
-    contrato.dias_restantes !== null &&
-    contrato.dias_restantes >= 0;
+  const vencimiento = getVencimientoContrato(contrato);
 
   return (
     <li className="relative pl-8">
@@ -107,13 +97,11 @@ export function ContratoItem({ contrato, empleadoActivo }: ContratoItemProps) {
           </div>
         </div>
 
-        {diasVencido !== null && (
-          <p className={cn("text-sm", TONE_TEXT.danger)}>
-            Venció hace {diasVencido} {diasVencido === 1 ? "día" : "días"}
-          </p>
+        {vencimiento?.tipo === "vencido" && (
+          <ContratoVencimiento vencimiento={vencimiento} />
         )}
 
-        {esVigente && progreso !== null && diasVencido === null && (
+        {esVigente && progreso !== null && vencimiento?.tipo !== "vencido" && (
           <div className="space-y-1.5">
             {aunNoEmpieza ? (
               <p className="text-sm text-muted-foreground">
@@ -134,19 +122,8 @@ export function ContratoItem({ contrato, empleadoActivo }: ContratoItemProps) {
                 />
               </div>
             )}
-            {mostrarVencimiento && (
-              <p
-                className={cn(
-                  "text-sm",
-                  contrato.alerta_vencimiento
-                    ? TONE_TEXT[
-                        ALERTA_VENCIMIENTO_TONE[contrato.alerta_vencimiento]
-                      ]
-                    : "text-muted-foreground",
-                )}
-              >
-                Vence en {contrato.dias_restantes} días
-              </p>
+            {vencimiento?.tipo === "porVencer" && (
+              <ContratoVencimiento vencimiento={vencimiento} />
             )}
           </div>
         )}
@@ -168,12 +145,7 @@ export function ContratoItem({ contrato, empleadoActivo }: ContratoItemProps) {
                 Sin PDF
               </span>
             )}
-            {contrato.es_prorroga && (
-              <span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
-                <CornerDownRightIcon className="size-4" aria-hidden />
-                Renovación del contrato anterior
-              </span>
-            )}
+            {contrato.es_prorroga && <ContratoProrroga />}
           </div>
 
           <div className="flex items-center gap-1">

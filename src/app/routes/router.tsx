@@ -97,6 +97,15 @@ export const router = createBrowserRouter([
             ],
           },
           {
+            element: <RoleRoute path={ROUTE_PATHS.gestionPersonal.contratos} />,
+            children: [
+              {
+                path: ROUTE_PATHS.gestionPersonal.contratos,
+                lazy: lazyPage(() => import("@/pages/contratos/ContratosPage")),
+              },
+            ],
+          },
+          {
             element: <RoleRoute path={ROUTE_PATHS.gestionPersonal.empleados} />,
             children: [
               {

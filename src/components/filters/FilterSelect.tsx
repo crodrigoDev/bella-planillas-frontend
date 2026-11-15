@@ -15,6 +15,8 @@ interface FilterSelectProps {
   value: string | undefined;
   onChange: (value: string | undefined) => void;
   isLoading?: boolean;
+  /** Deshabilita el selector, por ejemplo cuando otro filtro ya fija su valor */
+  disabled?: boolean;
   /** Para enlazar una etiqueta (`htmlFor`) con el selector */
   id?: string;
   className?: string;
@@ -33,6 +35,7 @@ export function FilterSelect({
   value,
   onChange,
   isLoading = false,
+  disabled = false,
   id,
   className,
 }: FilterSelectProps) {
@@ -53,6 +56,7 @@ export function FilterSelect({
     <Select
       items={items}
       value={value ?? ALL_VALUE}
+      disabled={disabled}
       onValueChange={(next) => {
         if (next === null) return;
 

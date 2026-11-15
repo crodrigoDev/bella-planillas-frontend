@@ -71,6 +71,7 @@ opción provisional. `SelectField` lo usa cuando recibe `clearLabel`.
 | `value` | `string \| undefined` | `undefined` = todos |
 | `onChange` | `(value: string \| undefined) => void` | |
 | `isLoading` | `boolean?` | |
+| `disabled` | `boolean?` | Deshabilita el selector (otro filtro lo fija; ver `ContratosToolbar`) |
 | `id` | `string?` | Para enlazar un `htmlFor` |
 | `className` | `string?` | Por defecto `w-full sm:w-48` |
 
