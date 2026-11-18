@@ -1,46 +1,53 @@
 import { XIcon } from "lucide-react";
 
+import { DateRangeFilter } from "@/components/filters/DateRangeFilter";
 import { FilterChip } from "@/components/filters/FilterChip";
 import { FilterSelect } from "@/components/filters/FilterSelect";
 import { Button } from "@/components/ui/button";
+import { formatDate } from "@/lib/format.utils";
 import {
   ACCION_OPTIONS,
   getAccionLabel,
   getTablaLabel,
   TABLA_OPTIONS,
+  TIPO_AFECTADO_LABEL,
 } from "../../config/auditoria.config";
 import type {
   AuditoriaFilterKey,
   AuditoriaFilters,
 } from "../../types/auditoria.types";
-import { shortId } from "../../utils/auditoria.utils";
 
 interface AuditoriaToolbarProps {
   filters: AuditoriaFilters;
-  /** Correo del usuario filtrado; solo sirve para la etiqueta */
-  usuarioEmail: string | undefined;
+  /** Nombre del usuario filtrado; solo sirve para la etiqueta */
+  usuarioNombre: string | undefined;
+  /** Nombre del afectado filtrado; solo sirve para la etiqueta */
+  afectadoNombre: string | undefined;
   hasActiveFilters: boolean;
   onFilterChange: (key: AuditoriaFilterKey, value: string | undefined) => void;
+  onFechasChange: (desde: string | undefined, hasta: string | undefined) => void;
   onQuitarUsuario: () => void;
-  onQuitarRegistro: () => void;
+  onQuitarAfectado: () => void;
   onClear: () => void;
 }
 
 /**
- * Barra con los filtros de la bitácora de auditoría
+ * Barra con los filtros de la actividad de auditoría
  *
  * @remarks
- * No guarda los filtros, los recibe de la URL. Módulo y acción son selectores
- * siempre visibles; el usuario y el registro se filtran desde una fila y solo se
- * ven como etiquetas, igual que los demás filtros aplicados.
+ * No guarda los filtros, los recibe de la URL. Módulo, acción y fechas son
+ * controles siempre visibles; el usuario y el afectado se filtran desde una fila
+ * y solo se ven como etiquetas, igual que los demás filtros aplicados.
  */
 export function AuditoriaToolbar({
   filters,
-  usuarioEmail,
+  usuarioNombre,
+  afectadoNombre,
   hasActiveFilters,
   onFilterChange,
+  onFechasChange,
   onQuitarUsuario,
-  onQuitarRegistro,
+  onQuitarAfectado,
   onClear,
 }: AuditoriaToolbarProps) {
   const appliedFilters: { key: string; label: string; onRemove: () => void }[] =
@@ -58,23 +65,24 @@ export function AuditoriaToolbar({
       label: `Acción: ${getAccionLabel(filters.accion)}`,
       onRemove: () => onFilterChange("accion", undefined),
     });
+  if (filters.desde || filters.hasta)
+    appliedFilters.push({
+      key: "fechas",
+      label: `Fecha: ${filters.desde ? formatDate(filters.desde) : "..."} - ${filters.hasta ? formatDate(filters.hasta) : "..."}`,
+      onRemove: () => onFechasChange(undefined, undefined),
+    });
   if (filters.usuario_id)
     appliedFilters.push({
       key: "usuario_id",
-      label: `Usuario: ${usuarioEmail ?? shortId(filters.usuario_id)}`,
+      label: `Hecho por: ${usuarioNombre ?? "usuario elegido"}`,
       onRemove: onQuitarUsuario,
     });
-  if (filters.registro_id)
+  if (filters.afectado_tipo && filters.afectado_id)
     appliedFilters.push({
-      key: "registro_id",
-      label: `Registro: ${shortId(filters.registro_id)}`,
-      onRemove: onQuitarRegistro,
+      key: "afectado_id",
+      label: `${TIPO_AFECTADO_LABEL[filters.afectado_tipo]}: ${afectadoNombre ?? "elegido"}`,
+      onRemove: onQuitarAfectado,
     });
-
-  // El filtro de módulo y de acción acepta cualquier texto de la URL: si no es
-  // una opción conocida, se agrega para que el selector lo muestre
-  const tablaOptions = withCurrent(TABLA_OPTIONS, filters.tabla_afectada);
-  const accionOptions = withCurrent(ACCION_OPTIONS, filters.accion);
 
   return (
     <div className="space-y-3">
@@ -82,16 +90,26 @@ export function AuditoriaToolbar({
         <FilterSelect
           ariaLabel="Filtrar por módulo"
           allLabel="Todos los módulos"
-          options={tablaOptions}
+          options={TABLA_OPTIONS}
           value={filters.tabla_afectada}
           onChange={(value) => onFilterChange("tabla_afectada", value)}
+          className="sm:w-64"
         />
         <FilterSelect
           ariaLabel="Filtrar por acción"
           allLabel="Todas las acciones"
-          options={accionOptions}
+          options={ACCION_OPTIONS}
           value={filters.accion}
           onChange={(value) => onFilterChange("accion", value)}
+          className="sm:w-64"
+        />
+        <DateRangeFilter
+          ariaLabel="Filtrar por fecha"
+          placeholder="Fecha"
+          from={filters.desde}
+          to={filters.hasta}
+          onChange={onFechasChange}
+          className="w-full sm:w-64"
         />
 
         {hasActiveFilters && (
@@ -112,12 +130,3 @@ export function AuditoriaToolbar({
     </div>
   );
 }
-
-/** Agrega el valor actual a las opciones si no es una de ellas */
-const withCurrent = (
-  options: { value: string; label: string }[],
-  current: string | undefined,
-) =>
-  current && !options.some((option) => option.value === current)
-    ? [...options, { value: current, label: current }]
-    : options;

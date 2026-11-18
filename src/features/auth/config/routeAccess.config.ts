@@ -32,6 +32,7 @@ const ROUTE_ROLES: Readonly<Record<string, readonly AuthRol[] | null>> = {
   [ROUTE_PATHS.asistencia.cierreMensual]: [RRHH],
   // Auditoría queda solo para RRHH por ahora
   [ROUTE_PATHS.auditoria]: [RRHH],
+  [ROUTE_PATHS.detalleAuditoria]: [RRHH],
 };
 
 /** Comprueba si el rol puede abrir una ruta registrada */

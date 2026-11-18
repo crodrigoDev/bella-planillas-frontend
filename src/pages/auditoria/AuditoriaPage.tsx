@@ -1,40 +1,45 @@
-import { useState } from "react";
+import { useLocation } from "react-router-dom";
 
+import { ROUTE_PATHS } from "@/app/routes/path";
 import { DataTable } from "@/components/data-table/DataTable";
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { PageHeader } from "@/components/page/PageHeader";
 import { AuditoriaToolbar } from "@/features/auditoria/components/listado/AuditoriaToolbar";
-import { CambiosAuditoriaModal } from "@/features/auditoria/components/modals/CambiosAuditoriaModal";
 import { getAuditoriaColumns } from "@/features/auditoria/config/auditoria.columns";
 import { useAuditoria } from "@/features/auditoria/hooks/useAuditoria";
 import { useAuditoriaFilters } from "@/features/auditoria/hooks/useAuditoriaFilters";
-import type { AuditoriaLog } from "@/features/auditoria/types/auditoria.types";
+import type { FilaActividad } from "@/features/auditoria/types/auditoria.types";
 import { usePaginacionServidor } from "@/hooks/usePaginacionServidor";
 
-const NO_LOGS: AuditoriaLog[] = [];
+const NO_FILAS: FilaActividad[] = [];
 
 /**
- * Bitácora de auditoría: quién cambió qué y cuándo, de solo lectura
+ * Auditoría: quién hizo qué, a quién afectó y cuándo, de solo lectura
  *
  * @remarks
- * Los filtros viven en la URL. Los registros los escribe un trigger de la base
- * de datos solo para algunas tablas. No hay filtro de fechas ni búsqueda de
- * texto en el backend.
+ * Los filtros viven en la URL. Cada fila ya viene explicada en lenguaje de
+ * negocio por el backend (`resumen`, afectado y autor); los valores antes y
+ * después están en la página de detalle de cada fila, a la que se llega con el
+ * listado y sus filtros como punto de retorno. No hay búsqueda de texto en el
+ * backend.
  */
 export default function AuditoriaPage() {
   const {
     filters,
-    usuarioEmail,
+    usuarioNombre,
+    afectadoNombre,
     hasActiveFilters,
     setPage,
     setLimit,
     setFilter,
+    setFechas,
     filtrarPorUsuario,
     quitarUsuario,
-    quitarRegistro,
+    filtrarPorAfectado,
+    quitarAfectado,
     clearFilters,
   } = useAuditoriaFilters();
-  const [verCambios, setVerCambios] = useState<AuditoriaLog | null>(null);
+  const { search } = useLocation();
   const { data, isLoading, isFetching, isPlaceholderData, error, refetch } =
     useAuditoria(filters);
 
@@ -47,8 +52,9 @@ export default function AuditoriaPage() {
   });
 
   const columns = getAuditoriaColumns({
-    onVerCambios: setVerCambios,
+    volverA: `${ROUTE_PATHS.auditoria}${search}`,
     onFiltrarUsuario: filtrarPorUsuario,
+    onFiltrarAfectado: filtrarPorAfectado,
   });
 
   return (
@@ -59,16 +65,18 @@ export default function AuditoriaPage() {
       <PageHeader
         id="auditoria-title"
         title="Auditoría"
-        description="Consulta los cambios que se hicieron en el sistema y quién los hizo"
+        description="Consulta quién hizo cada cambio, a quién afectó y qué cambió"
       />
 
       <AuditoriaToolbar
         filters={filters}
-        usuarioEmail={usuarioEmail}
+        usuarioNombre={usuarioNombre}
+        afectadoNombre={afectadoNombre}
         hasActiveFilters={hasActiveFilters}
         onFilterChange={setFilter}
+        onFechasChange={setFechas}
         onQuitarUsuario={quitarUsuario}
-        onQuitarRegistro={quitarRegistro}
+        onQuitarAfectado={quitarAfectado}
         onClear={clearFilters}
       />
 
@@ -80,21 +88,14 @@ export default function AuditoriaPage() {
 
       <DataTable
         columns={columns}
-        data={data?.items ?? NO_LOGS}
+        data={data?.items ?? NO_FILAS}
         pagination={pagination}
         rowCount={data?.pagination.total ?? 0}
         onPaginationChange={onPaginationChange}
         isLoading={isLoading}
         isFetching={isFetching}
-        emptyMessage="No hay registros de auditoría con estos filtros"
-        itemLabel="registros"
-      />
-
-      <CambiosAuditoriaModal
-        log={verCambios}
-        onOpenChange={(open) => {
-          if (!open) setVerCambios(null);
-        }}
+        emptyMessage="No hay actividad registrada con estos filtros"
+        itemLabel="movimientos"
       />
     </section>
   );

@@ -1,74 +1,154 @@
 import type { PaginationMeta } from "@/lib/api/types/api.types";
-import type { CambioCampo } from "@/lib/types/cambios.types";
 
-/** Empleado vinculado al usuario que hizo la acción */
-export interface AuditoriaEmpleado {
-  nro_documento: string;
-  nombre: string;
-  apellido: string;
+/*
+ * Tipos de la vista asistida de auditoría (`/core/audit/actividad` y
+ * `/core/audit/afectados`). Replican el contrato del backend, que aún no está en
+ * `@jyp/shared-contracts`:
+ * `bella-jyp-backend/src/modules/core/audit/contracts/actividad-auditoria.schema.ts`.
+ */
+
+/** Entidad de negocio a la que se atribuye un cambio; `empresa` no tiene id */
+export type TipoAfectadoAuditoria =
+  | "empleado"
+  | "area"
+  | "cargo"
+  | "jornada"
+  | "empresa";
+
+/** Tipos de afectado que tienen una línea de tiempo propia */
+export type TipoAfectadoConId = Exclude<TipoAfectadoAuditoria, "empresa">;
+
+/** Tipo de dato de un campo de negocio */
+export type TipoCampoAuditoria =
+  | "texto"
+  | "fecha"
+  | "fecha_hora"
+  | "hora"
+  | "booleano"
+  | "moneda"
+  | "numero"
+  | "enum"
+  | "referencia"
+  | "lista";
+
+/** Valor ya legible de un campo: texto, número, Sí/No o null si no tiene valor */
+export type ValorCambio = string | number | boolean | null;
+
+/** Un campo que cambió dentro de un elemento de una lista */
+export interface CambioElemento {
+  campo: string;
+  etiqueta: string;
+  tipo: TipoCampoAuditoria;
+  antes: ValorCambio;
+  despues: ValorCambio;
+}
+
+/** Elemento de una lista que cambió (por ejemplo un día del horario) con sus campos */
+export interface DetalleElemento {
+  elemento: string;
+  etiqueta: string;
+  cambios: CambioElemento[];
+}
+
+/**
+ * Un campo que cambió, con sus valores ya traducidos a lenguaje de negocio
+ *
+ * @remarks
+ * Si `protegido` es true (cuentas, CCI, CUSPP), `antes` y `despues` vienen en
+ * null. Si `tipo` es `lista`, también, y el contenido está en `detalle`.
+ */
+export interface CambioActividad extends CambioElemento {
+  protegido?: boolean;
+  detalle?: DetalleElemento[];
 }
 
 /** Usuario que hizo la acción */
-export interface AuditoriaUsuario {
-  email: string;
+export interface ActorActividad {
+  id: string;
+  nombre: string;
   rol: string;
-  empleados: AuditoriaEmpleado | null;
+}
+
+/** A quién afectó el cambio; `id` es null cuando el afectado es la empresa */
+export interface AfectadoActividad {
+  tipo: TipoAfectadoAuditoria;
+  id: string | null;
+  nombre: string;
+  detalle: string | null;
 }
 
 /**
- * Fila del listado de auditoría (sin los valores antes y después)
+ * Fila de actividad: qué pasó, quién lo hizo y a quién afectó
  *
  * @remarks
- * `usuarios` es null cuando la acción la hizo el sistema.
+ * `accion` es la acción técnica (la que filtra el backend) y `accion_etiqueta`
+ * la de negocio. `modulo` es la tabla técnica y sirve para el filtro por módulo.
+ * `registro_id` es el id de la fila modificada: solo vale para enlazar a su
+ * pantalla (en operaciones masivas es un id inventado). `actor` es null si lo
+ * hizo el sistema.
  */
-export interface AuditoriaLog {
+export interface FilaActividad {
   id: string;
-  usuario_id: string | null;
+  /** Instante completo con zona (ISO) */
+  fecha: string;
   accion: string;
-  tabla_afectada: string;
+  accion_etiqueta: string;
+  modulo: string;
+  modulo_etiqueta: string;
   registro_id: string;
-  direccion_ip: string;
-  created_at: string;
-  usuarios: AuditoriaUsuario | null;
-}
-
-/**
- * Detalle de una fila de auditoría (`GET logs/:id`)
- *
- * @remarks
- * Trae los valores, pero no el usuario. `cambios` los calcula el backend: todos
- * los campos en una creación y solo los que cambian en una modificación, con su
- * etiqueta en español y sin los campos técnicos.
- */
-export interface AuditoriaDetalle {
-  id: string;
-  usuario_id: string | null;
-  accion: string;
-  tabla_afectada: string;
-  registro_id: string;
-  direccion_ip: string;
-  created_at: string;
-  valores_antes: Record<string, unknown> | null;
-  valores_despues: Record<string, unknown> | null;
-  cambios: CambioCampo[];
+  actor: ActorActividad | null;
+  afectado: AfectadoActividad | null;
+  resumen: string;
   campos_modificados: string[];
 }
 
-/** Filtros del listado de auditoría */
+/** Detalle de una fila de actividad (`GET actividad/:id`): la fila más sus cambios */
+export interface DetalleActividad extends FilaActividad {
+  cambios: CambioActividad[];
+}
+
+/**
+ * Filtros del listado de actividad
+ *
+ * @remarks
+ * `desde` y `hasta` son días `YYYY-MM-DD` en hora de Lima, ambos inclusive.
+ */
 export interface AuditoriaFilters {
   page: number;
   limit: number;
   tabla_afectada?: string;
   accion?: string;
   usuario_id?: string;
-  registro_id?: string;
+  afectado_tipo?: TipoAfectadoAuditoria;
+  afectado_id?: string;
+  desde?: string;
+  hasta?: string;
 }
 
 /** Filtros que se cambian de uno en uno */
 export type AuditoriaFilterKey = "tabla_afectada" | "accion";
 
-/** Página de auditoría con sus datos de paginación */
+/** Parámetros de la línea de tiempo de un afectado */
+export interface AfectadoParams {
+  page: number;
+  limit: number;
+  desde?: string;
+  hasta?: string;
+}
+
+/** Página de actividad con sus datos de paginación */
 export interface AuditoriaPage {
-  items: AuditoriaLog[];
+  items: FilaActividad[];
   pagination: PaginationMeta;
+}
+
+/**
+ * Estado que viaja con el enlace al detalle de un registro
+ *
+ * @remarks
+ * `volverA` es la ruta (con sus filtros) desde la que se llegó, para que el
+ * enlace "Volver" de la página de detalle la recupere.
+ */
+export interface DetalleLocationState {
+  volverA?: string;
 }

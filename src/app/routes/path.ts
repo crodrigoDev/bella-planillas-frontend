@@ -44,6 +44,7 @@ export const ROUTE_PATHS = {
   },
 
   auditoria: "/auditoria",
+  detalleAuditoria: "/auditoria/:id",
 
   perfil: "/perfil",
 } as const;
@@ -81,3 +82,11 @@ export const buildEditarJornadaPath = (id: string): string =>
  */
 export const buildSolicitudPath = (idOCodigo: string): string =>
   `${ROUTE_PATHS.gestionPersonal.solicitudes}/${idOCodigo}`;
+
+/**
+ * Arma la ruta del detalle de un registro de auditoría
+ *
+ * @param id - Id de la fila de actividad (no el del registro modificado)
+ */
+export const buildAuditoriaDetallePath = (id: string): string =>
+  `${ROUTE_PATHS.auditoria}/${id}`;
