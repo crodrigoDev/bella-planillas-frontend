@@ -23,6 +23,7 @@ export const ROUTE_PATHS = {
     detalleEmpleadoDerechohabientes: "/empleados/:id/derechohabientes",
     detalleEmpleadoAsistencia: "/empleados/:id/asistencia",
     detalleEmpleadoHistorial: "/empleados/:id/historial",
+    contratos: "/contratos",
     solicitudes: "/solicitudes",
     nuevaSolicitud: "/solicitudes/nueva",
     detalleSolicitud: "/solicitudes/:id",

@@ -66,3 +66,33 @@ export const getProgresoContrato = (
 
   return Math.min(100, Math.max(0, avance));
 };
+
+/** Aviso de vencimiento de un contrato vigente con fecha de fin */
+export type VencimientoContrato =
+  | { tipo: "vencido"; dias: number }
+  | {
+      tipo: "porVencer";
+      dias: number;
+      alerta: Contrato["alerta_vencimiento"];
+    };
+
+/**
+ * Calcula el aviso de vencimiento de un contrato
+ *
+ * @returns El aviso, o null si no es vigente o no tiene fecha de fin
+ *
+ * @remarks
+ * El backend no cambia el estado al pasar la fecha de fin: un contrato sigue
+ * Vigente aunque ya haya vencido, y `dias_restantes` sale negativo.
+ */
+export const getVencimientoContrato = (
+  contrato: Pick<Contrato, "estado" | "dias_restantes" | "alerta_vencimiento">,
+): VencimientoContrato | null => {
+  const { estado, dias_restantes, alerta_vencimiento } = contrato;
+
+  if (estado !== "VIGENTE" || dias_restantes === null) return null;
+  if (dias_restantes < 0)
+    return { tipo: "vencido", dias: Math.abs(dias_restantes) };
+
+  return { tipo: "porVencer", dias: dias_restantes, alerta: alerta_vencimiento };
+};

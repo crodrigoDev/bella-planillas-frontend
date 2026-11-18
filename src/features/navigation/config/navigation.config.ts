@@ -5,6 +5,7 @@ import {
   CalendarClock,
   CalendarDays,
   ClipboardList,
+  FileText,
   LayoutDashboard,
   Network,
   ScanLine,
@@ -35,6 +36,11 @@ export const RRHH_SIDEBAR_ITEMS = [
         label: "Empleados",
         to: ROUTE_PATHS.gestionPersonal.empleados,
         icon: UserRound,
+      },
+      {
+        label: "Contratos",
+        to: ROUTE_PATHS.gestionPersonal.contratos,
+        icon: FileText,
       },
       {
         label: "Solicitudes",

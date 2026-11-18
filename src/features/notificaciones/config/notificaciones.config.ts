@@ -28,7 +28,7 @@ export const TIPO_NOTIFICACION_CONFIG: Record<
  * Nombre legible y enlace de cada módulo de origen
  *
  * @remarks
- * `CONTRATOS` no tiene enlace: no existe un listado global de contratos.
+ * `CONTRATOS` enlaza al listado global de contratos.
  */
 export const MODULO_NOTIFICACION_CONFIG: Record<
   string,
@@ -42,5 +42,8 @@ export const MODULO_NOTIFICACION_CONFIG: Record<
     nombre: "Asistencia",
     ruta: ROUTE_PATHS.asistencia.cierreMensual,
   },
-  CONTRATOS: { nombre: "Contratos" },
+  CONTRATOS: {
+    nombre: "Contratos",
+    ruta: ROUTE_PATHS.gestionPersonal.contratos,
+  },
 };

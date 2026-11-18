@@ -8,7 +8,13 @@ import type {
   ApiResponse,
   PaginationApiResponse,
 } from "@/lib/api/types/api.types";
-import type { Contrato, ContratoDetalle } from "../types/contratos.types";
+import type {
+  Contrato,
+  ContratoDetalle,
+  ContratoFilters,
+  ContratoGlobal,
+  ContratosPage,
+} from "../types/contratos.types";
 import { getNombreArchivo } from "../utils/contratos.utils";
 
 /** Datos con los que se crea un contrato de alta (sin renovación) */
@@ -21,6 +27,29 @@ export type NuevoContrato = Omit<
  * Agrupa las operaciones de contratos que se comunican al backend
  */
 export const contratosService = {
+  /**
+   * Consulta una página de contratos de todos los colaboradores
+   *
+   * @returns Los contratos de la página y su paginación
+   *
+   * @remarks
+   * El backend no devuelve los anulados. Con `search` o `area_id` oculta los
+   * contratos de empleados inactivos (CON-F7). Con `por_vencer_dias` solo trae
+   * los vigentes que vencen pronto, del más próximo al más lejano.
+   */
+  list: async (filters: ContratoFilters): Promise<ContratosPage> => {
+    const response = await protectedHttpClient.get<
+      PaginationApiResponse<ContratoGlobal>
+    >("/rrhh/contrato", { params: filters });
+
+    const { total, page, limit, totalPages } = response.data.meta;
+
+    return {
+      items: response.data.data,
+      pagination: { total, page, limit, totalPages },
+    };
+  },
+
   /**
    * Lista los contratos de un empleado, del más reciente al más antiguo
    *
