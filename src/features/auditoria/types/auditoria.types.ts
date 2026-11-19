@@ -1,54 +1,33 @@
+import type {
+  CambioActividadAuditoria,
+  DetalleActividadAuditoria,
+  DetalleElementoAuditoria,
+  FilaActividadAuditoria,
+  TipoAfectadoAuditoria,
+  TipoCampoAuditoria,
+  ValorCambioAuditoria,
+} from "@jyp/shared-contracts";
 import type { PaginationMeta } from "@/lib/api/types/api.types";
 
 /*
  * Tipos de la vista asistida de auditoría (`/core/audit/actividad` y
- * `/core/audit/afectados`). Replican el contrato del backend, que aún no está en
- * `@jyp/shared-contracts`:
- * `bella-jyp-backend/src/modules/core/audit/contracts/actividad-auditoria.schema.ts`.
+ * `/core/audit/afectados`). Vienen del contrato compartido
+ * `@jyp/shared-contracts`; aquí solo se reexportan con los nombres del feature.
  */
 
-/** Entidad de negocio a la que se atribuye un cambio; `empresa` no tiene id */
-export type TipoAfectadoAuditoria =
-  | "empleado"
-  | "area"
-  | "cargo"
-  | "jornada"
-  | "empresa";
+export type { TipoAfectadoAuditoria, TipoCampoAuditoria };
 
-/** Tipos de afectado que tienen una línea de tiempo propia */
+/** Tipos de afectado que tienen una línea de tiempo propia (`empresa` no tiene id) */
 export type TipoAfectadoConId = Exclude<TipoAfectadoAuditoria, "empresa">;
 
-/** Tipo de dato de un campo de negocio */
-export type TipoCampoAuditoria =
-  | "texto"
-  | "fecha"
-  | "fecha_hora"
-  | "hora"
-  | "booleano"
-  | "moneda"
-  | "numero"
-  | "enum"
-  | "referencia"
-  | "lista";
-
 /** Valor ya legible de un campo: texto, número, Sí/No o null si no tiene valor */
-export type ValorCambio = string | number | boolean | null;
-
-/** Un campo que cambió dentro de un elemento de una lista */
-export interface CambioElemento {
-  campo: string;
-  etiqueta: string;
-  tipo: TipoCampoAuditoria;
-  antes: ValorCambio;
-  despues: ValorCambio;
-}
+export type ValorCambio = ValorCambioAuditoria;
 
 /** Elemento de una lista que cambió (por ejemplo un día del horario) con sus campos */
-export interface DetalleElemento {
-  elemento: string;
-  etiqueta: string;
-  cambios: CambioElemento[];
-}
+export type DetalleElemento = DetalleElementoAuditoria;
+
+/** Un campo que cambió dentro de un elemento de una lista */
+export type CambioElemento = DetalleElemento["cambios"][number];
 
 /**
  * Un campo que cambió, con sus valores ya traducidos a lenguaje de negocio
@@ -57,25 +36,7 @@ export interface DetalleElemento {
  * Si `protegido` es true (cuentas, CCI, CUSPP), `antes` y `despues` vienen en
  * null. Si `tipo` es `lista`, también, y el contenido está en `detalle`.
  */
-export interface CambioActividad extends CambioElemento {
-  protegido?: boolean;
-  detalle?: DetalleElemento[];
-}
-
-/** Usuario que hizo la acción */
-export interface ActorActividad {
-  id: string;
-  nombre: string;
-  rol: string;
-}
-
-/** A quién afectó el cambio; `id` es null cuando el afectado es la empresa */
-export interface AfectadoActividad {
-  tipo: TipoAfectadoAuditoria;
-  id: string | null;
-  nombre: string;
-  detalle: string | null;
-}
+export type CambioActividad = CambioActividadAuditoria;
 
 /**
  * Fila de actividad: qué pasó, quién lo hizo y a quién afectó
@@ -85,27 +46,18 @@ export interface AfectadoActividad {
  * la de negocio. `modulo` es la tabla técnica y sirve para el filtro por módulo.
  * `registro_id` es el id de la fila modificada: solo vale para enlazar a su
  * pantalla (en operaciones masivas es un id inventado). `actor` es null si lo
- * hizo el sistema.
+ * hizo el sistema; `fecha` es el instante completo con zona (ISO).
  */
-export interface FilaActividad {
-  id: string;
-  /** Instante completo con zona (ISO) */
-  fecha: string;
-  accion: string;
-  accion_etiqueta: string;
-  modulo: string;
-  modulo_etiqueta: string;
-  registro_id: string;
-  actor: ActorActividad | null;
-  afectado: AfectadoActividad | null;
-  resumen: string;
-  campos_modificados: string[];
-}
+export type FilaActividad = FilaActividadAuditoria;
+
+/** Usuario que hizo la acción */
+export type ActorActividad = NonNullable<FilaActividad["actor"]>;
+
+/** A quién afectó el cambio; `id` es null cuando el afectado es la empresa */
+export type AfectadoActividad = NonNullable<FilaActividad["afectado"]>;
 
 /** Detalle de una fila de actividad (`GET actividad/:id`): la fila más sus cambios */
-export interface DetalleActividad extends FilaActividad {
-  cambios: CambioActividad[];
-}
+export type DetalleActividad = DetalleActividadAuditoria;
 
 /**
  * Filtros del listado de actividad
