@@ -81,7 +81,7 @@ Cada feature es un módulo de dominio con su propia carpeta de `components/`, `h
 | `derechohabientes` | Familiares y sus sustentos                                    |
 | `datosFinancieros` | Previsión social, cuentas y salud                             |
 | `asistencia`       | Resumen mensual y detalle diario                              |
-| `historial`        | Línea de tiempo del empleado                                  |
+| `auditoria`        | Actividad del sistema y línea de tiempo del empleado          |
 
 Reglas que se mantienen:
 

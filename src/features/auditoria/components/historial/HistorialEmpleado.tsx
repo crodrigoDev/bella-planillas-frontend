@@ -2,22 +2,20 @@ import { EmptyState } from "@/components/feedback/EmptyState";
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { LoadingButton } from "@/components/form/LoadingButton";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useHistorial } from "../hooks/useHistorial";
+import { useHistorialAfectado } from "../../hooks/useHistorialAfectado";
 import { EventoHistorialItem } from "./EventoHistorialItem";
 
 interface HistorialEmpleadoProps {
   empleadoId: string;
 }
 
-/** Tabla de auditoría donde se guardan los cambios de un empleado */
-const TABLA_EMPLEADOS = "empleados";
-
 /**
- * Pestaña Historial de la ficha: línea de tiempo de los cambios del empleado
+ * Pestaña Historial de la ficha: línea de tiempo de todo lo que cambió del colaborador
  *
  * @remarks
- * Lee la auditoría del backend, del cambio más reciente al más antiguo, de a
- * 20 por vez ("Cargar más").
+ * Lee la línea de tiempo del afectado en el backend, que junta su ficha, contratos,
+ * familiares, datos financieros, solicitudes y asistencia. Va del cambio más
+ * reciente al más antiguo, de a 20 por vez ("Cargar más").
  */
 export function HistorialEmpleado({ empleadoId }: HistorialEmpleadoProps) {
   const {
@@ -28,7 +26,7 @@ export function HistorialEmpleado({ empleadoId }: HistorialEmpleadoProps) {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useHistorial(TABLA_EMPLEADOS, empleadoId);
+  } = useHistorialAfectado("empleado", empleadoId);
 
   if (isLoading) return <Skeleton className="h-64 w-full" />;
 
@@ -48,7 +46,7 @@ export function HistorialEmpleado({ empleadoId }: HistorialEmpleadoProps) {
     return (
       <EmptyState
         title="Sin cambios registrados"
-        description="Todavía no hay nada guardado en el historial de este colaborador."
+        description="Todavía no hay cambios registrados de este colaborador."
       />
     );
 

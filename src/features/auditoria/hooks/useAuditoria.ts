@@ -11,7 +11,7 @@ export const auditoriaKey = {
 };
 
 /**
- * Obtiene una página de la bitácora según los filtros
+ * Obtiene una página de la actividad según los filtros
  *
  * @remarks
  * Mantiene la página anterior visible mientras llega la nueva.
@@ -25,9 +25,9 @@ export function useAuditoria(filters: AuditoriaFilters) {
 }
 
 /**
- * Obtiene una fila de la bitácora con sus valores antes y después
+ * Obtiene una fila de actividad con sus cambios
  *
- * @param id - Id de la fila; sin id no se consulta
+ * @param id - Id de la fila; sin id no se consulta (sirve para pedirla solo al abrir un detalle)
  * @returns La consulta; `data` es null si la fila no existe
  */
 export function useAuditoriaRegistro(id: string | undefined) {
