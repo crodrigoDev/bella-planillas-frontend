@@ -11,7 +11,7 @@ interface ContextoActividadProps {
 }
 
 /**
- * Contexto de un cambio: a quién afectó, quién lo hizo y en qué módulo
+ * Detalles del contexto de un cambio: a quién afectó, quién lo hizo y en qué módulo
  *
  * @remarks
  * Un colaborador afectado enlaza a su ficha y una solicitud, a su detalle. La
@@ -24,10 +24,10 @@ export function ContextoActividad({ fila }: ContextoActividadProps) {
   return (
     <section
       aria-labelledby="contexto-actividad-title"
-      className="space-y-4 rounded-lg border bg-card p-4"
+      className="space-y-4 lg:border-l lg:pl-8"
     >
       <h2 id="contexto-actividad-title" className="text-base font-semibold">
-        Contexto
+        Detalles
       </h2>
 
       <div className="space-y-4">

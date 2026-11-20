@@ -9,11 +9,11 @@ interface ActividadCabeceraProps {
 }
 
 /**
- * Cabecera del detalle: el resumen del cambio como título, con su acción y su fecha
+ * Cabecera del detalle: el resumen del cambio como título, con su acción, módulo y fecha
  *
  * @remarks
  * El resumen ya viene escrito en lenguaje de negocio por el backend, así que es
- * lo primero que se lee; la acción y la hora quedan debajo como datos de apoyo.
+ * lo primero que se lee; la acción, el módulo y la hora quedan debajo como datos de apoyo.
  */
 export function ActividadCabecera({ id, fila }: ActividadCabeceraProps) {
   return (
@@ -21,11 +21,14 @@ export function ActividadCabecera({ id, fila }: ActividadCabeceraProps) {
       <h1 id={id} className="max-w-3xl text-2xl font-semibold text-balance">
         {fila.resumen}
       </h1>
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-sm text-muted-foreground">
         <StatusBadge tone={getAccionTone(fila.accion_etiqueta)} withDot>
           {fila.accion_etiqueta}
         </StatusBadge>
-        <time dateTime={fila.fecha} className="text-sm text-muted-foreground">
+        <span aria-hidden>·</span>
+        <span>{fila.modulo_etiqueta}</span>
+        <span aria-hidden>·</span>
+        <time dateTime={fila.fecha}>
           {formatFechaHoraLima(fila.fecha)} (hora de Lima)
         </time>
       </div>

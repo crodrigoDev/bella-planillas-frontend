@@ -17,12 +17,13 @@ import { parseUuid } from "@/lib/urlParams.utils";
  * Detalle de un registro de auditoría: qué pasó, qué cambió y a quién afectó
  *
  * @remarks
- * Una sola consulta (`GET actividad/:id`) trae el resumen, el contexto y los
- * cambios. El título es el resumen; los cambios ocupan la columna principal y
- * el contexto y los otros cambios del afectado van al lado (en pantallas
- * angostas, el contexto va primero). "Volver" lleva al listado con los filtros
- * con que se llegó, o a la pestaña Historial si se llegó de ahí. Un id que no
- * es uuid se trata como no encontrado.
+ * Una sola consulta (`GET actividad/:id`) trae el resumen, los detalles y los
+ * cambios. El título es el resumen; en la columna principal van "Qué cambió" y
+ * debajo "Otros cambios" del afectado, mientras que la columna lateral muestra
+ * "Detalles" (en pantallas angostas, "Detalles" va primero tras la cabecera).
+ * "Volver" lleva al listado con los filtros con que se llegó, o a la pestaña
+ * Historial si se llegó de ahí. Un id que no es uuid se trata como no
+ * encontrado.
  */
 export default function AuditoriaDetallePage() {
   const params = useParams();
@@ -67,13 +68,13 @@ export default function AuditoriaDetallePage() {
           <ActividadCabecera id="auditoria-detalle-title" fila={data} />
 
           <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-            <div className="lg:col-start-2 lg:row-start-1">
+            <div className="lg:col-start-2 lg:row-span-2 lg:row-start-1">
               <ContextoActividad fila={data} />
             </div>
 
             <section
               aria-labelledby="cambios-actividad-title"
-              className="space-y-3 lg:col-start-1 lg:row-span-2 lg:row-start-1"
+              className="space-y-3 lg:col-start-1 lg:row-start-1"
             >
               <h2
                 id="cambios-actividad-title"
@@ -95,7 +96,7 @@ export default function AuditoriaDetallePage() {
               )}
             </section>
 
-            <div className="lg:col-start-2 lg:row-start-2">
+            <div className="lg:col-start-1 lg:row-start-2">
               <OtrosCambiosAfectado fila={data} />
             </div>
           </div>
