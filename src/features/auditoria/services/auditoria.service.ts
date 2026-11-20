@@ -5,6 +5,7 @@ import type {
   ApiResponse,
   PaginationApiResponse,
 } from "@/lib/api/types/api.types";
+import type { ColaboradorOption } from "@/lib/types/options.types";
 import type {
   AfectadoParams,
   AuditoriaFilters,
@@ -12,7 +13,11 @@ import type {
   DetalleActividad,
   FilaActividad,
   TipoAfectadoConId,
+  UsuarioBusqueda,
 } from "../types/auditoria.types";
+
+/** Usuarios que trae cada búsqueda del filtro "Hecho por" */
+const USUARIOS_LIMIT = 20;
 
 /** Pasa la respuesta paginada del backend a la forma que usa el front */
 const toPage = (
@@ -40,6 +45,32 @@ export const auditoriaService = {
     >("/core/audit/actividad", { params: filters });
 
     return toPage(response.data);
+  },
+
+  /**
+   * Busca cuentas de usuario para el filtro "Hecho por"
+   *
+   * @param search - Nombre, correo o documento a buscar
+   * @returns Los usuarios como opciones de un selector de colaborador
+   *
+   * @remarks
+   * El listado trae también las cuentas desactivadas (no se envía `activo`),
+   * porque una acción vieja pudo hacerla un usuario que ya no está activo. Cada
+   * opción muestra el nombre del colaborador o su correo si no tiene uno, y el
+   * documento o el rol como segunda línea.
+   */
+  listUsuarios: async (search?: string): Promise<ColaboradorOption[]> => {
+    const response = await protectedHttpClient.get<
+      PaginationApiResponse<UsuarioBusqueda>
+    >("/core/usuarios", {
+      params: { limit: USUARIOS_LIMIT, search: search || undefined },
+    });
+
+    return response.data.data.map(({ id, email, rol, empleados }) => ({
+      value: id,
+      label: empleados ? `${empleados.nombre} ${empleados.apellido}` : email,
+      nro_documento: empleados?.nro_documento ?? rol,
+    }));
   },
 
   /**

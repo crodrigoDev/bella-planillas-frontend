@@ -77,6 +77,33 @@ export interface AuditoriaFilters {
   hasta?: string;
 }
 
+/**
+ * Usuario que puede aparecer como autor de un cambio (`GET /core/usuarios`)
+ *
+ * @remarks
+ * Es la forma en que el backend devuelve cada cuenta en el listado: los campos
+ * de paginación vienen en `meta`. `empleados` es null si la cuenta no tiene
+ * colaborador asociado; el nombre del filtro sale de ahí o, si no hay, del
+ * correo.
+ */
+export interface UsuarioBusqueda {
+  id: string;
+  email: string;
+  rol: string;
+  activo: boolean;
+  ultimo_acceso: string | null;
+  created_at: string;
+  empleados: {
+    id: string;
+    nro_documento: string;
+    nombre: string;
+    apellido: string;
+    estado_laboral: string;
+    area: { id: string; nombre: string } | null;
+    cargo: { id: string; nombre: string } | null;
+  } | null;
+}
+
 /** Filtros que se cambian de uno en uno */
 export type AuditoriaFilterKey = "tabla_afectada" | "accion";
 

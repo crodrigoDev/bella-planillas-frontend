@@ -1,10 +1,12 @@
 import { XIcon } from "lucide-react";
 
+import { ColaboradorSelect } from "@/components/form/ColaboradorSelect";
 import { DateRangeFilter } from "@/components/filters/DateRangeFilter";
 import { FilterChip } from "@/components/filters/FilterChip";
 import { FilterSelect } from "@/components/filters/FilterSelect";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/format.utils";
+import type { ColaboradorOption } from "@/lib/types/options.types";
 import {
   ACCION_OPTIONS,
   getAccionLabel,
@@ -15,18 +17,35 @@ import {
 import type {
   AuditoriaFilterKey,
   AuditoriaFilters,
+  TipoAfectadoAuditoria,
 } from "../../types/auditoria.types";
 
 interface AuditoriaToolbarProps {
   filters: AuditoriaFilters;
+  /** Resultado de la búsqueda de colaboradores afectados; lo trae la página para no depender de otra feature */
+  empleados: ColaboradorOption[];
+  empleadosLoading: boolean;
+  /** Resultado de la búsqueda de usuarios; lo trae la página */
+  usuarios: ColaboradorOption[];
+  usuariosLoading: boolean;
   /** Nombre del usuario filtrado; solo sirve para la etiqueta */
   usuarioNombre: string | undefined;
   /** Nombre del afectado filtrado; solo sirve para la etiqueta */
   afectadoNombre: string | undefined;
   hasActiveFilters: boolean;
+  /** Se llama con el texto a buscar cuando el usuario deja de teclear */
+  onAfectadoSearchChange: (search: string) => void;
+  /** Se llama con el texto a buscar cuando el usuario deja de teclear */
+  onUsuarioSearchChange: (search: string) => void;
   onFilterChange: (key: AuditoriaFilterKey, value: string | undefined) => void;
   onFechasChange: (desde: string | undefined, hasta: string | undefined) => void;
+  onFiltrarUsuario: (usuarioId: string, nombre: string) => void;
   onQuitarUsuario: () => void;
+  onFiltrarAfectado: (
+    tipo: TipoAfectadoAuditoria,
+    id: string,
+    nombre: string,
+  ) => void;
   onQuitarAfectado: () => void;
   onClear: () => void;
 }
@@ -35,23 +54,55 @@ interface AuditoriaToolbarProps {
  * Barra con los filtros de la actividad de auditoría
  *
  * @remarks
- * No guarda los filtros, los recibe de la URL. Módulo, acción y fechas son
- * controles siempre visibles; el usuario y el afectado se filtran desde una fila
- * y solo se ven como etiquetas, igual que los demás filtros aplicados.
+ * No guarda los filtros, los recibe de la URL. El colaborador afectado y quién
+ * hizo el cambio se buscan desde la barra (el propio buscador muestra lo
+ * elegido); el afectado de otro tipo (área, cargo o jornada) se filtra desde
+ * una fila y se ve como etiqueta. Módulo, acción y fechas son controles siempre
+ * visibles, y los filtros aplicados se pueden quitar uno a uno.
  */
 export function AuditoriaToolbar({
   filters,
+  empleados,
+  empleadosLoading,
+  usuarios,
+  usuariosLoading,
   usuarioNombre,
   afectadoNombre,
   hasActiveFilters,
+  onAfectadoSearchChange,
+  onUsuarioSearchChange,
   onFilterChange,
   onFechasChange,
+  onFiltrarUsuario,
   onQuitarUsuario,
+  onFiltrarAfectado,
   onQuitarAfectado,
   onClear,
 }: AuditoriaToolbarProps) {
   const appliedFilters: { key: string; label: string; onRemove: () => void }[] =
     [];
+
+  /** El select entrega solo el id: el nombre se toma de la opción elegida para la URL */
+  const handleAfectadoChange = (value: string | undefined) => {
+    if (!value) {
+      onQuitarAfectado();
+      return;
+    }
+
+    const nombre = empleados.find((option) => option.value === value)?.label ?? "";
+    onFiltrarAfectado("empleado", value, nombre);
+  };
+
+  /** El select entrega solo el id: el nombre se toma de la opción elegida para la URL */
+  const handleUsuarioChange = (value: string | undefined) => {
+    if (!value) {
+      onQuitarUsuario();
+      return;
+    }
+
+    const nombre = usuarios.find((option) => option.value === value)?.label ?? "";
+    onFiltrarUsuario(value, nombre);
+  };
 
   if (filters.tabla_afectada)
     appliedFilters.push({
@@ -71,13 +122,12 @@ export function AuditoriaToolbar({
       label: `Fecha: ${filters.desde ? formatDate(filters.desde) : "..."} - ${filters.hasta ? formatDate(filters.hasta) : "..."}`,
       onRemove: () => onFechasChange(undefined, undefined),
     });
-  if (filters.usuario_id)
-    appliedFilters.push({
-      key: "usuario_id",
-      label: `Hecho por: ${usuarioNombre ?? "usuario elegido"}`,
-      onRemove: onQuitarUsuario,
-    });
-  if (filters.afectado_tipo && filters.afectado_id)
+  // El afectado colaborador ya se ve en su buscador; los demás solo en la etiqueta
+  if (
+    filters.afectado_tipo &&
+    filters.afectado_tipo !== "empleado" &&
+    filters.afectado_id
+  )
     appliedFilters.push({
       key: "afectado_id",
       label: `${TIPO_AFECTADO_LABEL[filters.afectado_tipo]}: ${afectadoNombre ?? "elegido"}`,
@@ -87,6 +137,34 @@ export function AuditoriaToolbar({
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
+        <div className="w-full sm:w-64">
+          <ColaboradorSelect
+            ariaLabel="Filtrar por colaborador afectado"
+            placeholder="Todos los afectados"
+            value={
+              filters.afectado_tipo === "empleado"
+                ? filters.afectado_id
+                : undefined
+            }
+            onChange={handleAfectadoChange}
+            options={empleados}
+            isLoading={empleadosLoading}
+            onSearchChange={onAfectadoSearchChange}
+            selectedLabel={afectadoNombre}
+          />
+        </div>
+        <div className="w-full sm:w-64">
+          <ColaboradorSelect
+            ariaLabel="Filtrar por quién hizo el cambio"
+            placeholder="Todos los usuarios"
+            value={filters.usuario_id}
+            onChange={handleUsuarioChange}
+            options={usuarios}
+            isLoading={usuariosLoading}
+            onSearchChange={onUsuarioSearchChange}
+            selectedLabel={usuarioNombre}
+          />
+        </div>
         <FilterSelect
           ariaLabel="Filtrar por módulo"
           allLabel="Todos los módulos"
