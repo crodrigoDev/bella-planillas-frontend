@@ -1,7 +1,30 @@
-import type { ValorCambio } from "../types/auditoria.types";
+import type {
+  CambioElemento,
+  DetalleElemento,
+  ValorCambio,
+} from "../types/auditoria.types";
 
 /** Cómo se muestran los cambios de una fila según su acción de negocio */
 export type ModoCambios = "comparacion" | "valores" | "valoresPrevios";
+
+/** Columna de la matriz de cambios de un campo lista */
+export interface ColumnaMatriz {
+  campo: string;
+  etiqueta: string;
+}
+
+/** Fila de la matriz de cambios: un elemento con sus celdas indexadas por campo */
+export interface FilaMatriz {
+  elemento: string;
+  etiqueta: string;
+  celdas: Record<string, CambioElemento>;
+}
+
+/** Matriz armada a partir del detalle de un campo lista */
+export interface MatrizCambios {
+  columnas: ColumnaMatriz[];
+  filas: FilaMatriz[];
+}
 
 /**
  * Elige cómo mostrar los cambios según la acción de negocio (`accion_etiqueta`)
@@ -31,4 +54,46 @@ export const getTextoProtegido = (modo: ModoCambios): string => {
   if (modo === "valoresPrevios") return "Eliminado (valor protegido)";
 
   return "Modificado (valor protegido)";
+};
+
+/** Texto aclaratorio sobre los valores mostrados en creación o eliminación; null en comparación */
+export const getTextoModo = (modo: ModoCambios): string | null => {
+  if (modo === "valores")
+    return "Registro nuevo: no tenía valores anteriores.";
+  if (modo === "valoresPrevios")
+    return "Registro eliminado: estos eran sus últimos valores.";
+
+  return null;
+};
+
+/**
+ * Arma las columnas y filas de la matriz de cambios de un campo lista
+ *
+ * @remarks
+ * Respeta el orden en que llegan los elementos y sus campos del backend; cada
+ * columna se registra la primera vez que aparece al recorrer los elementos.
+ */
+export const buildMatrizCambios = (detalle: DetalleElemento[]): MatrizCambios => {
+  const columnas: ColumnaMatriz[] = [];
+  const camposVistos = new Set<string>();
+
+  const filas: FilaMatriz[] = detalle.map((elemento) => {
+    const celdas: Record<string, CambioElemento> = {};
+
+    for (const cambio of elemento.cambios) {
+      if (!camposVistos.has(cambio.campo)) {
+        camposVistos.add(cambio.campo);
+        columnas.push({ campo: cambio.campo, etiqueta: cambio.etiqueta });
+      }
+      celdas[cambio.campo] = cambio;
+    }
+
+    return {
+      elemento: elemento.elemento,
+      etiqueta: elemento.etiqueta,
+      celdas,
+    };
+  });
+
+  return { columnas, filas };
 };
