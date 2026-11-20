@@ -8,7 +8,7 @@ export interface PerfilEmpleado {
 }
 
 /**
- * Perfil del usuario con sesión (`GET /usuarios/me`)
+ * Perfil del usuario con sesión (`GET /core/usuarios/me`)
  *
  * @remarks
  * `ultimo_acceso` llega como texto ISO (el contrato lo declara como fecha).

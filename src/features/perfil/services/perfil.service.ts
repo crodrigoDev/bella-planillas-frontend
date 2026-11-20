@@ -15,7 +15,7 @@ export const perfilService = {
    */
   me: async (): Promise<MiPerfil> => {
     const response =
-      await protectedHttpClient.get<ApiResponse<MiPerfil>>("/usuarios/me");
+      await protectedHttpClient.get<ApiResponse<MiPerfil>>("/core/usuarios/me");
 
     return response.data.data;
   },
