@@ -222,6 +222,17 @@ export const router = createBrowserRouter([
             ],
           },
           {
+            element: <RoleRoute path={ROUTE_PATHS.asistencia.calendario} />,
+            children: [
+              {
+                path: ROUTE_PATHS.asistencia.calendario,
+                lazy: lazyPage(
+                  () => import("@/pages/asistencia/CalendarioPage"),
+                ),
+              },
+            ],
+          },
+          {
             element: <RoleRoute path={ROUTE_PATHS.asistencia.jornadas} />,
             children: [
               {

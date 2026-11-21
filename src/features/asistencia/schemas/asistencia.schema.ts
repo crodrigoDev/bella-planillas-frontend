@@ -1,5 +1,6 @@
 import {
   AsignarJornadaAsistenciaSchema,
+  DiaAdicionalCalendarioSchema,
   ResolverIncidenciaSchema,
   type ResolverDiaAsistenciaDto,
 } from "@jyp/shared-contracts";
@@ -78,6 +79,20 @@ export const AsignarJornadaFormSchema = AsignarJornadaAsistenciaSchema.omit({
 });
 
 const horaOpcional = z.string().regex(REGEX_HORA, "Escribe la hora como HH:mm").optional();
+
+/**
+ * Formulario de un día acordado del calendario
+ *
+ * @remarks
+ * Es el esquema del contrato tal cual: el backend valida lo mismo. La fecha
+ * solo se pide al crear, porque el guardado es un upsert por fecha.
+ */
+export const DiaCalendarioFormSchema = DiaAdicionalCalendarioSchema;
+
+/** Formulario para activar o desactivar un día acordado: solo pide el motivo */
+export const CambiarEstadoDiaFormSchema = DiaAdicionalCalendarioSchema.pick({
+  motivo: true,
+});
 
 /**
  * Formulario para resolver un día
