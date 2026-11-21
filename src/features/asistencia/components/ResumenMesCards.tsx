@@ -8,7 +8,7 @@ import {
 import { ESTADO_RESUMEN } from "../config/asistencia.config";
 import type { ResumenMes } from "../types/asistencia.types";
 import { cn } from "@/lib/utils";
-import { formatMinutos, getMotivoNoAprobable } from "../utils/asistencia.utils";
+import { formatMinutos } from "../utils/asistencia.utils";
 
 interface ResumenMesCardsProps {
   resumen: ResumenMes;
@@ -79,7 +79,8 @@ export function ResumenMesCards({ resumen }: ResumenMesCardsProps) {
     },
   ];
 
-  const aviso = getMotivoNoAprobable(resumen);
+  const aviso =
+    resumen.estado === "PENDIENTE" ? resumen.acciones.aprobar : null;
 
   return (
     <section aria-label="Resumen del mes" className="space-y-3">

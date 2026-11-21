@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { useSearchParams } from "react-router-dom";
 import { CheckIcon, ChevronDownIcon, RefreshCwIcon } from "lucide-react";
 
@@ -23,7 +23,6 @@ import { useResumenMes } from "../hooks/useAsistencia";
 import {
   esDiaSinJornada,
   formatPeriodo,
-  getMotivoNoAprobable,
   getPeriodoActual,
   parsePeriodo,
 } from "../utils/asistencia.utils";
@@ -43,10 +42,49 @@ import { SelectorMes } from "./SelectorMes";
 /** Modal abierto de la pestaña; los que dependen de un día o una acción llevan su dato */
 type ModalAbierto =
   | { tipo: "aprobar" }
-  | { tipo: "resolverResumen"; accion: AccionResumen }
+  | { tipo: "resolverResumen" }
   | { tipo: "marcacion" }
   | { tipo: "jornada" }
   | { tipo: "dia"; fecha: string };
+
+interface BotonResumenProps {
+  /** Motivo por el que la acción no se puede hacer; null si se puede */
+  motivo: string | null;
+  onClick: () => void;
+  variant?: "default" | "outline";
+  className?: string;
+  children: ReactNode;
+}
+
+/**
+ * Botón de una acción del resumen, deshabilitado con su motivo en un tooltip
+ *
+ * @remarks
+ * El span deja que el tooltip funcione aunque el botón esté deshabilitado.
+ */
+function BotonResumen({
+  motivo,
+  onClick,
+  variant = "outline",
+  className,
+  children,
+}: BotonResumenProps) {
+  return (
+    <Tooltip>
+      <TooltipTrigger render={<span />}>
+        <Button
+          disabled={motivo !== null}
+          onClick={onClick}
+          variant={variant}
+          className={className}
+        >
+          {children}
+        </Button>
+      </TooltipTrigger>
+      {motivo && <TooltipContent>{motivo}</TooltipContent>}
+    </Tooltip>
+  );
+}
 
 interface AsistenciaEmpleadoProps {
   empleadoId: string;
@@ -84,6 +122,10 @@ export function AsistenciaEmpleado({
     () => parsePeriodo(searchParams.get("periodo")) ?? getPeriodoActual(),
   );
   const [modal, setModal] = useState<ModalAbierto | null>(null);
+  // Última acción de rechazar o reabrir: no se limpia al cerrar para que el
+  // diálogo no cambie de texto mientras se anima la salida.
+  const [accionResumen, setAccionResumen] =
+    useState<AccionResumen>("RECHAZAR");
 
   const { data, isLoading, error, refetch } = useResumenMes(
     empleadoId,
@@ -97,8 +139,8 @@ export function AsistenciaEmpleado({
   };
 
   const aprobado = data?.estado === "APROBADO";
-  const motivoNoAprobable = data ? getMotivoNoAprobable(data) : null;
-  const puedeAprobar = data?.estado === "PENDIENTE" && !motivoNoAprobable;
+  // El backend dice qué acciones se pueden hacer y, si no, por qué
+  const acciones = data?.acciones;
   // Días que el backend no evalúa porque falta la jornada
   const fechasSinJornada = (data?.detalle?.dias ?? [])
     .filter(esDiaSinJornada)
@@ -145,42 +187,39 @@ export function AsistenciaEmpleado({
             </LoadingButton>
           )}
           {data?.estado === "PENDIENTE" && (
-            <Button
-              variant="outline"
-              className="text-destructive"
-              onClick={() =>
-                setModal({ tipo: "resolverResumen", accion: "RECHAZAR" })
+            <BotonResumen
+              motivo={acciones?.rechazar ?? null}
+              className={
+                acciones?.rechazar === null ? "text-destructive" : undefined
               }
+              onClick={() => {
+                setAccionResumen("RECHAZAR");
+                setModal({ tipo: "resolverResumen" });
+              }}
             >
               Rechazar
-            </Button>
+            </BotonResumen>
           )}
           {data && data.estado !== "PENDIENTE" && (
-            <Button
-              variant="outline"
-              onClick={() =>
-                setModal({ tipo: "resolverResumen", accion: "REABRIR" })
-              }
+            <BotonResumen
+              motivo={acciones?.reabrir ?? null}
+              onClick={() => {
+                setAccionResumen("REABRIR");
+                setModal({ tipo: "resolverResumen" });
+              }}
             >
               Reabrir
-            </Button>
+            </BotonResumen>
           )}
           {data?.estado === "PENDIENTE" && (
-            <Tooltip>
-              {/* El span deja que el tooltip funcione aunque el botón esté deshabilitado */}
-              <TooltipTrigger render={<span />}>
-                <Button
-                  disabled={!puedeAprobar}
-                  onClick={() => setModal({ tipo: "aprobar" })}
-                >
-                  <CheckIcon data-icon="inline-start" />
-                  Aprobar
-                </Button>
-              </TooltipTrigger>
-              {motivoNoAprobable && (
-                <TooltipContent>{motivoNoAprobable}</TooltipContent>
-              )}
-            </Tooltip>
+            <BotonResumen
+              motivo={acciones?.aprobar ?? null}
+              variant="default"
+              onClick={() => setModal({ tipo: "aprobar" })}
+            >
+              <CheckIcon data-icon="inline-start" />
+              Aprobar
+            </BotonResumen>
           )}
         </div>
       </div>
@@ -248,7 +287,7 @@ export function AsistenciaEmpleado({
       <ResolverResumenModal
         empleadoId={empleadoId}
         periodo={periodo}
-        accion={modal?.tipo === "resolverResumen" ? modal.accion : "RECHAZAR"}
+        accion={accionResumen}
         open={modal?.tipo === "resolverResumen"}
         onOpenChange={handleOpenChange}
       />

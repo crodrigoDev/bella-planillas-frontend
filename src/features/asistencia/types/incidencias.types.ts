@@ -1,5 +1,5 @@
 import type { PaginationMeta } from "@/lib/api/types/api.types";
-import type { EstadoResumen } from "./asistencia.types";
+import type { AccionesResumen, EstadoResumen } from "./asistencia.types";
 
 /**
  * Resumen mensual de un colaborador en el listado del cierre
@@ -28,6 +28,8 @@ export interface Incidencia {
   /** Días por resolver; con más de cero no se puede aprobar */
   pendientes: number;
   version: number;
+  /** Qué acciones se pueden hacer y, si no, por qué */
+  acciones: AccionesResumen;
 }
 
 /** Filtros del listado del cierre mensual */
