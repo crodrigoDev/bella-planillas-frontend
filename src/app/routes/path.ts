@@ -41,6 +41,7 @@ export const ROUTE_PATHS = {
     marcaciones: "/marcaciones",
     importarMarcaciones: "/marcaciones/importar",
     cierreMensual: "/cierre-mensual",
+    calendario: "/calendario",
   },
 
   auditoria: "/auditoria",
