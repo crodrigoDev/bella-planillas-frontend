@@ -46,8 +46,10 @@ interface AsignarJornadaModalProps {
  * ingreso ni repetir la fecha de inicio de otra asignación. Cuando el empleado
  * ya tiene historial de asistencia, la jornada se cambia solo desde aquí. Una
  * jornada rige desde su fecha hasta que se asigna otra. Con una fecha pasada se
- * avisa, porque se recalculan los días desde entonces. El formulario está dentro
- * del contenido: al cerrarse se desmonta.
+ * avisa, porque se recalculan los días desde entonces y el backend rechaza la
+ * asignación si algún mes desde esa fecha tiene resúmenes aprobados o una
+ * planilla cerrada. El formulario está dentro del contenido: al cerrarse se
+ * desmonta.
  */
 export function AsignarJornadaModal({
   empleadoId,
@@ -154,8 +156,9 @@ function AsignarJornadaForm({
             <AlertDescription>
               Esta fecha ya pasó: los días desde entonces se recalculan con la
               jornada nueva. Solo se actualiza el resumen del mes que estás
-              viendo; los meses anteriores hay que actualizarlos a mano, y un
-              mes aprobado tendrá que reabrirse y aprobarse de nuevo.
+              viendo; los demás meses hay que actualizarlos desde Cierre
+              mensual. Si algún mes desde esa fecha ya está aprobado, primero
+              hay que reabrirlo.
             </AlertDescription>
           </Alert>
         )}
