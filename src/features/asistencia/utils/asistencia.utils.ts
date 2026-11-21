@@ -67,12 +67,13 @@ export const shiftPeriodo = (periodo: string, meses: number): string => {
 /**
  * Nombre de un mes para mostrar
  *
- * @example formatPeriodo("2026-11") // "noviembre de 2026"
+ * @example formatPeriodo("2026-09") // "septiembre de 2026"
  */
 export const formatPeriodo = (periodo: string): string => {
   const [year, month] = periodo.split("-").map(Number);
 
-  return new Date(Date.UTC(year, month - 1, 1)).toLocaleDateString("es-PE", {
+  // "es-PE" devuelve "setiembre" en el navegador; con "es" sale "septiembre"
+  return new Date(Date.UTC(year, month - 1, 1)).toLocaleDateString("es", {
     month: "long",
     year: "numeric",
     timeZone: "UTC",
