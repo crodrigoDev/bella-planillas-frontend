@@ -15,6 +15,10 @@ import { CierreMensualToolbar } from "@/features/asistencia/components/cierre/Ci
 import { GenerarMesModal } from "@/features/asistencia/components/cierre/GenerarMesModal";
 import { ResumenCierre } from "@/features/asistencia/components/cierre/ResumenCierre";
 import { AprobarResumenModal } from "@/features/asistencia/components/modals/AprobarResumenModal";
+import {
+  ResolverResumenModal,
+  type AccionResumen,
+} from "@/features/asistencia/components/modals/ResolverResumenModal";
 import { getCierreMensualColumns } from "@/features/asistencia/config/cierreMensual.columns";
 import { MAX_APROBACION_MES } from "@/features/asistencia/config/cierreMensual.config";
 import { useCierreMensualFilters } from "@/features/asistencia/hooks/useCierreMensualFilters";
@@ -30,11 +34,12 @@ import { getOptionLabel } from "@/lib/catalogos.utils";
 
 const NO_INCIDENCIAS: Incidencia[] = [];
 
-/** Modal abierto de la página; aprobar una fila lleva a su colaborador */
+/** Modal abierto de la página; aprobar una fila lleva a su colaborador y rechazar o reabrir piden el motivo */
 type ModalAbierto =
   | { tipo: "generar" }
   | { tipo: "aprobarMes" }
-  | { tipo: "aprobarFila"; incidencia: Incidencia };
+  | { tipo: "aprobarFila"; incidencia: Incidencia }
+  | { tipo: "resolverFila" };
 
 /**
  * Cierre mensual de asistencia: genera y aprueba el mes de todos los colaboradores
@@ -56,6 +61,12 @@ export default function CierreMensualPage() {
     clearFilters,
   } = useCierreMensualFilters();
   const [modal, setModal] = useState<ModalAbierto | null>(null);
+  // Última fila del modal de rechazar o reabrir: no se limpia al cerrar para
+  // que el diálogo no cambie de texto mientras se anima la salida.
+  const [filaResolver, setFilaResolver] = useState<{
+    incidencia: Incidencia;
+    accion: AccionResumen;
+  } | null>(null);
   const { areas } = useEmpleadosCatalogos();
   const { data, isLoading, isFetching, isPlaceholderData, error, refetch } =
     useIncidencias(filters);
@@ -71,9 +82,17 @@ export default function CierreMensualPage() {
     setLimit,
   });
 
-  const columns = getCierreMensualColumns((incidencia) =>
-    setModal({ tipo: "aprobarFila", incidencia }),
-  );
+  const columns = getCierreMensualColumns({
+    onAprobar: (incidencia) => setModal({ tipo: "aprobarFila", incidencia }),
+    onRechazar: (incidencia) => {
+      setFilaResolver({ incidencia, accion: "RECHAZAR" });
+      setModal({ tipo: "resolverFila" });
+    },
+    onReabrir: (incidencia) => {
+      setFilaResolver({ incidencia, accion: "REABRIR" });
+      setModal({ tipo: "resolverFila" });
+    },
+  });
 
   const pendientesMes = conteoMes.data?.PENDIENTE ?? 0;
   const motivoNoAprobarMes =
@@ -185,6 +204,13 @@ export default function CierreMensualPage() {
         }
         periodo={filters.periodo}
         open={modal?.tipo === "aprobarFila"}
+        onOpenChange={handleOpenChange}
+      />
+      <ResolverResumenModal
+        empleadoId={filaResolver?.incidencia.empleado_id ?? ""}
+        periodo={filaResolver?.incidencia.periodo ?? filters.periodo}
+        accion={filaResolver?.accion ?? "RECHAZAR"}
+        open={modal?.tipo === "resolverFila"}
         onOpenChange={handleOpenChange}
       />
     </section>

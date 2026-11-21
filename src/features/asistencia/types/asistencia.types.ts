@@ -8,6 +8,19 @@ export type TipoMarca =
 /** Estado del resumen de un mes: lo revisa y aprueba RRHH */
 export type EstadoResumen = "PENDIENTE" | "APROBADO" | "RECHAZADO";
 
+/**
+ * Motivos por los que cada acción del resumen está bloqueada
+ *
+ * @remarks
+ * `null` significa que la acción se puede hacer. El texto ya viene en lenguaje
+ * de negocio y es la misma regla que valida el backend al recibir la acción.
+ */
+export interface AccionesResumen {
+  aprobar: string | null;
+  rechazar: string | null;
+  reabrir: string | null;
+}
+
 /** Una marcación dentro del detalle de un día */
 export interface MarcaDia {
   tipo: TipoMarca;
@@ -71,5 +84,7 @@ export interface ResumenMes {
   version: number;
   estado: EstadoResumen;
   motivo_revision: string | null;
+  /** Qué acciones se pueden hacer y, si no, por qué */
+  acciones: AccionesResumen;
   detalle: { version_motor: string; dias: DiaAsistencia[] } | null;
 }

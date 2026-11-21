@@ -13,21 +13,6 @@ import type {
   IncidenciasPage,
 } from "../types/incidencias.types";
 
-/** Pide una página de una fila y devuelve solo el total que informa el backend */
-const contarPorEstado = async (
-  periodo: string,
-  estado: "PENDIENTE" | "APROBADO" | "RECHAZADO",
-  areaId?: string,
-): Promise<number> => {
-  const response = await protectedHttpClient.get<
-    PaginationApiResponse<Incidencia>
-  >("/asistencia/incidencias", {
-    params: { page: 1, limit: 1, periodo, estado, area_id: areaId },
-  });
-
-  return response.data.meta.total;
-};
-
 /**
  * Agrupa las operaciones del cierre mensual (todos los colaboradores) que se comunican al backend
  */
@@ -53,21 +38,19 @@ export const incidenciasService = {
   /**
    * Cuenta los resúmenes del mes en cada estado
    *
-   * @remarks
-   * El backend no tiene un endpoint de totales: se piden tres páginas de una
-   * fila (una por estado) y se lee `meta.total`.
+   * @returns Cuántos hay pendientes, aprobados y rechazados
    */
   contar: async (
     periodo: string,
     areaId?: string,
   ): Promise<ConteoIncidencias> => {
-    const [pendiente, aprobado, rechazado] = await Promise.all([
-      contarPorEstado(periodo, "PENDIENTE", areaId),
-      contarPorEstado(periodo, "APROBADO", areaId),
-      contarPorEstado(periodo, "RECHAZADO", areaId),
-    ]);
+    const response = await protectedHttpClient.get<
+      ApiResponse<ConteoIncidencias>
+    >("/asistencia/incidencias/totales", {
+      params: { periodo, area_id: areaId },
+    });
 
-    return { PENDIENTE: pendiente, APROBADO: aprobado, RECHAZADO: rechazado };
+    return response.data.data;
   },
 
   /**

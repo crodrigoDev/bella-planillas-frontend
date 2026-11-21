@@ -1,49 +1,11 @@
 import { getTodayIsoDate } from "@/lib/date.utils";
 import type { MarcacionManualDto } from "../services/asistencia.service";
-import type { DiaAsistencia, ResumenMes } from "../types/asistencia.types";
+import type { DiaAsistencia } from "../types/asistencia.types";
 import { ALERTA_SIN_JORNADA, ZONA_LIMA } from "../config/asistencia.config";
 
 /** Si el backend no pudo evaluar el día porque no hay jornada asignada */
 export const esDiaSinJornada = (dia: DiaAsistencia): boolean =>
   dia.alertas.includes(ALERTA_SIN_JORNADA);
-
-/**
- * Lo mínimo de un resumen que hace falta para saber si se puede aprobar
- *
- * @remarks
- * Lo cumplen el resumen de la ficha (`ResumenMes`) y la fila del cierre
- * mensual (`Incidencia`), que no trae el detalle día por día.
- */
-export type ResumenAprobable = Pick<
-  ResumenMes,
-  "estado" | "vigente" | "completo" | "pendientes"
-> &
-  Partial<Pick<ResumenMes, "detalle">>;
-
-/**
- * Por qué no se puede aprobar un resumen pendiente, o null si se puede
- *
- * @remarks
- * Son las mismas condiciones que exige el backend: resumen vigente, completo
- * y sin días por resolver. Los días sin jornada también cuentan como pendientes
- * en el backend, pero no se pueden resolver: el motivo manda a asignar la jornada.
- */
-export const getMotivoNoAprobable = (
-  resumen: ResumenAprobable,
-): string | null => {
-  if (resumen.estado !== "PENDIENTE") return null;
-  if (!resumen.vigente)
-    return "El resumen está desactualizado: actualízalo para poder aprobarlo.";
-  const sinJornada = resumen.detalle?.dias.filter(esDiaSinJornada).length ?? 0;
-  if (sinJornada > 0)
-    return `Hay ${sinJornada} ${sinJornada === 1 ? "día" : "días"} sin jornada asignada: asigna una jornada y actualiza el resumen para poder aprobarlo.`;
-  if (resumen.pendientes > 0)
-    return `Hay ${resumen.pendientes} ${resumen.pendientes === 1 ? "día" : "días"} por resolver antes de aprobar.`;
-  if (!resumen.completo)
-    return "Todavía hay días sin evaluar: se podrá aprobar cuando el mes esté completo.";
-
-  return null;
-};
 
 /** Mes de hoy como YYYY-MM */
 export const getPeriodoActual = (): string => getTodayIsoDate().slice(0, 7);

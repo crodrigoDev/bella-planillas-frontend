@@ -2,14 +2,11 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
 import { buildEmpleadoPath } from "@/app/routes/path";
 import type { DataTableFeatures } from "@/components/data-table/dataTable.config";
-import { CheckIcon } from "lucide-react";
+import { CheckIcon, RotateCcwIcon, XIcon } from "lucide-react";
 import { StatusBadge } from "@/components/feedback/StatusBadge";
 import { AccionButton } from "@/components/page/AccionButton";
 import type { Incidencia } from "../types/incidencias.types";
-import {
-  formatMinutos,
-  getMotivoNoAprobable,
-} from "../utils/asistencia.utils";
+import { formatMinutos } from "../utils/asistencia.utils";
 import { ESTADO_RESUMEN } from "./asistencia.config";
 
 const columnHelper = createColumnHelper<DataTableFeatures, Incidencia>();
@@ -17,14 +14,26 @@ const columnHelper = createColumnHelper<DataTableFeatures, Incidencia>();
 /** Horas extra (texto decimal del backend) para mostrar, sin ceros de sobra */
 const formatHoras = (horas: string): string => `${Number(horas)} h`;
 
+/** Acciones que se abren desde la columna "Acciones" de una fila */
+export interface CierreMensualAcciones {
+  /** Resumen pendiente: se aprueba el mes de la fila */
+  onAprobar: (incidencia: Incidencia) => void;
+  /** Resumen pendiente: se rechaza el mes de la fila */
+  onRechazar: (incidencia: Incidencia) => void;
+  /** Resumen aprobado o rechazado: se vuelve a dejar pendiente */
+  onReabrir: (incidencia: Incidencia) => void;
+}
+
 /**
  * Columnas de la tabla del cierre mensual
  *
- * @param onAprobar - Se llama con la fila cuyo botón "Aprobar" se pulsó
+ * @param acciones - Qué hacer con la fila cuando se pulsa Aprobar, Rechazar o Reabrir
  */
-export const getCierreMensualColumns = (
-  onAprobar: (incidencia: Incidencia) => void,
-) =>
+export const getCierreMensualColumns = ({
+  onAprobar,
+  onRechazar,
+  onReabrir,
+}: CierreMensualAcciones) =>
   columnHelper.columns([
     columnHelper.display({
       id: "colaborador",
@@ -90,16 +99,43 @@ export const getCierreMensualColumns = (
     columnHelper.display({
       id: "acciones",
       header: "Acciones",
-      // Solo los pendientes se aprueban; si falta algo, el tooltip dice qué
-      cell: ({ row }) =>
-        row.original.estado === "PENDIENTE" && (
-          <AccionButton
-            label="Aprobar"
-            icon={CheckIcon}
-            tone="success"
-            onClick={() => onAprobar(row.original)}
-            disabledReason={getMotivoNoAprobable(row.original) ?? undefined}
-          />
-        ),
+      // Los pendientes se aprueban o rechazan; los que ya tienen veredicto se reabren.
+      // Si una acción no se puede hacer, su tooltip trae el motivo que da el backend.
+      cell: ({ row }) => {
+        const { estado, acciones } = row.original;
+        const pendiente = estado === "PENDIENTE";
+
+        return (
+          <div className="flex gap-1">
+            {pendiente && (
+              <>
+                <AccionButton
+                  label="Aprobar"
+                  icon={CheckIcon}
+                  tone="success"
+                  onClick={() => onAprobar(row.original)}
+                  disabledReason={acciones.aprobar ?? undefined}
+                />
+                <AccionButton
+                  label="Rechazar"
+                  icon={XIcon}
+                  tone="danger"
+                  onClick={() => onRechazar(row.original)}
+                  disabledReason={acciones.rechazar ?? undefined}
+                />
+              </>
+            )}
+            {!pendiente && (
+              <AccionButton
+                label="Reabrir"
+                icon={RotateCcwIcon}
+                tone="info"
+                onClick={() => onReabrir(row.original)}
+                disabledReason={acciones.reabrir ?? undefined}
+              />
+            )}
+          </div>
+        );
+      },
     }),
   ]);
