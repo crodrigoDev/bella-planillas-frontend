@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import type { DashboardRrhhResponseDto } from "../types/dashboard.types";
+import { formatPorcentaje } from "../utils/dashboard.utils";
 
 interface CierreAsistenciaResumenProps {
   cierre: DashboardRrhhResponseDto["cierre_asistencia"];
@@ -26,8 +27,16 @@ export function CierreAsistenciaResumen({
   cierre,
   periodo,
 }: CierreAsistenciaResumenProps) {
+  const totalResumenes =
+    cierre.pendientes +
+    cierre.aprobados +
+    cierre.rechazados +
+    cierre.sin_calcular;
+  const avance =
+    totalResumenes > 0 ? (cierre.aprobados / totalResumenes) * 100 : 0;
+
   return (
-    <Card className="h-full justify-between">
+    <Card className="h-full">
       <CardHeader className="border-b">
         <div className="flex items-center gap-2.5">
           <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -55,7 +64,38 @@ export function CierreAsistenciaResumen({
         </CardAction>
       </CardHeader>
 
-      <CardContent>
+      <CardContent className="space-y-5">
+        {totalResumenes === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            Aún no hay resúmenes de este mes
+          </p>
+        ) : (
+          <div className="space-y-2">
+            <div className="flex items-baseline justify-between gap-2 text-sm">
+              <p className="font-medium">
+                {cierre.aprobados} de {totalResumenes}{" "}
+                {totalResumenes === 1 ? "aprobado" : "aprobados"}
+              </p>
+              <span className="text-muted-foreground tabular-nums">
+                {formatPorcentaje(avance, 0)}
+              </span>
+            </div>
+            <div
+              role="progressbar"
+              aria-label="Resúmenes de asistencia aprobados"
+              aria-valuemin={0}
+              aria-valuemax={totalResumenes}
+              aria-valuenow={cierre.aprobados}
+              className="h-2 w-full overflow-hidden rounded-full bg-muted"
+            >
+              <div
+                className="h-full rounded-full bg-success transition-all duration-300"
+                style={{ width: `${avance}%` }}
+              />
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-2 gap-3">
           <ResumenCifra
             label="Por aprobar"

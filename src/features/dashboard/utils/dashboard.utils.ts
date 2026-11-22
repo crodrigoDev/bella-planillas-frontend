@@ -18,19 +18,29 @@ export const formatNombreMes = (periodo: string): string =>
   formatPeriodo(periodo).split(" de ")[0];
 
 /**
- * Formatea una fecha YYYY-MM-DD como día y mes corto sin desfase horario ("15 oct")
+ * Convierte una fecha YYYY-MM-DD en `Date` a medianoche UTC, para formatear y sumar días sin desfase horario
  */
-export const formatDiaMesCorto = (isoDate: string): string => {
+export const parseFechaUtc = (isoDate: string): Date => {
   const [year, month, day] = toDateInput(isoDate).split("-").map(Number);
 
-  return new Date(Date.UTC(year, month - 1, day))
+  return new Date(Date.UTC(year, month - 1, day));
+};
+
+/** Pone en mayúscula la primera letra ("lun" pasa a "Lun") */
+const capitalizar = (texto: string): string =>
+  texto.charAt(0).toUpperCase() + texto.slice(1);
+
+/**
+ * Formatea una fecha YYYY-MM-DD como día y mes corto sin desfase horario ("15 oct")
+ */
+export const formatDiaMesCorto = (isoDate: string): string =>
+  parseFechaUtc(isoDate)
     .toLocaleDateString("es", {
       day: "numeric",
       month: "short",
       timeZone: "UTC",
     })
     .replace(".", "");
-};
 
 /**
  * Formatea un día y mes numéricos como "15 de noviembre" sin depender de la zona horaria
@@ -46,13 +56,29 @@ export const formatDiaMesLargo = (dia: number, mes: number): string =>
 /**
  * Devuelve la etiqueta corta del día de la semana ("Lun", "Mar"...) para una fecha YYYY-MM-DD
  */
-export const formatDiaSemanaCorto = (isoDate: string): string => {
-  const [year, month, day] = toDateInput(isoDate).split("-").map(Number);
-  const texto = new Date(Date.UTC(year, month - 1, day))
-    .toLocaleDateString("es-PE", { weekday: "short", timeZone: "UTC" })
-    .replace(".", "");
+export const formatDiaSemanaCorto = (isoDate: string): string =>
+  capitalizar(
+    parseFechaUtc(isoDate)
+      .toLocaleDateString("es-PE", { weekday: "short", timeZone: "UTC" })
+      .replace(".", ""),
+  );
 
-  return texto.charAt(0).toUpperCase() + texto.slice(1);
+/**
+ * Formatea una fecha YYYY-MM-DD como día completo sin coma ni desfase horario ("Lunes 12 de octubre")
+ */
+export const formatDiaCompleto = (isoDate: string): string => {
+  const fecha = parseFechaUtc(isoDate);
+  const diaSemana = fecha.toLocaleDateString("es", {
+    weekday: "long",
+    timeZone: "UTC",
+  });
+  const diaMes = fecha.toLocaleDateString("es", {
+    day: "numeric",
+    month: "long",
+    timeZone: "UTC",
+  });
+
+  return `${capitalizar(diaSemana)} ${diaMes}`;
 };
 
 /**

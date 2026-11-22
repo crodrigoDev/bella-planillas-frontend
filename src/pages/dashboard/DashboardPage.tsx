@@ -29,12 +29,12 @@ function DashboardSkeleton() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, index) => (
           <Card key={index}>
-            <CardContent className="space-y-3">
-              <div className="flex items-center justify-between">
+            <CardContent className="space-y-5">
+              <div className="flex items-center gap-2.5">
+                <Skeleton className="size-9 rounded-lg" />
                 <Skeleton className="h-4 w-32" />
-                <Skeleton className="size-8 rounded-lg" />
               </div>
-              <Skeleton className="h-8 w-20" />
+              <Skeleton className="h-9 w-20" />
               <Skeleton className="h-5 w-36 rounded-full" />
             </CardContent>
           </Card>
@@ -47,7 +47,7 @@ function DashboardSkeleton() {
             <Skeleton className="h-5 w-48" />
           </CardHeader>
           <CardContent className="pt-4">
-            <Skeleton className="h-48 w-full" />
+            <Skeleton className="h-72 w-full" />
           </CardContent>
         </Card>
         <Card className="lg:col-span-5">
@@ -134,6 +134,10 @@ function DashboardRrhh() {
               )}
               icon={Users}
               iconClassName="bg-primary/10 text-primary"
+              comparacion={{
+                anterior: data.dotacion.comparacion.activos,
+                actual: data.dotacion.total_activos,
+              }}
               linkTo={ROUTE_PATHS.gestionPersonal.empleados}
               linkLabel="Ver colaboradores"
             />
@@ -147,6 +151,10 @@ function DashboardRrhh() {
               )}
               icon={UserPlus}
               iconClassName="bg-success-soft text-success-soft-foreground"
+              comparacion={{
+                anterior: data.dotacion.comparacion.altas,
+                actual: data.dotacion.altas_mes,
+              }}
             />
             <KpiCard
               title="Ceses del mes"
@@ -158,6 +166,10 @@ function DashboardRrhh() {
               )}
               icon={UserMinus}
               iconClassName="bg-warning-soft text-warning-soft-foreground"
+              comparacion={{
+                anterior: data.dotacion.comparacion.ceses,
+                actual: data.dotacion.ceses_mes,
+              }}
             />
             <KpiCard
               title="Rotación"
@@ -169,6 +181,14 @@ function DashboardRrhh() {
               )}
               icon={RefreshCw}
               iconClassName="bg-info-soft text-info-soft-foreground"
+              comparacion={{
+                anterior: Math.max(
+                  0,
+                  data.dotacion.rotacion_porcentaje -
+                    data.dotacion.comparacion.rotacion_puntos_porcentuales,
+                ),
+                actual: data.dotacion.rotacion_porcentaje,
+              }}
             />
           </div>
 
@@ -177,6 +197,7 @@ function DashboardRrhh() {
               <WeeklyAttendance
                 asistencia={data.asistencia_semana}
                 esMesActual={esMesActual}
+                periodo={periodoDatos}
               />
             </div>
             <div className="lg:col-span-5">
