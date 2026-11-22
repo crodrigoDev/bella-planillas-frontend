@@ -1,16 +1,19 @@
-import type { CrearAreaDto } from "@jyp/shared-contracts";
-export type AreaViewModel = Pick<
-  CrearAreaDto,
-  "nombre" | "descripcion"
-> & {
-  /** Identificador del registro de ejemplo. */
-  id: string;
-  /** Cantidad de empleados activos vinculados al área. */
-  activeEmployees: number;
-  /** Cantidad de cargos activos vinculados al área. */
-  activePositions: number;
-  /** Cantidad de jornadas asociadas al área. */
-  associatedSchedules: number;
-  /** Indica si el área está activa. */
-  isActive: boolean;
-};
+import type { AreaResumenDto } from "@jyp/shared-contracts";
+
+import type { PaginationMeta } from "@/lib/api/types/api.types";
+
+export type { AreaResumenDto };
+
+/** Filtros del listado de áreas */
+export interface AreaFilters {
+  page: number;
+  limit: number;
+  /** Nombre o descripción */
+  search?: string;
+}
+
+/** Página de áreas con sus datos de paginación */
+export interface AreasPage {
+  items: AreaResumenDto[];
+  pagination: PaginationMeta;
+}

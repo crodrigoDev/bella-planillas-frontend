@@ -1,77 +1,30 @@
-import { useState } from "react";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
-import { areasMock } from "@/features/areas/data/areas.mock";
-import type { AreaViewModel } from "@/features/areas/types/areas.types";
+import { areasService } from "../services/areas.service";
+import type { AreaFilters } from "../types/areas.types";
 
 /**
- * Administra las áreas de ejemplo, la búsqueda y la paginación.
- * Los cambios se mantienen en memoria hasta recargar la página.
+ * Claves de caché de áreas
+ *
+ * @remarks
+ * El catálogo de áreas que usan empleados, jornadas y contratos vive aparte
+ * en `["catalogos", "areas"]`.
  */
-export function useAreas() {
-  const [areas, setAreas] = useState<AreaViewModel[]>(() =>
-    areasMock.map((area) => ({ ...area })),
-  );
+export const areasKey = {
+  all: ["areas"] as const,
+  list: (filters: AreaFilters) => ["areas", "list", filters] as const,
+};
 
-  const [search, setSearchValue] = useState("");
-  const [pageSize, setPageSizeValue] = useState(10);
-  const [requestedPage, setRequestedPage] = useState(1);
-
-  const normalizedSearch = search.trim().toLocaleLowerCase("es");
-
-  const filteredAreas = areas.filter((area) => {
-    const searchableText =
-      `${area.nombre} ${area.descripcion ?? ""}`.toLocaleLowerCase("es");
-
-    return searchableText.includes(normalizedSearch);
+/**
+ * Obtiene una página de áreas según los filtros
+ *
+ * @remarks
+ * Mantiene la página anterior visible mientras llega la nueva.
+ */
+export function useAreas(filters: AreaFilters) {
+  return useQuery({
+    queryKey: areasKey.list(filters),
+    queryFn: () => areasService.list(filters),
+    placeholderData: keepPreviousData,
   });
-
-  const activeAreasCount = areas.filter(
-    (area) => area.isActive,
-  ).length;
-
-  const totalResults = filteredAreas.length;
-  const totalPages = Math.max(1, Math.ceil(totalResults / pageSize));
-  const currentPage = Math.min(requestedPage, totalPages);
-
-  const startIndex = (currentPage - 1) * pageSize;
-  const paginatedAreas = filteredAreas.slice(
-    startIndex,
-    startIndex + pageSize,
-  );
-
-  const firstResult = totalResults === 0 ? 0 : startIndex + 1;
-  const lastResult = Math.min(startIndex + pageSize, totalResults);
-
-  function setSearch(value: string) {
-    setSearchValue(value);
-    setRequestedPage(1);
-  }
-
-  function setPageSize(value: number) {
-    if (![5, 10, 20].includes(value)) return;
-
-    setPageSizeValue(value);
-    setRequestedPage(1);
-  }
-
-  function goToPage(page: number) {
-    setRequestedPage(Math.max(1, Math.min(page, totalPages)));
-  }
-
-  return {
-    areas,
-    setAreas,
-    search,
-    setSearch,
-    activeAreasCount,
-    paginatedAreas,
-    pageSize,
-    setPageSize,
-    currentPage,
-    totalPages,
-    totalResults,
-    firstResult,
-    lastResult,
-    goToPage,
-  };
 }
