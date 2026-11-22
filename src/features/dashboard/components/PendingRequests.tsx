@@ -1,109 +1,99 @@
-// src/features/dashboard/components/PendingRequests.tsx
+import { ArrowRight, Inbox } from "lucide-react";
+import { Link } from "react-router-dom";
 
-interface Request {
-  id: string;
-  initials: string;
-  name: string;
-  type: string;
-  typeColor: string;
-  avatarColor: string; // <-- Nueva propiedad
-  details: string;
-  area: string;
-  time: string;
+import { buildSolicitudPath, ROUTE_PATHS } from "@/app/routes/path";
+import { EmptyState } from "@/components/feedback/EmptyState";
+import { StatusBadge } from "@/components/feedback/StatusBadge";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  getEstadoLabel,
+  getEstadoTone,
+  getTipoLabel,
+} from "@/features/solicitudes/config/solicitudes.config";
+import type { DashboardRrhhResponseDto } from "../types/dashboard.types";
+import { formatDetalleSolicitud } from "../utils/dashboard.utils";
+
+interface PendingRequestsProps {
+  solicitudes: DashboardRrhhResponseDto["solicitudes_tramite"];
 }
 
-const mockRequests: Request[] = [
-  { 
-    id: '1', 
-    initials: 'CM', 
-    name: 'Camila Morales Rivera', 
-    type: 'Vacaciones', 
-    typeColor: 'bg-blue-50 text-blue-700 border-blue-100', 
-    avatarColor: 'bg-blue-50 text-blue-700 border-blue-100', // <-- Aquí aplicamos el azul
-    details: '10 días solicitados (15 Oct – 25 Oct)', 
-    area: 'Tecnología & Desarrollo', 
-    time: '• 28/09/2026 10:45 AM' 
-  },
-  { 
-    id: '2', 
-    initials: 'JM', 
-    name: 'Jorge Ignacio Morales', 
-    type: 'Permiso médico', 
-    typeColor: 'bg-amber-50 text-amber-700 border-amber-200', 
-    avatarColor: 'bg-amber-50 text-amber-700 border-amber-200', // <-- Ajustamos los demás para que combinen
-    details: '1 día con goce (14 Oct)', 
-    area: 'Operaciones & Logística', 
-    time: '• 28/09/2026 09:30 AM' 
-  },
-  { 
-    id: '3', 
-    initials: 'LT', 
-    name: 'Lucía Torres Silva', 
-    type: 'Justificación', 
-    typeColor: 'bg-[#F2F1FF] text-[#150AB4] border-[#150AB4]/20', 
-    avatarColor: 'bg-[#F2F1FF] text-[#150AB4] border-[#150AB4]/20', 
-    details: '3 días excepcionales (20 Oct – 22 Oct)', 
-    area: 'Tecnología & Desarrollo', 
-    time: '• 28/09/2026 07:15 AM' 
-  },
-  { 
-    id: '4', 
-    initials: 'VP', 
-    name: 'Valeria Sofía Pardo', 
-    type: 'Adelanto', 
-    typeColor: 'bg-emerald-100 text-emerald-800 border-emerald-200', 
-    avatarColor: 'bg-emerald-100 text-emerald-800 border-emerald-200', 
-    details: 'S/ 1,200.00 a descontar en quincena', 
-    area: 'Ventas & Comercial', 
-    time: '• 27/09/2026 04:20 PM' 
-  },
-];
+/**
+ * Lista las solicitudes pendientes o en revisión próximas a atender
+ */
+export function PendingRequests({ solicitudes }: PendingRequestsProps) {
+  const { total_pendientes, proximas } = solicitudes;
 
-export function PendingRequests() {
   return (
-    <div className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-sm flex flex-col justify-between">
-      <div>
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-lg bg-[#F2F1FF] text-[#150AB4] flex items-center justify-center flex-shrink-0">
-              <span className="material-symbols-outlined text-[18px]">pending_actions</span>
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <h3 className="text-sm font-semibold text-slate-900 truncate">Solicitudes pendientes</h3>
-                <span className="text-[11px] font-semibold bg-blue-50 text-blue-800 border border-blue-200 px-2 py-0.5 rounded-full">4 por revisar</span>
-              </div>
-            </div>
+    <Card className="h-full">
+      <CardHeader className="border-b">
+        <div className="flex items-center gap-2.5">
+          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-info-soft text-info-soft-foreground">
+            <Inbox className="size-4" aria-hidden="true" />
           </div>
-          <a className="text-xs font-semibold text-[#150AB4] hover:text-[#120990] transition-colors flex items-center gap-0.5" href="#">
-            <span>Gestionar todas</span>
-            <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
-          </a>
+          <div className="flex flex-wrap items-center gap-2">
+            <CardTitle>Solicitudes en trámite</CardTitle>
+            <Badge variant="secondary">{total_pendientes} en trámite</Badge>
+          </div>
         </div>
 
-        <div className="divide-y divide-slate-100 mt-2">
-          {mockRequests.map((req) => (
-            <div key={req.id} className="py-3 px-2 hover:bg-slate-50/80 rounded-lg transition-colors flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3 min-w-0">
-                
-                {/* AVATAR DINÁMICO: Usa req.avatarColor en lugar de un color fijo */}
-                <div className={`w-8 h-8 rounded-lg font-bold text-xs flex items-center justify-center flex-shrink-0 border ${req.avatarColor}`}>
-                  {req.initials}
-                </div>
-                
+        <CardAction>
+          <Link
+            to={ROUTE_PATHS.gestionPersonal.solicitudes}
+            className="group inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+          >
+            <span>Ver todas</span>
+            <ArrowRight
+              className="size-3.5 transition-transform group-hover:translate-x-0.5"
+              aria-hidden="true"
+            />
+          </Link>
+        </CardAction>
+      </CardHeader>
+
+      <CardContent className="flex-1">
+        {proximas.length === 0 ? (
+          <EmptyState title="No hay solicitudes pendientes" />
+        ) : (
+          <div className="divide-y">
+            {proximas.map((solicitud) => (
+              <Link
+                key={solicitud.id}
+                to={buildSolicitudPath(solicitud.codigo)}
+                className="flex items-center justify-between gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-muted/50"
+              >
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <span className="text-xs font-semibold text-slate-900 truncate">{req.name}</span>
-                    <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded border ${req.typeColor}`}>{req.type}</span>
-                    <span className="text-[10px] text-slate-400 font-normal">{req.time}</span>
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                    <span className="truncate text-sm font-medium">
+                      {solicitud.colaborador}
+                    </span>
+                    <span className="text-xs font-medium text-muted-foreground">
+                      · {getTipoLabel(solicitud.tipo)}
+                    </span>
                   </div>
-                  <p className="text-[11px] text-slate-500 truncate">{req.details} • {req.area}</p>
+                  <p className="truncate text-xs text-muted-foreground">
+                    {solicitud.area} · {formatDetalleSolicitud(solicitud)}
+                  </p>
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+
+                <StatusBadge
+                  tone={getEstadoTone(solicitud.estado)}
+                  withDot
+                  className="shrink-0"
+                >
+                  {getEstadoLabel(solicitud.estado)}
+                </StatusBadge>
+              </Link>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }

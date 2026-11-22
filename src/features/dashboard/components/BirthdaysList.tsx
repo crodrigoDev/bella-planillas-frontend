@@ -1,69 +1,117 @@
-// src/features/dashboard/components/BirthdaysList.tsx
+import { Cake } from "lucide-react";
 
-interface BirthdayPerson {
-  id: string;
-  name: string;
-  role: string;
-  area: string;
-  date: string;
-  daysLeft: string;
-  isUrgent?: boolean;
+import { EmptyState } from "@/components/feedback/EmptyState";
+import { StatusBadge } from "@/components/feedback/StatusBadge";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { getTodayIsoDate } from "@/lib/date.utils";
+import { cn } from "@/lib/utils";
+import type { DashboardRrhhResponseDto } from "../types/dashboard.types";
+import {
+  formatDiaMesLargo,
+  formatNombreMes,
+  getIniciales,
+} from "../utils/dashboard.utils";
+
+interface BirthdaysListProps {
+  cumpleanos: DashboardRrhhResponseDto["cumpleanos"];
+  periodo: string;
+  esMesActual: boolean;
 }
 
-const mockBirthdays: BirthdayPerson[] = [
-  { id: '1', name: 'Camila Morales Rivera', role: 'Diseñadora UX/UI', area: 'Tecnología & Desarrollo', date: '08 Oct', daysLeft: 'En 4 días', isUrgent: true },
-  { id: '2', name: 'Rodrigo Castillo Paz', role: 'Analista de Selección', area: 'Recursos Humanos', date: '14 Oct', daysLeft: 'En 10 días' },
-  { id: '3', name: 'Carlos Andrés Méndez Ruiz', role: 'Supervisor de Almacén', area: 'Operaciones & Logística', date: '19 Oct', daysLeft: 'En 15 días' },
-  { id: '4', name: 'Lucía Torres Silva', role: 'Ingeniera de Software', area: 'Tecnología & Desarrollo', date: '24 Oct', daysLeft: 'En 20 días' },
-];
+/**
+ * Lista de cumpleaños de colaboradores activos durante el mes seleccionado
+ */
+export function BirthdaysList({
+  cumpleanos,
+  periodo,
+  esMesActual,
+}: BirthdaysListProps) {
+  const { total_mes, primeros } = cumpleanos;
+  const restantes = Math.max(0, total_mes - primeros.length);
+  const mesNombre = formatNombreMes(periodo);
+  const sufijoMes = esMesActual ? "este mes" : `en ${mesNombre}`;
 
-export function BirthdaysList() {
+  const [, hoyMes, hoyDia] = getTodayIsoDate().split("-").map(Number);
+
   return (
-    <div className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-sm flex flex-col justify-between">
-      <div>
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-lg bg-[#F2F1FF] text-[#150AB4] flex items-center justify-center flex-shrink-0">
-              <span className="material-symbols-outlined text-[18px]">cake</span>
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <h3 className="text-sm font-semibold text-slate-900">Próximos cumpleaños</h3>
-                <span className="text-[11px] font-semibold bg-[#F2F1FF] text-[#150AB4] border border-[#150AB4]/20 px-2 py-0.5 rounded-full">Octubre 2026</span>
-              </div>
-            </div>
+    <Card className="h-full justify-between">
+      <CardHeader className="border-b">
+        <div className="flex items-center gap-2.5">
+          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <Cake className="size-4" aria-hidden="true" />
           </div>
+          <CardTitle>Cumpleaños del mes</CardTitle>
         </div>
-        
-        <div className="divide-y divide-slate-100 mt-2">
-          {mockBirthdays.map((person) => (
-            <div key={person.id} className="flex items-center justify-between py-2.5 px-2 hover:bg-slate-50/80 rounded-lg transition-colors group">
-              <div className="flex items-center gap-3 min-w-0">
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold text-slate-900 truncate">{person.name}</span>
-                    {person.isUrgent && (
-                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">Próximo</span>
-                    )}
+
+        <CardAction>
+          <Badge variant="secondary">
+            {total_mes} en {mesNombre}
+          </Badge>
+        </CardAction>
+      </CardHeader>
+
+      <CardContent className="flex-1">
+        {primeros.length === 0 ? (
+          <EmptyState title={`No hay cumpleaños ${sufijoMes}`} />
+        ) : (
+          <div className="divide-y">
+            {primeros.map((persona) => {
+              const esHoy =
+                esMesActual && persona.mes === hoyMes && persona.dia === hoyDia;
+
+              return (
+                <div
+                  key={persona.empleado_id}
+                  className="flex items-center justify-between gap-3 py-2.5"
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div
+                      aria-hidden="true"
+                      className={cn(
+                        "flex size-8 shrink-0 items-center justify-center rounded-lg border text-xs font-semibold",
+                        esHoy
+                          ? "border-success-border bg-success-soft text-success-soft-foreground"
+                          : "border-primary/20 bg-primary/10 text-primary",
+                      )}
+                    >
+                      {getIniciales(persona.nombre_completo)}
+                    </div>
+
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="truncate text-sm font-medium">
+                          {persona.nombre_completo}
+                        </span>
+                        {esHoy && <StatusBadge tone="success">Hoy</StatusBadge>}
+                      </div>
+                      <p className="truncate text-xs text-muted-foreground">
+                        {persona.area} · {persona.cargo}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-[11px] text-slate-500 truncate">{person.role} • {person.area}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 flex-shrink-0 pl-2">
-                <div className="text-right">
-                  <span className="text-xs font-semibold text-slate-900 block">{person.date}</span>
-                  <span className={`text-[10px] font-medium block ${person.isUrgent ? 'text-emerald-600' : 'text-slate-500'}`}>
-                    {person.daysLeft}
+
+                  <span className="shrink-0 text-xs font-medium text-foreground">
+                    {formatDiaMesLargo(persona.dia, persona.mes)}
                   </span>
                 </div>
-                <button className="w-7 h-7 rounded-lg text-slate-400 hover:text-[#150AB4] hover:bg-[#F2F1FF] flex items-center justify-center transition-colors" type="button">
-                  <span className="material-symbols-outlined text-[16px]">mail</span>
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+              );
+            })}
+          </div>
+        )}
+
+        {restantes > 0 && (
+          <p className="mt-3 text-xs text-muted-foreground">
+            y {restantes} más {sufijoMes}
+          </p>
+        )}
+      </CardContent>
+    </Card>
   );
 }

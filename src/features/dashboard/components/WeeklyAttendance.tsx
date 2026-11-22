@@ -1,126 +1,294 @@
-// src/features/dashboard/components/WeeklyAttendance.tsx
 import { useState } from "react";
+import { AlertTriangle, CalendarCheck2 } from "lucide-react";
 
-const attendanceData = {
-  puntual: { 
-    color: "bg-emerald-500", 
-    dot: "bg-emerald-500", 
-    border: "border-emerald-300",
-    text: "text-emerald-700", 
-    values: [124, 122, 120, 123, 125], 
-    heights: [96.9, 95.3, 93.8, 96.1, 97.7],
-    // NUEVOS DATOS PARA EL FOOTER
-    rate: "94.2%",
-    summaryLabel: "puntualidad promedio semanal",
-    avg: "Promedio: 123 colaboradores a tiempo / día"
-  },
-  tardanza: { 
-    color: "bg-amber-500", 
-    dot: "bg-amber-500", 
-    border: "border-amber-300",
-    text: "text-amber-700", 
-    values: [3, 4, 5, 3, 2], 
-    heights: [50, 66.7, 83.3, 50, 33.3],
-    // NUEVOS DATOS PARA EL FOOTER
-    rate: "2.7%",
-    summaryLabel: "tardanza promedio semanal",
-    avg: "Promedio: 3.4 colaboradores con tardanza / día"
-  },
-  falta: { 
-    color: "bg-rose-500", 
-    dot: "bg-rose-500", 
-    border: "border-rose-300",
-    text: "text-rose-700", 
-    values: [1, 2, 3, 2, 1], 
-    heights: [33.3, 66.7, 100, 66.7, 33.3],
-    // NUEVOS DATOS PARA EL FOOTER
-    rate: "1.4%",
-    summaryLabel: "inasistencia promedio semanal",
-    avg: "Promedio: 1.8 ausencias / día"
+import { EmptyState } from "@/components/feedback/EmptyState";
+import { TONE_TEXT } from "@/components/feedback/statusTone.config";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { formatFechaHoraLima, toDateInput } from "@/lib/date.utils";
+import { cn } from "@/lib/utils";
+import type {
+  DashboardRrhhResponseDto,
+  IndicadorAsistencia,
+} from "../types/dashboard.types";
+import {
+  formatDiaMesCorto,
+  formatDiaSemanaCorto,
+  formatPorcentaje,
+} from "../utils/dashboard.utils";
+
+interface WeeklyAttendanceProps {
+  asistencia: DashboardRrhhResponseDto["asistencia_semana"];
+  esMesActual: boolean;
+}
+
+const TABS_CONFIG: Record<
+  IndicadorAsistencia,
+  {
+    label: string;
+    avgLabel: string;
+    barClass: string;
+    dotClass: string;
+    textClass: string;
   }
+> = {
+  puntuales: {
+    label: "Puntuales",
+    avgLabel: "puntuales",
+    barClass: "bg-success",
+    dotClass: "bg-success",
+    textClass: TONE_TEXT.success,
+  },
+  tardanzas: {
+    label: "Tardanzas",
+    avgLabel: "con tardanza",
+    barClass: "bg-warning",
+    dotClass: "bg-warning",
+    textClass: TONE_TEXT.warning,
+  },
+  faltas: {
+    label: "Faltas",
+    avgLabel: "faltas",
+    barClass: "bg-destructive",
+    dotClass: "bg-destructive",
+    textClass: TONE_TEXT.danger,
+  },
 };
 
-const days = [
-  { day: "Lun", date: "22 Sep" },
-  { day: "Mar", date: "23 Sep" },
-  { day: "Mié", date: "24 Sep" },
-  { day: "Jue", date: "25 Sep" },
-  { day: "Vie", date: "26 Sep" }
-];
+const TABS_ORDER: IndicadorAsistencia[] = ["puntuales", "tardanzas", "faltas"];
 
-type TabType = "puntual" | "tardanza" | "falta";
+/** Genera las 5 fechas laborables (lunes a viernes) a partir de `desde` sin desfase horario */
+const getFechasSemana = (desde: string): string[] => {
+  const [year, month, day] = toDateInput(desde).split("-").map(Number);
 
-export function WeeklyAttendance() {
-  const [activeTab, setActiveTab] = useState<TabType>("puntual");
-  const currentData = attendanceData[activeTab];
+  return Array.from({ length: 5 }, (_, offset) => {
+    const fecha = new Date(Date.UTC(year, month - 1, day + offset));
+    const mes = String(fecha.getUTCMonth() + 1).padStart(2, "0");
+    const dia = String(fecha.getUTCDate()).padStart(2, "0");
+
+    return `${fecha.getUTCFullYear()}-${mes}-${dia}`;
+  });
+};
+
+/**
+ * Gráfico semanal de asistencia por día laborable con selector de indicador
+ */
+export function WeeklyAttendance({
+  asistencia,
+  esMesActual,
+}: WeeklyAttendanceProps) {
+  const [activeTab, setActiveTab] = useState<IndicadorAsistencia>("puntuales");
+  const config = TABS_CONFIG[activeTab];
+
+  const {
+    desde,
+    hasta,
+    dias,
+    puntualidad_porcentaje,
+    ultima_actualizacion,
+    dias_empleado_sin_jornada,
+  } = asistencia;
+
+  const sinAsistencia =
+    dias.length === 0 || dias.every((dia) => dia.esperados === 0);
+
+  const diasPorFecha = new Map(
+    dias.map((dia) => [toDateInput(dia.fecha), dia]),
+  );
+  const fechasSemana = getFechasSemana(desde);
+
+  const totalPendientes = dias.reduce((acc, dia) => acc + dia.pendientes, 0);
+  const diasConEsperados = dias.filter((dia) => dia.esperados > 0);
+  const promedioDia =
+    diasConEsperados.length > 0
+      ? Number(
+          (
+            diasConEsperados.reduce((acc, dia) => acc + dia[activeTab], 0) /
+            diasConEsperados.length
+          ).toFixed(1),
+        )
+      : 0;
+
+  const maxTabValor = Math.max(...dias.map((dia) => dia[activeTab]), 1);
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200/80 p-5 shadow-sm flex flex-col justify-between h-full">
-      <div>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-4 border-b border-slate-100">
+    <Card className="h-full justify-between">
+      <CardHeader className="border-b">
+        <div className="flex items-center gap-2.5">
+          <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <CalendarCheck2 className="size-4" aria-hidden="true" />
+          </div>
           <div>
-            <h3 className="text-sm font-semibold text-slate-900">Asistencia de la semana</h3>
-            <p className="text-[11px] text-slate-400">Registro consolidado de los últimos 5 días laborables (Lun-Vie)</p>
-          </div>
-          
-          {/* Botones de Pestañas */}
-          <div className="inline-flex items-center p-1 bg-slate-100/90 rounded-lg border border-slate-200/60 gap-1 text-xs">
-            {(Object.keys(attendanceData) as TabType[]).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all cursor-pointer border ${
-                  activeTab === tab 
-                    ? `bg-white shadow-sm font-semibold ${attendanceData[tab].text} ${attendanceData[tab].border}` 
-                    : 'border-transparent font-medium text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <span className={`w-2 h-2 rounded-full ${attendanceData[tab].dot}`}></span>
-                <span className="capitalize">{tab}</span>
-              </button>
-            ))}
+            <CardTitle>Asistencia de la semana</CardTitle>
+            <CardDescription className="text-xs">
+              Del {formatDiaMesCorto(desde)} al {formatDiaMesCorto(hasta)}
+            </CardDescription>
           </div>
         </div>
 
-        {/* Gráfico de Barras */}
-        <div className="pt-8 pb-2 relative">
-          <div className="grid grid-cols-5 gap-3 sm:gap-5 items-end h-48">
-            {days.map((day, index) => (
-              <div key={index} className="flex flex-col items-center group cursor-pointer relative h-full justify-end">
-                <span className="text-[11px] font-semibold text-slate-700 mb-2 transition-colors">
-                  {currentData.values[index]}/128
-                </span>
-                <div className="w-full max-w-[48px] h-full bg-slate-100/80 rounded-lg p-1 flex flex-col justify-end border border-slate-200/60 group-hover:border-[#150AB4]/30 transition-all">
-                  <div 
-                    className={`w-full rounded-md transition-all duration-500 ease-in-out ${currentData.color}`} 
-                    style={{ height: `${currentData.heights[index]}%` }}
-                  ></div>
+        <CardAction>
+          <div
+            role="group"
+            aria-label="Indicador de asistencia"
+            className="inline-flex items-center gap-1 rounded-lg border bg-muted p-1 text-xs"
+          >
+            {TABS_ORDER.map((tab) => {
+              const item = TABS_CONFIG[tab];
+              const isSelected = activeTab === tab;
+
+              return (
+                <button
+                  key={tab}
+                  type="button"
+                  aria-pressed={isSelected}
+                  onClick={() => setActiveTab(tab)}
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-md px-2.5 py-1 transition-all",
+                    isSelected
+                      ? cn("border bg-card font-semibold shadow-xs", item.textClass)
+                      : "font-medium text-muted-foreground hover:text-foreground",
+                  )}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={cn("size-2 rounded-full", item.dotClass)}
+                  />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </CardAction>
+      </CardHeader>
+
+      <CardContent className="flex flex-1 flex-col justify-between gap-4">
+        {sinAsistencia ? (
+          <EmptyState
+            title={
+              esMesActual
+                ? "Todavía no hay asistencia registrada esta semana"
+                : `No hay asistencia registrada en la semana del ${formatDiaMesCorto(desde)} al ${formatDiaMesCorto(hasta)}`
+            }
+          />
+        ) : (
+          <div className="grid h-48 grid-cols-5 items-end gap-3 pt-4 sm:gap-5">
+            {fechasSemana.map((fecha) => {
+              const dia = diasPorFecha.get(fecha);
+
+              if (!dia) {
+                return (
+                  <div
+                    key={fecha}
+                    className="flex h-full flex-col items-center justify-end"
+                  >
+                    <span className="mb-2 text-[11px] font-semibold text-muted-foreground">
+                      —
+                    </span>
+                    <div className="flex h-full w-full max-w-12 flex-col justify-end rounded-lg border border-dashed bg-muted/30 p-1" />
+                    <span className="mt-2 text-xs font-semibold text-muted-foreground">
+                      {formatDiaSemanaCorto(fecha)}
+                    </span>
+                    <span className="text-[11px] text-muted-foreground">
+                      {formatDiaMesCorto(fecha)}
+                    </span>
+                  </div>
+                );
+              }
+
+              const valor = dia[activeTab];
+              const altura =
+                activeTab === "puntuales"
+                  ? dia.esperados > 0
+                    ? (valor / dia.esperados) * 100
+                    : 0
+                  : valor > 0
+                    ? Math.max((valor / maxTabValor) * 100, 8)
+                    : 0;
+
+              return (
+                <div
+                  key={fecha}
+                  className="flex h-full flex-col items-center justify-end"
+                >
+                  <span className="mb-2 text-[11px] font-semibold tabular-nums text-foreground">
+                    {valor}/{dia.esperados}
+                  </span>
+                  <div className="flex h-full w-full max-w-12 flex-col justify-end rounded-lg border bg-muted/60 p-1">
+                    <div
+                      className={cn(
+                        "w-full rounded-md transition-all duration-300",
+                        config.barClass,
+                      )}
+                      style={{ height: `${Math.min(100, Math.max(0, altura))}%` }}
+                    />
+                  </div>
+                  <span className="mt-2 text-xs font-semibold">
+                    {formatDiaSemanaCorto(fecha)}
+                  </span>
+                  <span className="text-[11px] text-muted-foreground">
+                    {formatDiaMesCorto(fecha)}
+                  </span>
                 </div>
-                <span className="text-xs font-semibold text-slate-800 mt-2.5">{day.day}</span>
-                <span className="text-[10px] text-slate-400 font-medium">{day.date}</span>
-              </div>
-            ))}
+              );
+            })}
           </div>
-        </div>
-      </div>
+        )}
 
-      {/* FOOTER (El resumen de abajo) */}
-      <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs mt-4">
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 font-medium text-slate-600">
-            <span className={`w-2 h-2 rounded-full ${currentData.dot}`}></span>
-            <strong className="text-slate-900 font-semibold">{currentData.rate}</strong>
-            <span>{currentData.summaryLabel}</span>
+        {(totalPendientes > 0 || dias_empleado_sin_jornada > 0) && (
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            {dias_empleado_sin_jornada > 0 && (
+              <div className="inline-flex items-center gap-1.5 rounded-lg border border-warning-border bg-warning-soft px-2.5 py-1.5 text-xs text-warning-soft-foreground">
+                <AlertTriangle className="size-3.5 shrink-0" aria-hidden="true" />
+                <span>
+                  {dias_empleado_sin_jornada}{" "}
+                  {dias_empleado_sin_jornada === 1 ? "día" : "días"} de
+                  colaboradores sin jornada asignada
+                </span>
+              </div>
+            )}
+            {totalPendientes > 0 && (
+              <span className="text-xs font-medium text-muted-foreground">
+                {totalPendientes}{" "}
+                {totalPendientes === 1 ? "día por revisar" : "días por revisar"}
+              </span>
+            )}
+          </div>
+        )}
+      </CardContent>
+
+      <CardFooter className="flex-wrap justify-between gap-2 bg-transparent py-3 text-xs text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <span>
+            Puntualidad:{" "}
+            <strong className="font-semibold text-foreground">
+              {puntualidad_porcentaje !== null
+                ? formatPorcentaje(puntualidad_porcentaje, 1)
+                : "—"}
+            </strong>
           </span>
-          <span className="text-slate-300 hidden sm:inline">•</span>
-          <span className="text-slate-500 text-[11px] hidden sm:inline">{currentData.avg}</span>
+          {!sinAsistencia && (
+            <>
+              <span aria-hidden="true">•</span>
+              <span>
+                Promedio: {promedioDia} {config.avgLabel} / día
+              </span>
+            </>
+          )}
         </div>
-        <a className="font-semibold text-[#150AB4] hover:underline flex items-center gap-0.5" href="#">
-          <span>Ver reporte detallado</span>
-          <span>→</span>
-        </a>
-      </div>
 
-    </div>
+        {ultima_actualizacion && (
+          <span>
+            Actualizado el {formatFechaHoraLima(ultima_actualizacion)}
+          </span>
+        )}
+      </CardFooter>
+    </Card>
   );
 }
