@@ -1,12 +1,13 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
+import { ROOT_KEYS } from "@/lib/queryKeys.config";
 import { dashboardService } from "../services/dashboard.service";
 
 /**
  * Claves de caché del dashboard de Recursos Humanos
  */
 export const dashboardKey = {
-  all: ["dashboard"] as const,
+  all: ROOT_KEYS.dashboard,
   rrhh: (periodo: string) => ["dashboard", "rrhh", periodo] as const,
 };
 

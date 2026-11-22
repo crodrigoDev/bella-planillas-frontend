@@ -1,5 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
+import { ROOT_KEYS } from "@/lib/queryKeys.config";
 import { jornadasService } from "../services/jornadas.service";
 import type { JornadaFilters } from "../types/jornadas.types";
 
@@ -11,7 +12,7 @@ import type { JornadaFilters } from "../types/jornadas.types";
  * que usan empleados y asistencia vive aparte (`["catalogos", "jornadas"]`).
  */
 export const jornadasKey = {
-  all: ["jornadas"] as const,
+  all: ROOT_KEYS.jornadas,
   list: (filters: JornadaFilters) => ["jornadas", "list", filters] as const,
   detail: (id: string) => ["jornadas", "detail", id] as const,
 };
