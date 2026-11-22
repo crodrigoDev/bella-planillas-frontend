@@ -10,8 +10,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { orDash } from "@/lib/format.utils";
+import { formatPeriodo } from "@/lib/periodo.utils";
 import type { DiaCalendarioAsistencia } from "../types/calendario.types";
-import { formatFechaCompleta, formatPeriodo } from "../utils/asistencia.utils";
+import { formatFechaCompleta } from "../utils/asistencia.utils";
 import { ORIGEN_DIA } from "./calendario.config";
 
 const columnHelper = createColumnHelper<

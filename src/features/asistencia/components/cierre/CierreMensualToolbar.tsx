@@ -1,6 +1,7 @@
 import { XIcon } from "lucide-react";
 import { FilterSelect } from "@/components/filters/FilterSelect";
 import { SearchInput } from "@/components/filters/SearchInput";
+import { SelectorMes } from "@/components/filters/SelectorMes";
 import { Button } from "@/components/ui/button";
 import type { SelectOption } from "@/lib/types/options.types";
 import { ESTADO_RESUMEN_OPTIONS } from "../../config/cierreMensual.config";
@@ -8,7 +9,6 @@ import type {
   IncidenciaFilterKey,
   IncidenciaFilters,
 } from "../../types/incidencias.types";
-import { SelectorMes } from "../SelectorMes";
 
 interface CierreMensualToolbarProps {
   filters: IncidenciaFilters;

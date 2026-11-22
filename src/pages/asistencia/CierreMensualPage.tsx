@@ -27,10 +27,10 @@ import {
   useIncidencias,
 } from "@/features/asistencia/hooks/useIncidencias";
 import type { Incidencia } from "@/features/asistencia/types/incidencias.types";
-import { formatPeriodo } from "@/features/asistencia/utils/asistencia.utils";
 import { useEmpleadosCatalogos } from "@/features/empleados/hooks/useCatalogos";
 import { usePaginacionServidor } from "@/hooks/usePaginacionServidor";
 import { getOptionLabel } from "@/lib/catalogos.utils";
+import { formatPeriodo } from "@/lib/periodo.utils";
 
 const NO_INCIDENCIAS: Incidencia[] = [];
 

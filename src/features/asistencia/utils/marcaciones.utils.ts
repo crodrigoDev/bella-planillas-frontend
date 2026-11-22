@@ -1,4 +1,4 @@
-import { formatPeriodo } from "./asistencia.utils";
+import { formatPeriodo } from "@/lib/periodo.utils";
 
 const ZONA_HORARIA_LIMA = "America/Lima";
 
