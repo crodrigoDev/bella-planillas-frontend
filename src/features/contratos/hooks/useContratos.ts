@@ -1,5 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
+import { ROOT_KEYS } from "@/lib/queryKeys.config";
 import { contratosService } from "../services/contratos.service";
 import type { ContratoFilters } from "../types/contratos.types";
 
@@ -10,7 +11,7 @@ import type { ContratoFilters } from "../types/contratos.types";
  * Invalidar `all` refresca también el listado global, sin importar sus filtros.
  */
 export const contratosKey = {
-  all: ["contratos"] as const,
+  all: ROOT_KEYS.contratos,
   list: (filters: ContratoFilters) => ["contratos", "list", filters] as const,
   byEmpleado: (empleadoId: string) =>
     ["contratos", "empleado", empleadoId] as const,
