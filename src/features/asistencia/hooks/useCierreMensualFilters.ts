@@ -1,11 +1,11 @@
 import { usePaginacionUrl } from "@/hooks/usePaginacionUrl";
+import { getPeriodoActual, parsePeriodo } from "@/lib/periodo.utils";
 import { parseUuid } from "@/lib/urlParams.utils";
 import type { EstadoResumen } from "../types/asistencia.types";
 import type {
   IncidenciaFilterKey,
   IncidenciaFilters,
 } from "../types/incidencias.types";
-import { getPeriodoActual, parsePeriodo } from "../utils/asistencia.utils";
 
 const parseEstado = (value: string | null): EstadoResumen | undefined =>
   value === "PENDIENTE" || value === "APROBADO" || value === "RECHAZADO"

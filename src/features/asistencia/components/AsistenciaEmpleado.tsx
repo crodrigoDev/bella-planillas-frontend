@@ -17,15 +17,16 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import type { SelectOption } from "@/lib/types/options.types";
-import { useGenerarResumen } from "../hooks/useAsistenciaActions";
-import { useResumenMes } from "../hooks/useAsistencia";
+import { SelectorMes } from "@/components/filters/SelectorMes";
 import {
-  esDiaSinJornada,
   formatPeriodo,
   getPeriodoActual,
   parsePeriodo,
-} from "../utils/asistencia.utils";
+} from "@/lib/periodo.utils";
+import type { SelectOption } from "@/lib/types/options.types";
+import { useGenerarResumen } from "../hooks/useAsistenciaActions";
+import { useResumenMes } from "../hooks/useAsistencia";
+import { esDiaSinJornada } from "../utils/asistencia.utils";
 import { AvisoJornada } from "./AvisoJornada";
 import { DetalleDiarioTabla } from "./DetalleDiarioTabla";
 import { AprobarResumenModal } from "./modals/AprobarResumenModal";
@@ -37,7 +38,6 @@ import {
   type AccionResumen,
 } from "./modals/ResolverResumenModal";
 import { ResumenMesCards } from "./ResumenMesCards";
-import { SelectorMes } from "./SelectorMes";
 
 /** Modal abierto de la pestaña; los que dependen de un día o una acción llevan su dato */
 type ModalAbierto =

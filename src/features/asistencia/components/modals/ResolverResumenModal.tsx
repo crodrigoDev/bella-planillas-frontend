@@ -10,10 +10,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { formatPeriodo } from "@/lib/periodo.utils";
 import { zodResolverOptions } from "@/lib/zodMessages.utils";
 import { useResolverResumen } from "../../hooks/useAsistenciaActions";
 import { ResolverResumenFormSchema } from "../../schemas/asistencia.schema";
-import { formatPeriodo } from "../../utils/asistencia.utils";
 import { MotivoField } from "../MotivoField";
 
 const resolver = zodResolver(ResolverResumenFormSchema, zodResolverOptions);

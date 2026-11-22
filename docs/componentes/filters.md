@@ -107,6 +107,23 @@ Etiqueta de un filtro aplicado, con botón para quitarlo.
 
 [`src/features/empleados/components/listado/EmpleadosToolbar.tsx`](../../src/features/empleados/components/listado/EmpleadosToolbar.tsx)
 
+## SelectorMes
+
+Selector de mes (`YYYY-MM`) con flechas para ir al mes anterior y al siguiente; bloquea
+los meses futuros y, si se indica `periodoMinimo`, los anteriores a esa fecha.
+
+| Prop | Tipo | Notas |
+| --- | --- | --- |
+| `periodo` | `string` | Mes mostrado (`YYYY-MM`) |
+| `onChange` | `(periodo: string) => void` | Recibe el nuevo mes `YYYY-MM` |
+| `periodoMinimo` | `string?` | Primer mes seleccionable (`YYYY-MM`) |
+
+```tsx
+<SelectorMes periodo={filters.periodo} onChange={onPeriodoChange} />
+```
+
+[`src/features/asistencia/components/cierre/CierreMensualToolbar.tsx`](../../src/features/asistencia/components/cierre/CierreMensualToolbar.tsx). Otros usos: `AsistenciaEmpleado.tsx`, `DashboardPage.tsx`.
+
 ## filters.config.ts
 
 Exporta `ACTIVO_FILTER_OPTIONS`: las opciones "Activo" / "Inactivo" del filtro de

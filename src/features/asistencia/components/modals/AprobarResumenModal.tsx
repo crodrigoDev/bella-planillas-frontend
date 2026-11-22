@@ -2,8 +2,8 @@ import {
   ConfirmModal,
   ConfirmModalBody,
 } from "@/components/feedback/ConfirmModal";
+import { formatPeriodo } from "@/lib/periodo.utils";
 import { useAprobarResumen } from "../../hooks/useAsistenciaActions";
-import { formatPeriodo } from "../../utils/asistencia.utils";
 
 interface AprobarResumenModalProps {
   empleadoId: string;

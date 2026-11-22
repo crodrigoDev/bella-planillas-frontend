@@ -46,6 +46,23 @@ const esFechaPasada = Boolean(desde) && desde < getTodayIsoDate();
 `toDateInput(contrato.fecha_inicio)` en `EditarContratoModal.tsx`,
 `getAge(nacimiento)` en `DerechohabienteItem.tsx`.
 
+## periodo.utils.ts
+
+Meses en formato `YYYY-MM`, validados para no pasar del mes actual.
+
+| Función | Qué hace |
+| --- | --- |
+| `getPeriodoActual()` | Mes de hoy en el navegador como `YYYY-MM` |
+| `parsePeriodo(value)` | Lee un `YYYY-MM` de la URL; `undefined` si es inválido o futuro |
+| `shiftPeriodo(periodo, meses)` | Suma o resta meses a un `YYYY-MM` |
+| `formatPeriodo(periodo)` | `"septiembre de 2026"` (`"es"` en UTC, evita "setiembre") |
+
+```ts
+periodo: parsePeriodo(searchParams.get("periodo")) ?? getPeriodoActual(),
+```
+
+[`src/features/asistencia/hooks/useCierreMensualFilters.ts`](../src/features/asistencia/hooks/useCierreMensualFilters.ts). Otros usos: `SelectorMes.tsx`, `CierreMensualPage.tsx`, `useDashboardFilters.ts`.
+
 ## catalogos.utils.ts
 
 Convierte catálogos del backend en opciones de `Select`. El tipo `SelectOption`

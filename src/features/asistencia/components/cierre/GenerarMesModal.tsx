@@ -12,10 +12,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { formatPeriodo } from "@/lib/periodo.utils";
 import { cn } from "@/lib/utils";
 import { useGenerarMes } from "../../hooks/useCierreMensualActions";
 import type { CierreProgreso } from "../../types/incidencias.types";
-import { formatPeriodo } from "../../utils/asistencia.utils";
 
 interface GenerarMesModalProps {
   periodo: string;

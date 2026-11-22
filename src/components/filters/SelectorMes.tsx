@@ -5,13 +5,13 @@ import {
   formatPeriodo,
   getPeriodoActual,
   shiftPeriodo,
-} from "../utils/asistencia.utils";
+} from "@/lib/periodo.utils";
 
 interface SelectorMesProps {
   /** Mes mostrado como YYYY-MM */
   periodo: string;
   onChange: (periodo: string) => void;
-  /** Primer mes que se puede ver (YYYY-MM); antes del ingreso no hay asistencia */
+  /** Primer mes que se puede ver (YYYY-MM); antes del ingreso no hay datos */
   periodoMinimo?: string;
 }
 
@@ -19,8 +19,7 @@ interface SelectorMesProps {
  * Selector de mes con flechas para ir al anterior y al siguiente
  *
  * @remarks
- * No deja pasar del mes actual (el backend no calcula asistencia futura) ni
- * ir antes del mes de ingreso del empleado.
+ * No deja pasar del mes actual ni ir antes de `periodoMinimo` si se indica.
  */
 export function SelectorMes({
   periodo,

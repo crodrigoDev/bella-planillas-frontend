@@ -11,11 +11,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { getTodayIsoDate } from "@/lib/date.utils";
+import { formatPeriodo } from "@/lib/periodo.utils";
 import { zodResolverOptions } from "@/lib/zodMessages.utils";
 import { useMarcacionManual } from "../../hooks/useAsistenciaActions";
 import { MarcacionManualFormSchema } from "../../schemas/asistencia.schema";
 import {
-  formatPeriodo,
   getRangoPeriodo,
   toMarcacionManualDto,
 } from "../../utils/asistencia.utils";

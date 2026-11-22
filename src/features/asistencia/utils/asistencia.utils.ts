@@ -1,4 +1,3 @@
-import { getTodayIsoDate } from "@/lib/date.utils";
 import type { MarcacionManualDto } from "../services/asistencia.service";
 import type { DiaAsistencia } from "../types/asistencia.types";
 import { ALERTA_SIN_JORNADA, ZONA_LIMA } from "../config/asistencia.config";
@@ -6,41 +5,6 @@ import { ALERTA_SIN_JORNADA, ZONA_LIMA } from "../config/asistencia.config";
 /** Si el backend no pudo evaluar el día porque no hay jornada asignada */
 export const esDiaSinJornada = (dia: DiaAsistencia): boolean =>
   dia.alertas.includes(ALERTA_SIN_JORNADA);
-
-/** Mes de hoy como YYYY-MM */
-export const getPeriodoActual = (): string => getTodayIsoDate().slice(0, 7);
-
-const PERIODO_REGEX = /^\d{4}-(0[1-9]|1[0-2])$/;
-
-/** Lee un mes (YYYY-MM) de la URL; solo acepta uno válido que no sea futuro */
-export const parsePeriodo = (value: string | null): string | undefined =>
-  value && PERIODO_REGEX.test(value) && value <= getPeriodoActual()
-    ? value
-    : undefined;
-
-/** Mueve un mes (YYYY-MM) hacia adelante o hacia atrás */
-export const shiftPeriodo = (periodo: string, meses: number): string => {
-  const [year, month] = periodo.split("-").map(Number);
-  const fecha = new Date(Date.UTC(year, month - 1 + meses, 1));
-
-  return fecha.toISOString().slice(0, 7);
-};
-
-/**
- * Nombre de un mes para mostrar
- *
- * @example formatPeriodo("2026-09") // "septiembre de 2026"
- */
-export const formatPeriodo = (periodo: string): string => {
-  const [year, month] = periodo.split("-").map(Number);
-
-  // "es-PE" devuelve "setiembre" en el navegador; con "es" sale "septiembre"
-  return new Date(Date.UTC(year, month - 1, 1)).toLocaleDateString("es", {
-    month: "long",
-    year: "numeric",
-    timeZone: "UTC",
-  });
-};
 
 /** Primer y último día de un mes (YYYY-MM-DD), para limitar los campos de fecha */
 export const getRangoPeriodo = (
