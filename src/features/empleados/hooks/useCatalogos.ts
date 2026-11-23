@@ -4,6 +4,13 @@ import { catalogosService } from "../services/catalogos.service";
 // Áreas, cargos y jornadas se editan con más frecuencia: caducan antes
 const ORGANIZACION_STALE_TIME = 5 * 60_000;
 
+/** Obtiene las áreas activas para filtros y selectores */
+export function useAreasCatalogo() {
+  return useCatalogo(["areas"], () => catalogosService.listAreas(), {
+    staleTime: ORGANIZACION_STALE_TIME,
+  });
+}
+
 /**
  * Obtiene las áreas, cargos y jornadas del listado y del registro de empleados
  *
@@ -11,11 +18,7 @@ const ORGANIZACION_STALE_TIME = 5 * 60_000;
  * @returns Una consulta por cada catálogo
  */
 export function useEmpleadosCatalogos(areaId?: string) {
-  const areas = useCatalogo(
-    ["areas"],
-    () => catalogosService.listAreas(),
-    { staleTime: ORGANIZACION_STALE_TIME },
-  );
+  const areas = useAreasCatalogo();
 
   const cargos = useCatalogo(
     ["cargos", areaId ?? null],
