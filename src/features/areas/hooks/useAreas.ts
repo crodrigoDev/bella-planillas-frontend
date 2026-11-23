@@ -1,5 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
+import { ROOT_KEYS } from "@/lib/queryKeys.config";
 import { areasService } from "../services/areas.service";
 import type { AreaFilters } from "../types/areas.types";
 
@@ -11,7 +12,7 @@ import type { AreaFilters } from "../types/areas.types";
  * en `["catalogos", "areas"]`.
  */
 export const areasKey = {
-  all: ["areas"] as const,
+  all: ROOT_KEYS.areas,
   list: (filters: AreaFilters) => ["areas", "list", filters] as const,
 };
 

@@ -9,6 +9,8 @@
 export const ROOT_KEYS = {
   empleados: ["empleados"] as const,
   catalogos: ["catalogos"] as const,
+  areas: ["areas"] as const,
+  cargos: ["cargos"] as const,
   jornadas: ["jornadas"] as const,
   contratos: ["contratos"] as const,
   dashboard: ["dashboard"] as const,

@@ -192,11 +192,13 @@ su raíz (`empleadosKey.all = ROOT_KEYS.empleados`).
 
 | Clave | Valor | La usan |
 | --- | --- | --- |
-| `ROOT_KEYS.empleados` | `["empleados"]` | `empleadosKey`; asistencia, derechohabientes y áreas la invalidan |
+| `ROOT_KEYS.empleados` | `["empleados"]` | `empleadosKey`; asistencia, derechohabientes, áreas y cargos la invalidan |
 | `ROOT_KEYS.catalogos` | `["catalogos"]` | `useCatalogo` |
+| `ROOT_KEYS.areas` | `["areas"]` | `areasKey`; cargos la invalida |
+| `ROOT_KEYS.cargos` | `["cargos"]` | `cargosKey`; áreas la invalida |
 | `ROOT_KEYS.jornadas` | `["jornadas"]` | `jornadasKey`; áreas la invalida |
-| `ROOT_KEYS.contratos` | `["contratos"]` | `contratosKey`; áreas la invalida |
-| `ROOT_KEYS.dashboard` | `["dashboard"]` | `dashboardKey`; áreas la invalida |
+| `ROOT_KEYS.contratos` | `["contratos"]` | `contratosKey`; áreas y cargos la invalidan |
+| `ROOT_KEYS.dashboard` | `["dashboard"]` | `dashboardKey`; áreas y cargos la invalidan |
 
 ```ts
 invalidate: [derechohabientesKey.all, ROOT_KEYS.empleados],

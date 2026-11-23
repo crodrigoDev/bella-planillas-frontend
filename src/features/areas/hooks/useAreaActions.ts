@@ -11,12 +11,14 @@ import { areasKey } from "./useAreas";
  *
  * @remarks
  * Además del listado, los catálogos (áreas y cargos que usan empleados,
- * jornadas y contratos), el listado de colaboradores, jornadas (columna áreas),
- * contratos globales (columna área) y el dashboard RRHH (distribución por área).
+ * jornadas y contratos), cargos (columna área), el listado de colaboradores,
+ * jornadas (columna áreas), contratos globales (columna área) y el dashboard
+ * RRHH (distribución por área).
  */
 const INVALIDATE = [
   areasKey.all,
   ROOT_KEYS.catalogos,
+  ROOT_KEYS.cargos,
   ROOT_KEYS.empleados,
   ROOT_KEYS.jornadas,
   ROOT_KEYS.contratos,
