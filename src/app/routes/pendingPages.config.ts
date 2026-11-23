@@ -1,8 +1,4 @@
-import { ROUTE_PATHS } from "./path";
-
 /**
  * Define las rutas que muestran temporalmente la página de construcción
  */
-export const pendingPages = [
-  { path: ROUTE_PATHS.organizacion.cargos, title: "Cargos" },
-] as const;
+export const pendingPages: readonly { path: string; title: string }[] = [];

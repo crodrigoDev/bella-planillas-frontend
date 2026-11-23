@@ -214,6 +214,15 @@ export const router = createBrowserRouter([
             ],
           },
           {
+            element: <RoleRoute path={ROUTE_PATHS.organizacion.cargos} />,
+            children: [
+              {
+                path: ROUTE_PATHS.organizacion.cargos,
+                lazy: lazyPage(() => import("@/pages/cargos/CargosPage")),
+              },
+            ],
+          },
+          {
             element: <RoleRoute path={ROUTE_PATHS.asistencia.marcaciones} />,
             children: [
               {
