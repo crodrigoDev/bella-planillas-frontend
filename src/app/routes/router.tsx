@@ -339,6 +339,28 @@ export const router = createBrowserRouter([
             ],
           },
           {
+            element: <RoleRoute path={ROUTE_PATHS.nomina.planillas} />,
+            children: [
+              {
+                path: ROUTE_PATHS.nomina.planillas,
+                lazy: lazyPage(
+                  () => import("@/pages/planillas/PlanillasPage"),
+                ),
+              },
+            ],
+          },
+          {
+            element: <RoleRoute path={ROUTE_PATHS.nomina.detallePlanilla} />,
+            children: [
+              {
+                path: ROUTE_PATHS.nomina.detallePlanilla,
+                lazy: lazyPage(
+                  () => import("@/pages/planillas/PlanillaDetallePage"),
+                ),
+              },
+            ],
+          },
+          {
             element: <RoleRoute path={ROUTE_PATHS.auditoria} />,
             children: [
               {

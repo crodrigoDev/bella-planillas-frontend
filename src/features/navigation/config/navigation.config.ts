@@ -9,19 +9,21 @@ import {
   FileText,
   LayoutDashboard,
   Network,
+  Receipt,
   ScanLine,
   Shield,
   UserRound,
   Users,
+  Wallet,
 } from "lucide-react";
 
 import { ROUTE_PATHS } from "@/app/routes/path";
 import type { SidebarItem } from "../types/navigation.types";
 
 /**
- * Define las opciones de navegación disponibles para Recursos Humanos
+ * Define las opciones de navegación de la aplicación; cada rol ve solo las que puede abrir
  */
-export const RRHH_SIDEBAR_ITEMS = [
+export const SIDEBAR_ITEMS = [
   {
     type: "link",
     label: "Dashboard",
@@ -91,6 +93,18 @@ export const RRHH_SIDEBAR_ITEMS = [
         label: "Calendario",
         to: ROUTE_PATHS.asistencia.calendario,
         icon: CalendarRange,
+      },
+    ],
+  },
+  {
+    type: "group",
+    label: "Nómina",
+    icon: Wallet,
+    items: [
+      {
+        label: "Planillas",
+        to: ROUTE_PATHS.nomina.planillas,
+        icon: Receipt,
       },
     ],
   },
