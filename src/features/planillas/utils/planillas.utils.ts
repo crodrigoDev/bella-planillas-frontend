@@ -13,6 +13,9 @@ const ESTADOS_TRABAJO_FINALES: readonly EstadoTrabajo[] = [
   "failed",
 ];
 
+const FRASE_NOVEDADES_PENDIENTES = "novedades pendientes";
+const FRASE_DESCANSO_SEMANAL = "descanso semanal";
+
 const CABECERA_VACIA: CabeceraPlanilla = {
   nombre_completo: null,
   nro_documento: null,
@@ -132,4 +135,33 @@ export const extraerNombreArchivo = (
 
   const match = /filename="?([^";\n]+)"?/i.exec(contentDisposition);
   return match?.[1]?.trim() || fallback;
+};
+
+/**
+ * Indica si una observación del cálculo se resuelve revisando las novedades del colaborador
+ *
+ * @remarks
+ * Depende del texto que envía el backend porque no envía códigos de error.
+ */
+export const requiereRevisarNovedades = (detalle: string): boolean => {
+  const texto = detalle.toLowerCase();
+
+  return (
+    texto.includes(FRASE_NOVEDADES_PENDIENTES) ||
+    texto.includes(FRASE_DESCANSO_SEMANAL)
+  );
+};
+
+/**
+ * Traduce observaciones técnicas del cálculo a un mensaje claro para el usuario
+ *
+ * @remarks
+ * Depende del texto que envía el backend porque no envía códigos de error.
+ */
+export const formatDetalleObservacion = (detalle: string): string => {
+  if (detalle.toLowerCase().includes(FRASE_DESCANSO_SEMANAL)) {
+    return "Tuvo faltas o días sin goce: registra y aprueba su descuento por descanso semanal (puede ser 0).";
+  }
+
+  return detalle;
 };

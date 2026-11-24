@@ -1,6 +1,9 @@
 import { useState, type ReactNode } from "react";
 import { isAxiosError } from "axios";
 import { ChevronDownIcon, ChevronUpIcon, XIcon } from "lucide-react";
+import { Link } from "react-router-dom";
+
+import { buildNovedadesPath } from "@/app/routes/path";
 
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { StatusBadge } from "@/components/feedback/StatusBadge";
@@ -24,12 +27,18 @@ import type {
   ErrorGeneracion,
   EstadoResultadoGeneracion,
 } from "../../types/planillas.types";
-import { esEstadoTrabajoFinal, getAvance } from "../../utils/planillas.utils";
+import {
+  esEstadoTrabajoFinal,
+  formatDetalleObservacion,
+  getAvance,
+  requiereRevisarNovedades,
+} from "../../utils/planillas.utils";
 
 interface AvanceGeneracionProps {
   trabajoId: string;
   periodo: string;
   onCerrar: () => void;
+  enlazarNovedades?: boolean;
 }
 
 const RESULTADO_ESTADO: Record<
@@ -94,13 +103,17 @@ function AvisoCard({
 }
 
 interface ObservacionesGeneracionProps {
+  periodo: string;
   errores: ErrorGeneracion[];
   erroresTruncados: boolean;
+  enlazarNovedades: boolean;
 }
 
 function ObservacionesGeneracion({
+  periodo,
   errores,
   erroresTruncados,
+  enlazarNovedades,
 }: ObservacionesGeneracionProps) {
   const [abiertas, setAbiertas] = useState(false);
   const { nombresPorId } = useEmpleadosMapa();
@@ -133,15 +146,36 @@ function ObservacionesGeneracion({
 
       <CollapsibleContent className="rounded-lg border bg-background p-3 text-foreground">
         <ul className="space-y-1.5 text-sm">
-          {errores.map((item) => (
-            <li key={`${item.empleado_id}-${item.detalle}`}>
-              <span className="font-medium">
-                {nombresPorId.get(item.empleado_id) ??
-                  "Colaborador no identificado"}
-              </span>{" "}
-              — {item.detalle}
-            </li>
-          ))}
+          {errores.map((item) => {
+            const nombre = nombresPorId.get(item.empleado_id);
+            const detalle = formatDetalleObservacion(item.detalle);
+            const conEnlace =
+              enlazarNovedades && requiereRevisarNovedades(item.detalle);
+
+            return (
+              <li key={`${item.empleado_id}-${item.detalle}`}>
+                <span className="font-medium">
+                  {nombre ?? "Colaborador no identificado"}
+                </span>{" "}
+                — {detalle}
+                {conEnlace && (
+                  <>
+                    {" "}
+                    <Link
+                      to={buildNovedadesPath({
+                        periodo,
+                        empleadoId: item.empleado_id,
+                        empleado: nombre,
+                      })}
+                      className="font-medium text-primary underline-offset-4 hover:underline"
+                    >
+                      Ver novedades
+                    </Link>
+                  </>
+                )}
+              </li>
+            );
+          })}
         </ul>
         {erroresTruncados && (
           <p className="mt-2 text-xs text-muted-foreground">
@@ -160,6 +194,7 @@ export function AvanceGeneracion({
   trabajoId,
   periodo,
   onCerrar,
+  enlazarNovedades = true,
 }: AvanceGeneracionProps) {
   const {
     data: trabajo,
@@ -286,8 +321,10 @@ export function AvanceGeneracion({
       >
         {resultado.errores.length > 0 && (
           <ObservacionesGeneracion
+            periodo={periodo}
             errores={resultado.errores}
             erroresTruncados={resultado.errores_truncados}
+            enlazarNovedades={enlazarNovedades}
           />
         )}
       </AvisoCard>
