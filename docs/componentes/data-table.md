@@ -4,29 +4,35 @@
 
 ## DataTable
 
-Tabla genérica (TanStack Table) con paginación controlada por el servidor: filas de
-carga, atenuado mientras llega otra página, mensaje vacío, selector de filas por
-página y paginación con botones reales (`Button` dentro de `Pagination`; los números salen de `getPageItems`; la página actual lleva `aria-current="page"` y los botones se deshabilitan con `disabled`). Las filas y columnas se desplazan
-dentro de la caja de la tabla, como en Jira (cabecera fija con sombra al hacer scroll,
-separadores entre columnas, scroll vertical y horizontal), y la paginación queda
-siempre a la vista. El alto de la caja se ajusta a las filas y crece hasta el máximo que le deja su
-contenedor; después hace scroll. En una página de listado, la `section` debe ser
-`flex min-h-0 flex-1 flex-col` (el layout ya limita el alto); si el contenedor no tiene
-alto definido, la tabla crece con su contenido. Las columnas se definen con
-`createColumnHelper<DataTableFeatures, T>()`.
+Tabla genérica (TanStack Table) con paginación (del servidor, o en el navegador
+cortando la lista con [usePaginacionLocal](../hooks.md#usepaginacionlocal)) o sin
+paginación para listas cortas: filas de carga, atenuado mientras llega otra página,
+mensaje vacío, selector de filas por página y paginación con botones reales (`Button`
+dentro de `Pagination`; los números salen de `getPageItems`; la página actual lleva
+`aria-current="page"` y los botones se deshabilitan con `disabled`). Las filas y
+columnas se desplazan dentro de la caja de la tabla, como en Jira (cabecera fija con
+sombra al hacer scroll, separadores entre columnas, scroll vertical y horizontal), y la
+paginación queda siempre a la vista. El alto de la caja se ajusta a las filas y crece
+hasta el máximo que le deja su contenedor; después hace scroll. En una página de listado,
+la `section` debe ser `flex min-h-0 flex-1 flex-col` (el layout ya limita el alto); si
+el contenedor no tiene alto definido, la tabla crece con su contenido. Las columnas se
+definen con `createColumnHelper<DataTableFeatures, T>()`.
+
+`pagination`, `rowCount` y `onPaginationChange` van juntos: o se pasan los tres, o no se
+pasa ninguno (modo sin paginación, sin pie de página).
 
 | Prop | Tipo | Notas |
 | --- | --- | --- |
 | `columns` | `ColumnDef<DataTableFeatures, TData, any>[]` | |
-| `data` | `TData[]` | Solo las filas de la página actual |
-| `pagination` | `PaginationState` | `{ pageIndex, pageSize }` |
-| `rowCount` | `number` | Total de filas en el servidor |
-| `onPaginationChange` | `OnChangeFn<PaginationState>` | |
+| `data` | `readonly TData[]` | Filas de la página actual, o toda la lista sin paginación |
+| `pagination` | `PaginationState?` | `{ pageIndex, pageSize }`; obligatorio si se pagina |
+| `rowCount` | `number?` | Total de filas; obligatorio si se pagina |
+| `onPaginationChange` | `OnChangeFn<PaginationState>?` | Obligatorio si se pagina |
 | `isLoading` | `boolean?` | Primera carga: filas de carga |
 | `isFetching` | `boolean?` | Cargando otra página: atenúa y conserva los datos |
 | `emptyMessage` | `string` | Mensaje cuando no hay filas |
-| `itemLabel` | `string?` | Nombre de las filas en plural; por defecto "registros" |
-| `pageSizeOptions` | `readonly number[]?` | Por defecto `PAGE_SIZE_OPTIONS` |
+| `itemLabel` | `string?` | Nombre de las filas en plural; por defecto "registros" (solo con paginación) |
+| `pageSizeOptions` | `readonly number[]?` | Por defecto `PAGE_SIZE_OPTIONS` (solo con paginación) |
 
 ```tsx
 <DataTable
@@ -49,6 +55,22 @@ alto definido, la tabla crece con su contenido. Las columnas se definen con
 ```tsx
 const columnHelper = createColumnHelper<DataTableFeatures, Empleado>();
 ```
+
+### Sin paginación (listas cortas)
+
+Usa `DataTable` sin `pagination`, `rowCount` ni `onPaginationChange` cuando la lista
+completa es corta y vive dentro de otra pantalla (una pestaña de detalle o una sección):
+muestra todas las filas en el orden recibido y omite el pie de paginación.
+
+```tsx
+<DataTable
+  columns={columns}
+  data={novedades}
+  emptyMessage="Sin novedades en este mes"
+/>
+```
+
+[`src/features/novedades/components/NovedadesTabla.tsx`](../../src/features/novedades/components/NovedadesTabla.tsx)
 
 ## dataTable.config.ts
 

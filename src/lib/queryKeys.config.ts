@@ -15,4 +15,5 @@ export const ROOT_KEYS = {
   contratos: ["contratos"] as const,
   dashboard: ["dashboard"] as const,
   planillas: ["planillas"] as const,
+  novedades: ["novedades"] as const,
 };

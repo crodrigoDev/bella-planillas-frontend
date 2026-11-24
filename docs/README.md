@@ -73,6 +73,7 @@ Cada pieza es una subsección `##` de su archivo, con este formato:
 | Filtrar por un rango de fechas | [DateRangeFilter](componentes/filters.md#daterangefilter) |
 | Una tabla con paginación del servidor | [DataTable](componentes/data-table.md#datatable) con [usePaginacionServidor](hooks.md#usepaginacionservidor) |
 | Paginar en el navegador una lista que ya está completa (errores de un archivo) | [usePaginacionLocal](hooks.md#usepaginacionlocal) con [DataTable](componentes/data-table.md#datatable) |
+| Una lista corta completa dentro de otra pantalla (detalle, sección) | [DataTable](componentes/data-table.md#datatable) sin paginación |
 | Un proceso por pasos | [Stepper](componentes/stepper.md#stepper) y [StepperFooter](componentes/stepper.md#stepperfooter) |
 | Opciones de un catálogo del backend | [useCatalogo](hooks.md#usecatalogo) y [catalogos.utils.ts](lib.md#catalogosutilsts) |
 | Mostrar fechas, montos o datos vacíos | [format.utils.ts](lib.md#formatutilsts) |

@@ -4,6 +4,7 @@ import {
   type ColumnDef,
   type OnChangeFn,
   type PaginationState,
+  type ReactTable,
   type RowData,
 } from "@tanstack/react-table";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
@@ -38,54 +39,77 @@ import {
 } from "@/components/data-table/dataTable.config";
 import { getPageItems } from "@/lib/pagination.utils";
 
-interface DataTableProps<TData extends RowData> {
+interface DataTableBaseProps<TData extends RowData> {
   columns: ColumnDef<DataTableFeatures, TData, any>[]; // eslint-disable-line @typescript-eslint/no-explicit-any
-  data: TData[];
+  data: readonly TData[];
+  isLoading?: boolean; // Primera carga: muestra filas de carga en lugar de datos
+  isFetching?: boolean; // Cargando otra página: atenúa la tabla pero conserva los datos
+  emptyMessage: string;
+}
+
+interface DataTablePaginadaProps {
   pagination: PaginationState;
   rowCount: number;
   onPaginationChange: OnChangeFn<PaginationState>;
-  isLoading?: boolean; // Primera carga: muestra filas de carga en lugar de datos
-  isFetching?: boolean; // Cargando otra página: atenua la tabla pero conserva los datos
-  emptyMessage: string;
   itemLabel?: string; // Nombre de las filas en plural: "colaboradores", "áreas"...
   pageSizeOptions?: readonly number[]; // Cantidades de filas por página que se pueden elegir
 }
 
+interface DataTableSinPaginacionProps {
+  pagination?: undefined;
+  rowCount?: undefined;
+  onPaginationChange?: undefined;
+  itemLabel?: never;
+  pageSizeOptions?: never;
+}
+
+type DataTableProps<TData extends RowData> = DataTableBaseProps<TData> &
+  (DataTablePaginadaProps | DataTableSinPaginacionProps);
+
 const SKELETON_ROWS = 6;
 
 /**
- * Tabla genérica con paginación controlada por el servidor
+ * Tabla genérica; con paginación (del servidor, o en el navegador cortando la
+ * lista con `usePaginacionLocal`) o sin paginación para listas cortas
  */
-export function DataTable<TData extends RowData>({
-  columns,
-  data,
-  pagination,
-  rowCount,
-  onPaginationChange,
-  isLoading = false,
-  isFetching = false,
-  emptyMessage = "No se encontraron resultados.",
-  itemLabel = "registros",
-  pageSizeOptions = PAGE_SIZE_OPTIONS,
-}: DataTableProps<TData>) {
+export function DataTable<TData extends RowData>(props: DataTableProps<TData>) {
+  const {
+    columns,
+    data,
+    isLoading = false,
+    isFetching = false,
+    emptyMessage = "No se encontraron resultados.",
+  } = props;
+
   // Con scroll, la cabecera proyecta una sombra hacia las filas
   const [scrolled, setScrolled] = useState(false);
 
+  const paginacion =
+    props.pagination !== undefined
+      ? {
+          pagination: props.pagination,
+          rowCount: props.rowCount,
+          onPaginationChange: props.onPaginationChange,
+          itemLabel: props.itemLabel ?? "registros",
+          pageSizeOptions: props.pageSizeOptions ?? PAGE_SIZE_OPTIONS,
+        }
+      : null;
+
+  // `manualPagination: true` en ambos modos garantiza que, sin paginación, la
+  // tabla muestre todas las filas recibidas incluso si se agrega un modelo paginado.
   const table = useTable({
     features: dataTableFeatures,
     columns,
     data,
-    rowCount,
     manualPagination: true,
-    state: { pagination },
-    onPaginationChange,
+    ...(paginacion && {
+      rowCount: paginacion.rowCount,
+      state: { pagination: paginacion.pagination },
+      onPaginationChange: paginacion.onPaginationChange,
+    }),
   });
 
-  const { pageIndex, pageSize } = pagination;
-  const pageCount = table.getPageCount();
   const rows = table.getRowModel().rows;
-  const firstRow = rowCount === 0 ? 0 : pageIndex * pageSize + 1;
-  const lastRow = Math.min((pageIndex + 1) * pageSize, rowCount);
 
   return (
     <div className="flex min-h-0 flex-col gap-3">
@@ -154,94 +178,127 @@ export function DataTable<TData extends RowData>({
         </Table>
       </div>
 
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <p className="text-sm text-muted-foreground">
-          {rowCount > 0
-            ? `Mostrando ${firstRow}-${lastRow} de ${rowCount} ${itemLabel}`
-            : "Sin registros"}
-        </p>
+      {paginacion && (
+        <DataTablePaginacion
+          table={table}
+          pagination={paginacion.pagination}
+          rowCount={paginacion.rowCount}
+          itemLabel={paginacion.itemLabel}
+          pageSizeOptions={paginacion.pageSizeOptions}
+        />
+      )}
+    </div>
+  );
+}
 
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">
-              Registros por página:
-            </span>
-            <Select
-              items={pageSizeOptions.map((size) => ({
-                value: String(size),
-                label: String(size),
-              }))}
-              value={String(pageSize)}
-              onValueChange={(next) => {
-                if (next !== null) table.setPageSize(Number(next));
-              }}
-            >
-              <SelectTrigger size="sm" aria-label="Registros por página">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent alignItemWithTrigger={false}>
-                {pageSizeOptions.map((size) => (
-                  <SelectItem key={size} value={String(size)}>
-                    {size}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+interface DataTablePaginacionProps<TData extends RowData> {
+  table: ReactTable<DataTableFeatures, TData>;
+  pagination: PaginationState;
+  rowCount: number;
+  itemLabel: string;
+  pageSizeOptions: readonly number[];
+}
 
-          <Pagination aria-label="Paginación" className="mx-0 w-auto">
-            <PaginationContent>
-              <PaginationItem>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  aria-label="Página anterior"
-                  disabled={!table.getCanPreviousPage()}
-                  onClick={() => table.previousPage()}
-                >
-                  <ChevronLeftIcon data-icon="inline-start" />
-                  <span className="hidden sm:block">Anterior</span>
-                </Button>
-              </PaginationItem>
+function DataTablePaginacion<TData extends RowData>({
+  table,
+  pagination,
+  rowCount,
+  itemLabel,
+  pageSizeOptions,
+}: DataTablePaginacionProps<TData>) {
+  const { pageIndex, pageSize } = pagination;
+  const pageCount = table.getPageCount();
+  const firstRow = rowCount === 0 ? 0 : pageIndex * pageSize + 1;
+  const lastRow = Math.min((pageIndex + 1) * pageSize, rowCount);
 
-              {getPageItems(pageIndex + 1, pageCount).map((item, index) => (
-                <PaginationItem
-                  key={item === "ellipsis" ? `ellipsis-${index}` : item}
-                >
-                  {item === "ellipsis" ? (
-                    <PaginationEllipsis />
-                  ) : (
-                    <Button
-                      type="button"
-                      variant={item === pageIndex + 1 ? "default" : "outline"}
-                      size="sm"
-                      aria-label={`Página ${item}`}
-                      aria-current={item === pageIndex + 1 ? "page" : undefined}
-                      onClick={() => table.setPageIndex(item - 1)}
-                    >
-                      {item}
-                    </Button>
-                  )}
-                </PaginationItem>
+  return (
+    <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+      <p className="text-sm text-muted-foreground">
+        {rowCount > 0
+          ? `Mostrando ${firstRow}-${lastRow} de ${rowCount} ${itemLabel}`
+          : "Sin registros"}
+      </p>
+
+      <div className="flex flex-wrap items-center gap-4">
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">
+            Registros por página:
+          </span>
+          <Select
+            items={pageSizeOptions.map((size) => ({
+              value: String(size),
+              label: String(size),
+            }))}
+            value={String(pageSize)}
+            onValueChange={(next) => {
+              if (next !== null) table.setPageSize(Number(next));
+            }}
+          >
+            <SelectTrigger size="sm" aria-label="Registros por página">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent alignItemWithTrigger={false}>
+              {pageSizeOptions.map((size) => (
+                <SelectItem key={size} value={String(size)}>
+                  {size}
+                </SelectItem>
               ))}
-
-              <PaginationItem>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  aria-label="Página siguiente"
-                  disabled={!table.getCanNextPage()}
-                  onClick={() => table.nextPage()}
-                >
-                  <span className="hidden sm:block">Siguiente</span>
-                  <ChevronRightIcon data-icon="inline-end" />
-                </Button>
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+            </SelectContent>
+          </Select>
         </div>
+
+        <Pagination aria-label="Paginación" className="mx-0 w-auto">
+          <PaginationContent>
+            <PaginationItem>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                aria-label="Página anterior"
+                disabled={!table.getCanPreviousPage()}
+                onClick={() => table.previousPage()}
+              >
+                <ChevronLeftIcon data-icon="inline-start" />
+                <span className="hidden sm:block">Anterior</span>
+              </Button>
+            </PaginationItem>
+
+            {getPageItems(pageIndex + 1, pageCount).map((item, index) => (
+              <PaginationItem
+                key={item === "ellipsis" ? `ellipsis-${index}` : item}
+              >
+                {item === "ellipsis" ? (
+                  <PaginationEllipsis />
+                ) : (
+                  <Button
+                    type="button"
+                    variant={item === pageIndex + 1 ? "default" : "outline"}
+                    size="sm"
+                    aria-label={`Página ${item}`}
+                    aria-current={item === pageIndex + 1 ? "page" : undefined}
+                    onClick={() => table.setPageIndex(item - 1)}
+                  >
+                    {item}
+                  </Button>
+                )}
+              </PaginationItem>
+            ))}
+
+            <PaginationItem>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                aria-label="Página siguiente"
+                disabled={!table.getCanNextPage()}
+                onClick={() => table.nextPage()}
+              >
+                <span className="hidden sm:block">Siguiente</span>
+                <ChevronRightIcon data-icon="inline-end" />
+              </Button>
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
     </div>
   );

@@ -47,6 +47,7 @@ export const ROUTE_PATHS = {
   nomina: {
     planillas: "/planillas",
     detallePlanilla: "/planillas/:id",
+    novedades: "/novedades",
   },
 
   auditoria: "/auditoria",
@@ -102,3 +103,26 @@ export const buildAuditoriaDetallePath = (id: string): string =>
  */
 export const buildPlanillaPath = (id: string): string =>
   `${ROUTE_PATHS.nomina.planillas}/${id}`;
+
+/**
+ * Arma la ruta de novedades de planilla con el mes y colaborador opcionales
+ */
+export const buildNovedadesPath = ({
+  periodo,
+  empleadoId,
+  empleado,
+}: {
+  periodo: string;
+  empleadoId?: string;
+  empleado?: string;
+}): string => {
+  const params = new URLSearchParams();
+  if (periodo) params.set("periodo", periodo);
+  if (empleadoId) params.set("empleado_id", empleadoId);
+  if (empleado) params.set("empleado", empleado);
+
+  const query = params.toString();
+  return query
+    ? `${ROUTE_PATHS.nomina.novedades}?${query}`
+    : ROUTE_PATHS.nomina.novedades;
+};
