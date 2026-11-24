@@ -39,7 +39,9 @@ export function PlanillaValidacionInfo({
       <div className="flex items-start gap-2 rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
         <InfoIcon className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
         <p>
-          Revisa los montos. Al validarla, quedan fijos y se habilita la boleta.
+          Revisa los montos. Si algo no cuadra, corrige primero los datos o
+          registra una novedad y luego recalcula esta planilla. Al validarla,
+          los montos quedan fijos y se habilita la boleta.
         </p>
       </div>
     );

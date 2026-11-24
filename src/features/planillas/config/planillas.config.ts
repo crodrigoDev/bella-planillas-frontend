@@ -19,36 +19,67 @@ export interface ConceptoPlanilla {
   label: string;
 }
 
-/** Conceptos que componen los ingresos de la planilla */
+/** Conceptos que componen los ingresos de la planilla, en el orden de la boleta */
 export const CONCEPTOS_INGRESO: readonly ConceptoPlanilla[] = [
   { campo: "sueldo_base", label: "Sueldo básico" },
   { campo: "asignacion_familia", label: "Asignación familiar" },
+  { campo: "bono_extraordinario", label: "Bono extraordinario" },
   { campo: "horas_extras_25", label: "Horas extras 25 %" },
   { campo: "horas_extras_35", label: "Horas extras 35 %" },
   { campo: "recargo_nocturno", label: "Recargo nocturno" },
   { campo: "gratificacion", label: "Gratificación" },
   {
     campo: "bonif_extraordinaria",
-    label: "Bonificación extraordinaria Ley 30334",
+    label: "Bonificación extraordinaria (Ley 30334)",
   },
-  { campo: "bono_extraordinario", label: "Bono extraordinario" },
 ];
 
-/** Conceptos que componen los descuentos de la planilla */
-export const CONCEPTOS_DESCUENTO: readonly ConceptoPlanilla[] = [
-  { campo: "descuento_faltas", label: "Faltas" },
-  { campo: "descuento_tardanzas", label: "Tardanzas" },
-  { campo: "descuento_sin_goce", label: "Licencia sin goce" },
+/** Conceptos de descuento previsional para régimen ONP */
+export const CONCEPTOS_ONP: readonly ConceptoPlanilla[] = [
   { campo: "descuento_onp", label: "ONP" },
+];
+
+/** Conceptos de descuento previsional para régimen AFP */
+export const CONCEPTOS_AFP: readonly ConceptoPlanilla[] = [
   { campo: "descuento_afp_fondo", label: "AFP fondo" },
   { campo: "descuento_afp_seguro", label: "AFP prima de seguro" },
   { campo: "descuento_afp_comision", label: "AFP comisión" },
-  { campo: "descuento_quinta", label: "Renta de quinta categoría" },
-  { campo: "descuento_adelanto", label: "Adelanto" },
-  { campo: "descuento_eps", label: "EPS" },
-  { campo: "descuento_autorizado", label: "Descuento autorizado" },
-  { campo: "descuento_dso", label: "Descuento por descanso semanal" },
 ];
+
+const DESCUENTOS_PREVIOS: readonly ConceptoPlanilla[] = [
+  { campo: "descuento_faltas", label: "Faltas" },
+  { campo: "descuento_tardanzas", label: "Tardanzas" },
+  { campo: "descuento_sin_goce", label: "Permisos sin goce" },
+  { campo: "descuento_dso", label: "Descanso semanal" },
+  { campo: "descuento_autorizado", label: "Descuento autorizado" },
+];
+
+const DESCUENTOS_POSTERIORES: readonly ConceptoPlanilla[] = [
+  { campo: "descuento_quinta", label: "Renta de quinta categoría" },
+  { campo: "descuento_adelanto", label: "Adelanto de sueldo" },
+  { campo: "descuento_eps", label: "EPS" },
+];
+
+/**
+ * Arma la lista ordenada de descuentos según el régimen pensionario, igual que la boleta,
+ * incluyendo además cualquier concepto del otro régimen cuyo monto sea distinto de cero
+ */
+export const getConceptosDescuento = (
+  planilla: PlanillaDetalle,
+  esOnp: boolean,
+): readonly ConceptoPlanilla[] => {
+  const principal = esOnp ? CONCEPTOS_ONP : CONCEPTOS_AFP;
+  const alternativo = (esOnp ? CONCEPTOS_AFP : CONCEPTOS_ONP).filter(
+    (concepto) => Number(planilla[concepto.campo]) !== 0,
+  );
+
+  return [
+    ...DESCUENTOS_PREVIOS,
+    ...principal,
+    ...alternativo,
+    ...DESCUENTOS_POSTERIORES,
+  ];
+};
 
 /** Conceptos que componen los aportes del empleador */
 export const CONCEPTOS_APORTE: readonly ConceptoPlanilla[] = [

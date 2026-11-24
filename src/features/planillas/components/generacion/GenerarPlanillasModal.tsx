@@ -21,6 +21,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Field, FieldError, FieldTitle } from "@/components/ui/field";
+import { generarUuid } from "@/lib/id.utils";
 import { getPeriodoActual } from "@/lib/periodo.utils";
 import { zodResolverOptions } from "@/lib/zodMessages.utils";
 import { useEmpleadosBusqueda } from "../../hooks/useEmpleadosOpciones";
@@ -151,7 +152,7 @@ function GenerarPlanillasForm({
     const solicitudId =
       ultimoIntento?.claveEnvio === claveEnvio
         ? ultimoIntento.solicitudId
-        : crypto.randomUUID();
+        : generarUuid();
 
     setUltimoIntento({ claveEnvio, solicitudId });
 

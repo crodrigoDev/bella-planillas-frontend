@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { DownloadIcon } from "lucide-react";
+import { isAxiosError } from "axios";
+import { DownloadIcon, RefreshCwIcon } from "lucide-react";
 import { Link, useLocation, useParams } from "react-router-dom";
 
 import { ROUTE_PATHS } from "@/app/routes/path";
@@ -12,21 +13,31 @@ import { ResumenCifra } from "@/components/page/ResumenCifra";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EstadoPlanillaBadge } from "@/features/planillas/components/EstadoPlanillaBadge";
+import { PlanillaCabeceraCard } from "@/features/planillas/components/detalle/PlanillaCabeceraCard";
 import { PlanillaConceptosCard } from "@/features/planillas/components/detalle/PlanillaConceptosCard";
 import { PlanillaValidacionInfo } from "@/features/planillas/components/detalle/PlanillaValidacionInfo";
+import { AvanceGeneracion } from "@/features/planillas/components/generacion/AvanceGeneracion";
 import { ValidarPlanillaModal } from "@/features/planillas/components/modals/ValidarPlanillaModal";
 import {
   CONCEPTOS_APORTE,
-  CONCEPTOS_DESCUENTO,
   CONCEPTOS_INGRESO,
+  getConceptosDescuento,
 } from "@/features/planillas/config/planillas.config";
-import { useDescargarBoleta } from "@/features/planillas/hooks/usePlanillaActions";
-import { usePlanilla } from "@/features/planillas/hooks/usePlanilla";
 import {
+  useGenerarPlanillas,
+  useTrabajoPlanillas,
+} from "@/features/planillas/hooks/useGenerarPlanillas";
+import { usePlanilla } from "@/features/planillas/hooks/usePlanilla";
+import { useDescargarBoleta } from "@/features/planillas/hooks/usePlanillaActions";
+import {
+  esEstadoTrabajoFinal,
   esPlanillaValidable,
+  esRegimenOnp,
+  getCabeceraPlanilla,
   tieneBoleta,
 } from "@/features/planillas/utils/planillas.utils";
-import { formatCurrency } from "@/lib/format.utils";
+import { formatCurrency, toTitleCase } from "@/lib/format.utils";
+import { generarUuid } from "@/lib/id.utils";
 import { formatPeriodo } from "@/lib/periodo.utils";
 
 /** Nombre del colaborador que el listado envía al abrir el detalle */
@@ -42,21 +53,59 @@ const getNombreColaborador = (state: unknown): string | null => {
  * Detalle de la planilla de un colaborador en un mes
  *
  * @remarks
- * El nombre no viene en el detalle: lo envía el listado al navegar. Si se abre
- * el enlace directo se usa un título genérico. Desde aquí se valida la planilla
- * abierta y se descarga la boleta cuando ya está validada o declarada.
+ * Muestra los datos de cabecera del colaborador, los conceptos completos de
+ * ingresos, descuentos según el régimen pensionario y aportes del empleador.
+ * Permite recalcular y validar cuando la planilla está abierta, y descargar la
+ * boleta cuando ya está validada o declarada.
  */
 export default function PlanillaDetallePage() {
   const { id } = useParams();
   const { state } = useLocation();
   const [validarAbierto, setValidarAbierto] = useState(false);
+  const [solicitudRecalculo, setSolicitudRecalculo] = useState<string | null>(
+    null,
+  );
+  const [trabajoRecalculo, setTrabajoRecalculo] = useState<string | null>(null);
   const { data: planilla, error, isLoading, refetch } = usePlanilla(id);
   const boleta = useDescargarBoleta();
+  const recalcular = useGenerarPlanillas();
+  const trabajo = useTrabajoPlanillas(trabajoRecalculo);
 
-  const nombre = getNombreColaborador(state);
+  const recalculoTerminado = trabajo.data
+    ? esEstadoTrabajoFinal(trabajo.data.estado)
+    : isAxiosError(trabajo.error) && trabajo.error.response?.status === 404;
+  const recalculando = Boolean(trabajoRecalculo) && !recalculoTerminado;
+  const accionEnCurso = recalcular.isPending || recalculando;
+
+  const cabecera = getCabeceraPlanilla(planilla?.snapshot_calculo);
+  const nombre =
+    getNombreColaborador(state) ??
+    (cabecera.nombre_completo ? toTitleCase(cabecera.nombre_completo) : null);
+
   const volver = planilla
     ? `${ROUTE_PATHS.nomina.planillas}?periodo=${planilla.periodo}`
     : ROUTE_PATHS.nomina.planillas;
+
+  const handleRecalcular = () => {
+    if (!planilla) return;
+
+    const solicitudId = solicitudRecalculo ?? generarUuid();
+    setSolicitudRecalculo(solicitudId);
+
+    recalcular.mutate(
+      {
+        periodo: planilla.periodo,
+        solicitud_id: solicitudId,
+        empleado_id: planilla.empleado_id,
+      },
+      {
+        onSuccess: (respuesta) => {
+          setSolicitudRecalculo(null);
+          setTrabajoRecalculo(respuesta.trabajo_id);
+        },
+      },
+    );
+  };
 
   return (
     <section
@@ -68,8 +117,8 @@ export default function PlanillaDetallePage() {
       {isLoading ? (
         <div className="space-y-6" aria-busy>
           <Skeleton className="h-16 w-full max-w-xl" />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Skeleton className="h-24 w-full" />
+          <Skeleton className="h-36 w-full" />
+          <div className="grid gap-4 sm:grid-cols-3">
             <Skeleton className="h-24 w-full" />
             <Skeleton className="h-24 w-full" />
             <Skeleton className="h-24 w-full" />
@@ -106,9 +155,31 @@ export default function PlanillaDetallePage() {
                 <EstadoPlanillaBadge estado={planilla.estado} />
 
                 {esPlanillaValidable(planilla.estado) && (
-                  <Button onClick={() => setValidarAbierto(true)}>
-                    Validar planilla
-                  </Button>
+                  <>
+                    <LoadingButton
+                      variant="outline"
+                      isLoading={accionEnCurso}
+                      loadingText={
+                        recalcular.isPending ? "Iniciando…" : "Recalculando…"
+                      }
+                      icon={RefreshCwIcon}
+                      title="Vuelve a calcular con los datos actuales de asistencia, sueldo y novedades."
+                      onClick={handleRecalcular}
+                    >
+                      Recalcular esta planilla
+                    </LoadingButton>
+                    <Button
+                      disabled={accionEnCurso}
+                      title={
+                        accionEnCurso
+                          ? "Espera a que termine el recálculo."
+                          : undefined
+                      }
+                      onClick={() => setValidarAbierto(true)}
+                    >
+                      Validar planilla
+                    </Button>
+                  </>
                 )}
 
                 {tieneBoleta(planilla.estado) && (
@@ -126,7 +197,26 @@ export default function PlanillaDetallePage() {
             }
           />
 
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <ErrorAlert
+            error={recalcular.error}
+            title="No se pudo iniciar el recálculo"
+          />
+
+          {trabajoRecalculo && (
+            <AvanceGeneracion
+              trabajoId={trabajoRecalculo}
+              periodo={planilla.periodo}
+              onCerrar={() => setTrabajoRecalculo(null)}
+            />
+          )}
+
+          <PlanillaCabeceraCard
+            planilla={planilla}
+            cabecera={cabecera}
+            nombre={nombre}
+          />
+
+          <div className="grid gap-4 sm:grid-cols-3">
             <ResumenCifra
               label="Total ingresos"
               value={formatCurrency(Number(planilla.total_ingresos))}
@@ -140,10 +230,6 @@ export default function PlanillaDetallePage() {
               value={formatCurrency(Number(planilla.neto_a_pagar))}
               className="text-primary"
             />
-            <ResumenCifra
-              label="Días laborados"
-              value={planilla.dias_laborados}
-            />
           </div>
 
           <PlanillaValidacionInfo planilla={planilla} />
@@ -154,14 +240,15 @@ export default function PlanillaDetallePage() {
               conceptos={CONCEPTOS_INGRESO}
               planilla={planilla}
               total={planilla.total_ingresos}
-              vacio="Sin ingresos registrados este mes."
             />
             <PlanillaConceptosCard
               titulo="Descuentos"
-              conceptos={CONCEPTOS_DESCUENTO}
+              conceptos={getConceptosDescuento(
+                planilla,
+                esRegimenOnp(planilla, cabecera),
+              )}
               planilla={planilla}
               total={planilla.total_descuentos}
-              vacio="Sin descuentos este mes."
             />
           </div>
 
@@ -170,7 +257,6 @@ export default function PlanillaDetallePage() {
             descripcion="Los paga la empresa; no se descuentan del sueldo."
             conceptos={CONCEPTOS_APORTE}
             planilla={planilla}
-            vacio="Sin aportes de la empresa este mes."
           />
 
           <ValidarPlanillaModal

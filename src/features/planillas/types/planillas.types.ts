@@ -8,6 +8,22 @@ export type EstadoPlanilla = PlanillaResumenDto["estado"];
 export type PlanillaResumen = PlanillaResumenDto;
 
 /**
+ * Datos de cabecera guardados dentro del detalle interno de la planilla
+ *
+ * @remarks
+ * No existe un contrato compartido para esta estructura: todos sus campos son
+ * anulables por si faltan o cambia su forma en el servidor.
+ */
+export interface CabeceraPlanilla {
+  nombre_completo: string | null;
+  nro_documento: string | null;
+  cargo: string | null;
+  area: string | null;
+  asignacion_familiar: boolean | null;
+  regimen_pension: string | null;
+}
+
+/**
  * Detalle completo de una planilla mensual
  *
  * @remarks
@@ -26,6 +42,8 @@ export interface PlanillaDetalle {
   validado_en: string | null;
   created_at: string;
   updated_at: string;
+  tasa_afp_aplicada: string | null;
+  snapshot_calculo: unknown;
   sueldo_base: string;
   asignacion_familia: string;
   horas_extras_25: string;
