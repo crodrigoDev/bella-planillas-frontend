@@ -16,4 +16,5 @@ export const ROOT_KEYS = {
   dashboard: ["dashboard"] as const,
   planillas: ["planillas"] as const,
   novedades: ["novedades"] as const,
+  exportaciones: ["exportaciones"] as const,
 };

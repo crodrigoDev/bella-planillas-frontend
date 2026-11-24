@@ -55,6 +55,31 @@ export const getArchivoError = (
 };
 
 /**
+ * Extrae el nombre del archivo desde la cabecera `content-disposition`
+ *
+ * @param contentDisposition - Valor de la cabecera HTTP
+ * @param fallback - Nombre a usar si la cabecera no incluye uno válido
+ */
+export const extraerNombreArchivo = (
+  contentDisposition?: string,
+  fallback = "archivo",
+): string => {
+  if (!contentDisposition) return fallback;
+
+  const utf8Match = /filename\*=UTF-8''([^;\n]+)/i.exec(contentDisposition);
+  if (utf8Match?.[1]) {
+    try {
+      return decodeURIComponent(utf8Match[1].trim().replace(/^["']|["']$/g, ""));
+    } catch {
+      return utf8Match[1].trim();
+    }
+  }
+
+  const match = /filename="?([^";\n]+)"?/i.exec(contentDisposition);
+  return match?.[1]?.trim() || fallback;
+};
+
+/**
  * Entrega un archivo en memoria al navegador e inicia su descarga
  *
  * @param blob - Contenido binario del archivo

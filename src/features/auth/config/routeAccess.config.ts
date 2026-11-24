@@ -38,6 +38,7 @@ const ROUTE_ROLES: Readonly<Record<string, readonly AuthRol[] | null>> = {
   [ROUTE_PATHS.nomina.planillas]: [CONTADOR],
   [ROUTE_PATHS.nomina.detallePlanilla]: [CONTADOR],
   [ROUTE_PATHS.nomina.novedades]: [CONTADOR],
+  [ROUTE_PATHS.nomina.exportaciones]: [CONTADOR],
 };
 
 /** Comprueba si el rol puede abrir una ruta registrada */
