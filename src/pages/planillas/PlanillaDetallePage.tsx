@@ -12,6 +12,7 @@ import { PageHeader } from "@/components/page/PageHeader";
 import { ResumenCifra } from "@/components/page/ResumenCifra";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { NovedadesMes } from "@/features/novedades/components/NovedadesMes";
 import { EstadoPlanillaBadge } from "@/features/planillas/components/EstadoPlanillaBadge";
 import { PlanillaCabeceraCard } from "@/features/planillas/components/detalle/PlanillaCabeceraCard";
 import { PlanillaConceptosCard } from "@/features/planillas/components/detalle/PlanillaConceptosCard";
@@ -54,9 +55,10 @@ const getNombreColaborador = (state: unknown): string | null => {
  *
  * @remarks
  * Muestra los datos de cabecera del colaborador, los conceptos completos de
- * ingresos, descuentos según el régimen pensionario y aportes del empleador.
- * Permite recalcular y validar cuando la planilla está abierta, y descargar la
- * boleta cuando ya está validada o declarada.
+ * ingresos, descuentos según el régimen pensionario, aportes del empleador y
+ * las novedades del mes. Permite recalcular, gestionar novedades y validar
+ * cuando la planilla está abierta, y descargar la boleta cuando ya está
+ * validada o declarada.
  */
 export default function PlanillaDetallePage() {
   const { id } = useParams();
@@ -206,6 +208,7 @@ export default function PlanillaDetallePage() {
             <AvanceGeneracion
               trabajoId={trabajoRecalculo}
               periodo={planilla.periodo}
+              enlazarNovedades={false}
               onCerrar={() => setTrabajoRecalculo(null)}
             />
           )}
@@ -257,6 +260,15 @@ export default function PlanillaDetallePage() {
             descripcion="Los paga la empresa; no se descuentan del sueldo."
             conceptos={CONCEPTOS_APORTE}
             planilla={planilla}
+          />
+
+          <NovedadesMes
+            empleadoId={planilla.empleado_id}
+            periodo={planilla.periodo}
+            nombre={nombre ?? "este colaborador"}
+            editable={esPlanillaValidable(planilla.estado)}
+            motivoNoEditable="La planilla de este mes ya no está abierta; sus novedades no se pueden cambiar."
+            calculadaEn={planilla.updated_at}
           />
 
           <ValidarPlanillaModal
