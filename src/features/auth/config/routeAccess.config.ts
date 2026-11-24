@@ -2,6 +2,7 @@ import { ROUTE_PATHS } from "@/app/routes/path";
 import type { AuthRol } from "@/features/auth/types/auth.types";
 
 const RRHH: AuthRol = "RRHH";
+const CONTADOR: AuthRol = "CONTADOR";
 
 // null permite el acceso a cualquier usuario autenticado
 // Los permisos de consulta siguen los roles declarados en el backend
@@ -34,6 +35,8 @@ const ROUTE_ROLES: Readonly<Record<string, readonly AuthRol[] | null>> = {
   // Auditoría queda solo para RRHH por ahora
   [ROUTE_PATHS.auditoria]: [RRHH],
   [ROUTE_PATHS.detalleAuditoria]: [RRHH],
+  [ROUTE_PATHS.nomina.planillas]: [CONTADOR],
+  [ROUTE_PATHS.nomina.detallePlanilla]: [CONTADOR],
 };
 
 /** Comprueba si el rol puede abrir una ruta registrada */

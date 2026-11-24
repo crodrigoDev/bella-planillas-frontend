@@ -1,4 +1,5 @@
 import type { CargaMasivaFilaDTO } from "@jyp/shared-contracts";
+import { descargarArchivo } from "@/lib/archivo.utils";
 import { protectedHttpClient } from "@/lib/api/protectedHttpClient";
 import type { ApiResponse } from "@/lib/api/types/api.types";
 import type {
@@ -35,13 +36,7 @@ export const cargaMasivaService = {
       { responseType: "blob" },
     );
 
-    const url = URL.createObjectURL(response.data);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = NOMBRE_PLANTILLA;
-    link.click();
-    // Se libera después, para no cortar la descarga en algunos navegadores
-    setTimeout(() => URL.revokeObjectURL(url), 0);
+    descargarArchivo(response.data, NOMBRE_PLANTILLA);
   },
 
   /**

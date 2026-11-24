@@ -8,7 +8,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import AppSidebar from "@/features/navigation/components/AppSidebar";
-import { RRHH_SIDEBAR_ITEMS } from "@/features/navigation/config/navigation.config";
+import { SIDEBAR_ITEMS } from "@/features/navigation/config/navigation.config";
 import type { NavigationUser } from "@/features/navigation/types/navigation.types";
 import type { CSSProperties } from "react";
 import { useAuth } from "@/features/auth/hooks/useAuth";
@@ -39,7 +39,7 @@ export default function AppLayout() {
 
   // Usa los mismos permisos que las rutas para mostrar las opciones del usuario
   const sidebarItems = filterSidebarItems(
-    RRHH_SIDEBAR_ITEMS,
+    SIDEBAR_ITEMS,
     session.usuario.rol,
   );
 
