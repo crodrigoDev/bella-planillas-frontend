@@ -14,4 +14,5 @@ export const ROOT_KEYS = {
   jornadas: ["jornadas"] as const,
   contratos: ["contratos"] as const,
   dashboard: ["dashboard"] as const,
+  planillas: ["planillas"] as const,
 };

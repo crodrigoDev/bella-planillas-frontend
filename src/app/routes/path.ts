@@ -44,6 +44,11 @@ export const ROUTE_PATHS = {
     calendario: "/calendario",
   },
 
+  nomina: {
+    planillas: "/planillas",
+    detallePlanilla: "/planillas/:id",
+  },
+
   auditoria: "/auditoria",
   detalleAuditoria: "/auditoria/:id",
 
@@ -91,3 +96,9 @@ export const buildSolicitudPath = (idOCodigo: string): string =>
  */
 export const buildAuditoriaDetallePath = (id: string): string =>
   `${ROUTE_PATHS.auditoria}/${id}`;
+
+/**
+ * Arma la ruta del detalle de una planilla
+ */
+export const buildPlanillaPath = (id: string): string =>
+  `${ROUTE_PATHS.nomina.planillas}/${id}`;

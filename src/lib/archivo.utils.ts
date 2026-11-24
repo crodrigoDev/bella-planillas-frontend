@@ -53,3 +53,19 @@ export const getArchivoError = (
 
   return null;
 };
+
+/**
+ * Entrega un archivo en memoria al navegador e inicia su descarga
+ *
+ * @param blob - Contenido binario del archivo
+ * @param nombre - Nombre sugerido para guardar el archivo
+ */
+export const descargarArchivo = (blob: Blob, nombre: string): void => {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = nombre;
+  link.click();
+  // Se libera en el siguiente ciclo para no interrumpir la descarga
+  setTimeout(() => URL.revokeObjectURL(url), 0);
+};
