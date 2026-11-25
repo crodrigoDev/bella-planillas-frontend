@@ -4,12 +4,14 @@ import type {
 } from "@jyp/shared-contracts";
 import { isAxiosError } from "axios";
 
+import { leerErrorBlob } from "@/lib/api/apiError.utils";
 import { protectedHttpClient } from "@/lib/api/protectedHttpClient";
 import type {
   ApiMeta,
   ApiResponse,
   PaginationApiResponse,
 } from "@/lib/api/types/api.types";
+import { extraerNombreArchivo } from "@/lib/archivo.utils";
 import type {
   PlanillaDetalle,
   PlanillaResumen,
@@ -18,7 +20,6 @@ import type {
   SolicitudGeneracion,
   TrabajoPlanillas,
 } from "../types/planillas.types";
-import { extraerNombreArchivo } from "../utils/planillas.utils";
 
 const BASE_URL = "/nomina/planillas";
 
@@ -130,18 +131,23 @@ export const planillasService = {
   descargarBoleta: async (
     id: string,
   ): Promise<{ blob: Blob; nombre: string }> => {
-    const response = await protectedHttpClient.get<Blob>(
-      `${BASE_URL}/${id}/boleta`,
-      { responseType: "blob" },
-    );
+    try {
+      const response = await protectedHttpClient.get<Blob>(
+        `${BASE_URL}/${id}/boleta`,
+        { responseType: "blob" },
+      );
 
-    const disposition = response.headers["content-disposition"] as
-      | string
-      | undefined;
+      const disposition = response.headers["content-disposition"] as
+        | string
+        | undefined;
 
-    return {
-      blob: response.data,
-      nombre: extraerNombreArchivo(disposition, "boleta.pdf"),
-    };
+      return {
+        blob: response.data,
+        nombre: extraerNombreArchivo(disposition, "boleta.pdf"),
+      };
+    } catch (error) {
+      await leerErrorBlob(error);
+      throw error;
+    }
   },
 };

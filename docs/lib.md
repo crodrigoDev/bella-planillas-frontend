@@ -134,6 +134,8 @@ tamaño sale de los bytes, así no se escribe "5 MB" a mano.
 | --- | --- |
 | `getArchivoError(file, reglas)` | Mensaje de error, o `null` si no hay archivo o cumple |
 | `formatBytes(bytes)` | `"5 MB"`, `"512 KB"`; sirve también para las ayudas de `FileDropzone` |
+| `extraerNombreArchivo(disposition, fallback)` | Lee el nombre desde `content-disposition` o usa el respaldo |
+| `descargarArchivo(blob, nombre)` | Inicia la descarga del archivo en memoria |
 | `ReglasArchivo` | Tipo de las reglas (abajo) |
 
 | Regla | Tipo | Notas |
@@ -213,11 +215,15 @@ para el usuario (sin conexión, tiempo agotado, error 5xx, o el `detail` del bac
 Si no reconoce el error, devuelve un mensaje genérico. Para mostrar un error en pantalla
 usa `ErrorAlert`; esta función es para cuando se necesita el texto suelto.
 
+`leerErrorBlob(error: unknown): Promise<void>` convierte `error.response.data` de `Blob`
+a objeto cuando falla una petición con `responseType: "blob"` (como las descargas) y el
+servidor respondió JSON, para que `getApiErrorMessage` pueda leer `detail`.
+
 ```tsx
 {getApiErrorMessage(loginMutation.error)}
 ```
 
-[`src/pages/auth/LoginPage.tsx`](../src/pages/auth/LoginPage.tsx)
+[`src/pages/auth/LoginPage.tsx`](../src/pages/auth/LoginPage.tsx). Para descargas: `await leerErrorBlob(error)` en `exportaciones.service.ts` y `planillas.service.ts`.
 
 ## Clientes HTTP
 

@@ -29,3 +29,31 @@ export function getApiErrorMessage(error: unknown): string {
 
   return fallBackMessage;
 }
+
+/**
+ * Lee el mensaje de error cuando una petición de descarga (`responseType: "blob"`) falla con JSON
+ *
+ * @remarks
+ * Con `responseType: "blob"`, Axios entrega el cuerpo del error como `Blob` en vez de objeto.
+ * Si el `Blob` contiene JSON, lo convierte y reemplaza `error.response.data` para que
+ * `getApiErrorMessage` pueda leer `detail`.
+ */
+export async function leerErrorBlob(error: unknown): Promise<void> {
+  if (!isAxiosError(error) || !error.response) return;
+
+  const data = error.response.data;
+  if (!(data instanceof Blob)) return;
+
+  const tipo = data.type.toLowerCase();
+  if (tipo && !tipo.includes("json")) return;
+
+  try {
+    const texto = await data.text();
+    const parsed: unknown = JSON.parse(texto);
+    if (typeof parsed === "object" && parsed !== null) {
+      error.response.data = parsed;
+    }
+  } catch {
+    // Si no es JSON válido, se conserva el Blob y getApiErrorMessage usa el mensaje genérico
+  }
+}

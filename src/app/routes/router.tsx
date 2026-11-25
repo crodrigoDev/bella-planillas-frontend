@@ -372,6 +372,17 @@ export const router = createBrowserRouter([
             ],
           },
           {
+            element: <RoleRoute path={ROUTE_PATHS.nomina.exportaciones} />,
+            children: [
+              {
+                path: ROUTE_PATHS.nomina.exportaciones,
+                lazy: lazyPage(
+                  () => import("@/pages/exportaciones/ExportacionesPage"),
+                ),
+              },
+            ],
+          },
+          {
             element: <RoleRoute path={ROUTE_PATHS.auditoria} />,
             children: [
               {

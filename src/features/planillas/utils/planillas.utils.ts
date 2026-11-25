@@ -117,26 +117,6 @@ export const formatTasaAfp = (tasa: string | null): string => {
   return `${porcentaje.toFixed(2)} %`;
 };
 
-/** Extrae el nombre del archivo desde la cabecera `content-disposition` */
-export const extraerNombreArchivo = (
-  contentDisposition?: string,
-  fallback = "boleta.pdf",
-): string => {
-  if (!contentDisposition) return fallback;
-
-  const utf8Match = /filename\*=UTF-8''([^;\n]+)/i.exec(contentDisposition);
-  if (utf8Match?.[1]) {
-    try {
-      return decodeURIComponent(utf8Match[1].trim().replace(/^["']|["']$/g, ""));
-    } catch {
-      return utf8Match[1].trim();
-    }
-  }
-
-  const match = /filename="?([^";\n]+)"?/i.exec(contentDisposition);
-  return match?.[1]?.trim() || fallback;
-};
-
 /**
  * Indica si una observación del cálculo se resuelve revisando las novedades del colaborador
  *

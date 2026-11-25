@@ -48,6 +48,7 @@ export const ROUTE_PATHS = {
     planillas: "/planillas",
     detallePlanilla: "/planillas/:id",
     novedades: "/novedades",
+    exportaciones: "/exportaciones",
   },
 
   auditoria: "/auditoria",
