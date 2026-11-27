@@ -84,15 +84,14 @@ const EFECTO_LABELS: Record<EfectoAsistencia, string> = {
   PENDIENTE_DEFINIR: "Sin definir",
   CON_GOCE: "Con goce de haber",
   SIN_GOCE: "Sin goce de haber",
-  NO_APLICA: "No aplica",
+  SUBSIDIO: "Subsidio",
 };
 
 /**
  * Nombre de un efecto en la asistencia para mostrar
  *
  * @remarks
- * La base de datos admite también `SUBSIDIO`, que no está en el contrato: un
- * valor sin nombre se muestra tal cual.
+ * Si llega un valor fuera del contrato, se muestra tal cual.
  */
 export const getEfectoLabel = (efecto: string): string =>
   EFECTO_LABELS[efecto as EfectoAsistencia] ?? efecto;
