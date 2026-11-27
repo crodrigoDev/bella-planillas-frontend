@@ -10,8 +10,8 @@ export interface RegimenPension {
  * Datos financieros de un empleado tal como los devuelve el backend
  *
  * @remarks
- * Los números de cuenta, CCI y CUSPP ya llegan enmascarados. Los nombres
- * no llevan el sufijo `_mascara` que declara `DatoFinancieroResponseSchema`.
+ * Los números de cuenta, CCI y CUSPP ya llegan enmascarados (`cuspp`,
+ * `nro_cuenta_sueldo`, `cci_sueldo`, `nro_cuenta_cts`, `cci_cts`).
  */
 export interface DatosFinancieros {
   id_regimen: string;
