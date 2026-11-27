@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { CrearEmpleadoDto } from "@jyp/shared-contracts";
 
 import { FormSection } from "@/components/form/FormSection";
@@ -9,12 +10,13 @@ import { ResumenCampo } from "@/components/form/ResumenCampo";
 
 interface ResumenEmpleadoProps {
   datos: CrearEmpleadoDto;
+  action?: ReactNode;
 }
 
 /**
  * Resumen del paso 1: datos personales, domicilio y asignación laboral
  */
-export function ResumenEmpleado({ datos }: ResumenEmpleadoProps) {
+export function ResumenEmpleado({ datos, action }: ResumenEmpleadoProps) {
   const tiposDocumento = useTiposDocumento();
   const { areas, cargos, jornadas } = useEmpleadosCatalogos(datos.area_id);
 
@@ -22,6 +24,7 @@ export function ResumenEmpleado({ datos }: ResumenEmpleadoProps) {
     <FormSection
       title="Datos del empleado"
       description="Identificación, domicilio y asignación laboral."
+      action={action}
     >
       <ResumenCampo
         label="Tipo de documento"

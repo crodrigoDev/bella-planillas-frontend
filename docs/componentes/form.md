@@ -133,11 +133,12 @@ Bloque de un formulario: título y descripción a la izquierda, campos a la dere
 (1, 2 o 3 columnas según el ancho). Las secciones se separan con una línea, sin
 tarjetas ni iconos. Un campo ancho usa `sm:col-span-2` o `col-span-full`.
 
-| Prop | Tipo |
-| --- | --- |
-| `title` | `string` |
-| `description` | `string` |
-| `children` | `ReactNode` |
+| Prop | Tipo | Notas |
+| --- | --- | --- |
+| `title` | `string` | |
+| `description` | `string` | |
+| `action` | `ReactNode?` | Acción opcional junto al título (por ejemplo "Editar") |
+| `children` | `ReactNode` | |
 
 ```tsx
 <FormSection

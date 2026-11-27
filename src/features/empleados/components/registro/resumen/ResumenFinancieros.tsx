@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 import { FormSection } from "@/components/form/FormSection";
 import { getOptionLabel } from "@/lib/catalogos.utils";
 import { formatCurrency, formatDate, maskEnd, orDash } from "@/lib/format.utils";
@@ -14,6 +16,7 @@ import { ResumenCampo } from "@/components/form/ResumenCampo";
 
 interface ResumenFinancierosProps {
   datos: DatosFinancierosDraft;
+  action?: ReactNode;
 }
 
 /**
@@ -23,7 +26,7 @@ interface ResumenFinancierosProps {
  * Los números de cuenta y CCI se muestran ocultos, solo con los últimos
  * dígitos, porque son datos sensibles.
  */
-export function ResumenFinancieros({ datos }: ResumenFinancierosProps) {
+export function ResumenFinancieros({ datos, action }: ResumenFinancierosProps) {
   const { regimenes, afps, bancos } = useDatosFinancierosCatalogos();
 
   const regimen = regimenes.data?.find((item) => item.id === datos.id_regimen);
@@ -33,6 +36,7 @@ export function ResumenFinancieros({ datos }: ResumenFinancierosProps) {
     <FormSection
       title="Datos financieros"
       description="Previsión social, remuneración, cuentas y salud."
+      action={action}
     >
       <ResumenCampo
         label="Régimen previsional"
