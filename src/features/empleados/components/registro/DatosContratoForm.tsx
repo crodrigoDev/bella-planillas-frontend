@@ -11,6 +11,7 @@ import {
   DatosContratoSchema,
   type DatosContratoDraft,
 } from "../../schemas/datosContrato.schema";
+import { esModalidadSinFechaFin } from "@/features/contratos/config/contratos.config";
 import { useModalidadesContrato } from "@/features/contratos/hooks/useCatalogos";
 import { useNuevoEmpleadoStore } from "../../store/nuevoEmpleado.store";
 import { RegistroFooter } from "./RegistroFooter";
@@ -53,7 +54,7 @@ export function DatosContratoForm() {
   const { register, control, handleSubmit } = methods;
 
   const modalidad = useWatch({ control, name: "tipo_modalidad" });
-  const esIndeterminado = modalidad === "INDETERMINADO";
+  const sinFechaFin = esModalidadSinFechaFin(modalidad);
 
   const modalidades = useModalidadesContrato();
 
@@ -82,7 +83,7 @@ export function DatosContratoForm() {
             required
             type="date"
           />
-          {!esIndeterminado && (
+          {!sinFechaFin && (
             <TextField
               name="fecha_fin"
               label="Fecha de fin"

@@ -1,20 +1,25 @@
+import { protectedHttpClient } from "@/lib/api/protectedHttpClient";
+import type { ApiResponse } from "@/lib/api/types/api.types";
 import type { SelectOption } from "@/lib/types/options.types";
-import { MODALIDADES_CONTRATO_MOCK } from "../data/catalogos.mock";
+
+interface ModalidadContratoCatalogo {
+  codigo: string;
+  descripcion: string;
+}
 
 /**
  * Listas de opciones de los contratos
- *
- * @remarks
- * Los métodos marcados como TEMPORAL devuelven datos fijos de
- * `catalogos.mock.ts` porque el backend todavía no expone ese catálogo.
  */
 export const contratosCatalogosService = {
-  /**
-   * TEMPORAL: modalidades de contrato (plazo fijo, indeterminado)
-   *
-   * @remarks
-   * El backend no define una lista: solo guarda el texto de la modalidad.
-   */
-  listModalidades: async (): Promise<SelectOption[]> =>
-    MODALIDADES_CONTRATO_MOCK,
+  /** Consulta las modalidades de contrato */
+  listModalidades: async (): Promise<SelectOption[]> => {
+    const response = await protectedHttpClient.get<
+      ApiResponse<ModalidadContratoCatalogo[]>
+    >("/core/catalogos/modalidades-contrato");
+
+    return response.data.data.map(({ codigo, descripcion }) => ({
+      value: codigo,
+      label: descripcion,
+    }));
+  },
 };

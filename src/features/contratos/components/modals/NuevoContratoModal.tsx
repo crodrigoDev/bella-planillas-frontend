@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { getTodayIsoDate } from "@/lib/date.utils";
 import { zodResolverOptions } from "@/lib/zodMessages.utils";
+import { esModalidadSinFechaFin } from "../../config/contratos.config";
 import { useCrearContrato } from "../../hooks/useContratoActions";
 import { NuevoContratoFormSchema } from "../../schemas/contrato.schema";
 import { ContratoCampos } from "../ContratoCampos";
@@ -71,7 +72,9 @@ function NuevoContratoForm({ empleadoId, onClose }: NuevoContratoFormProps) {
     mutation.mutate(
       {
         ...values,
-        fecha_fin: values.fecha_fin ?? null,
+        fecha_fin: esModalidadSinFechaFin(values.tipo_modalidad)
+          ? null
+          : (values.fecha_fin ?? null),
         observacion: values.observacion ?? null,
       },
       { onSuccess: onClose },
