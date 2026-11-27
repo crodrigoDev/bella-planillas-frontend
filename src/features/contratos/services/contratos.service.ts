@@ -17,11 +17,8 @@ import type {
 } from "../types/contratos.types";
 import { getNombreArchivo } from "../utils/contratos.utils";
 
-/** Datos con los que se crea un contrato de alta (sin renovación) */
-export type NuevoContrato = Omit<
-  CrearContratoDto,
-  "empleado_id" | "estado" | "contrato_origen_id"
->;
+/** Datos con los que se crea un contrato desde la ficha */
+export type NuevoContrato = Omit<CrearContratoDto, "empleado_id">;
 
 /**
  * Agrupa las operaciones de contratos que se comunican al backend
