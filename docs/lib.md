@@ -160,10 +160,10 @@ const archivoError = getArchivoError(file, REGLAS_ARCHIVO);
 
 ## zodMessages.utils.ts
 
-Mensajes en español para los esquemas de `@jyp/shared-contracts` (zod 3).
-`zodEsErrorMap` traduce los mensajes por defecto y deja los que el contrato ya escribió.
-Cubre campos vacíos, textos largos o cortos, números fuera de rango y listas sin elegir.
-`zodResolverOptions` es lo que se pasa siempre a `zodResolver`.
+Mensajes en español para los esquemas de `@jyp/shared-contracts` y los formularios propios (zod 4).
+`zodEsErrorMap` es el customizador `error` de zod 4: traduce los mensajes por defecto y devuelve `undefined` para el resto, manteniendo con prioridad los mensajes ya escritos en cada esquema.
+Cubre campos vacíos, textos largos o cortos, números fuera de rango, formatos inválidos y listas sin elegir.
+`zodResolverOptions` (`{ error: zodEsErrorMap }`) es lo que se pasa siempre a `zodResolver`.
 
 ```ts
 const resolver = zodResolver(MarcacionManualFormSchema, zodResolverOptions);

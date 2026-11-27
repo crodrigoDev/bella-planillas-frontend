@@ -1,75 +1,71 @@
-import type { ParseParams, ZodErrorMap } from "zod/v3";
+import type { core } from "zod";
 
 /**
- * Traduce al español los mensajes por defecto de los esquemas de shared contracts
+ * Traduce al español los mensajes por defecto de los esquemas de zod 4
  *
  * @remarks
- * Los esquemas del contrato usan zod 3 y solo traducen algunos mensajes.
- * Esta función cubre el resto (campos vacíos, textos muy largos, etc.) y
- * deja intactos los mensajes que el contrato ya escribió en español.
- * Se usa a través de `zodResolverOptions`.
+ * Cubre los errores genéricos (campos vacíos, textos largos o cortos, números
+ * fuera de rango, formatos inválidos y opciones sin elegir) y devuelve
+ * `undefined` para el resto; los mensajes ya escritos en el esquema mantienen
+ * prioridad. Se usa a través de `zodResolverOptions`.
  */
-export const zodEsErrorMap: ZodErrorMap = (issue, ctx) => {
+export const zodEsErrorMap = (issue: core.$ZodRawIssue): string | undefined => {
   switch (issue.code) {
     case "invalid_type":
       // Un campo numérico vacío o con texto llega como NaN
-      if (issue.expected === "number") return { message: "Ingresa un número válido" };
+      if (issue.expected === "number") return "Ingresa un número válido";
 
-      if (issue.received === "undefined" || issue.received === "null")
-        return { message: "Este campo es obligatorio" };
+      if (issue.input === undefined || issue.input === null)
+        return "Este campo es obligatorio";
 
-      return { message: "El valor no es válido" };
+      return "El valor no es válido";
 
     case "too_small":
-      if (issue.type === "string")
-        return {
-          message:
-            issue.minimum === 1
-              ? "Este campo es obligatorio"
-              : `Debe tener al menos ${issue.minimum} caracteres`,
-        };
+      if (issue.origin === "string")
+        return issue.minimum === 1
+          ? "Este campo es obligatorio"
+          : `Debe tener al menos ${issue.minimum} caracteres`;
 
-      if (issue.type === "array")
-        return { message: "Selecciona al menos una opción" };
+      if (issue.origin === "array") return "Selecciona al menos una opción";
 
-      if (issue.type === "number")
-        return {
-          message: issue.inclusive
-            ? `Debe ser como mínimo ${issue.minimum}`
-            : `Debe ser mayor que ${issue.minimum}`,
-        };
+      if (issue.origin === "number")
+        return issue.inclusive
+          ? `Debe ser como mínimo ${issue.minimum}`
+          : `Debe ser mayor que ${issue.minimum}`;
 
-      return { message: ctx.defaultError };
+      return undefined;
 
     case "too_big":
-      if (issue.type === "string")
-        return { message: `No puede superar los ${issue.maximum} caracteres` };
+      if (issue.origin === "string")
+        return `No puede superar los ${issue.maximum} caracteres`;
 
-      if (issue.type === "number")
-        return { message: `Debe ser como máximo ${issue.maximum}` };
+      if (issue.origin === "number")
+        return `Debe ser como máximo ${issue.maximum}`;
 
-      return { message: ctx.defaultError };
+      return undefined;
 
-    case "invalid_enum_value":
-      return { message: "Selecciona una opción" };
+    case "invalid_value":
+      return "Selecciona una opción";
+
+    case "invalid_format":
+      if (issue.format === "uuid") return "Selecciona una opción válida";
+      if (issue.format === "email") return "Ingresa un correo válido";
+      if (issue.format === "date" || issue.format === "datetime")
+        return "Ingresa una fecha válida";
+
+      return "El formato no es válido";
 
     default:
-      return { message: ctx.defaultError };
+      return undefined;
   }
 };
 
 /**
- * Opciones para `zodResolver` con un esquema de shared contracts (zod 3)
+ * Opciones para `zodResolver` con esquemas de zod 4 (propios y de shared contracts)
  *
  * @example
  * zodResolver(CrearEmpleadoSchema, zodResolverOptions)
- *
- * @remarks
- * Zod 3 exige todos los campos de `ParseParams`; `path` y `async` quedan con
- * sus valores normales y el resolver ajusta lo que necesite.
  */
-export const zodResolverOptions: ParseParams = {
-  errorMap: zodEsErrorMap,
-  path: [],
-  async: false,
+export const zodResolverOptions: core.ParseContext<core.$ZodIssue> = {
+  error: zodEsErrorMap,
 };

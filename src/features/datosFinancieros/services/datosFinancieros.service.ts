@@ -9,10 +9,6 @@ import type { DatosFinancieros } from "../types/datosFinancieros.types";
 
 /**
  * Agrupa las operaciones de datos financieros que se comunican al backend
- *
- * @remarks
- * La ruta va como `RRHH` en mayúsculas: así está en el controlador del backend
- * y Fastify distingue mayúsculas (el `openapi.yml` dice `nomina`, está desactualizado).
  */
 export const datosFinancierosService = {
   /**
@@ -26,7 +22,7 @@ export const datosFinancierosService = {
     try {
       const response = await protectedHttpClient.get<
         ApiResponse<DatosFinancieros>
-      >(`/RRHH/dato-financiero/empleado/${empleadoId}`);
+      >(`/rrhh/dato-financiero/empleado/${empleadoId}`);
 
       return response.data.data;
     } catch (error) {
@@ -46,7 +42,7 @@ export const datosFinancierosService = {
     empleadoId: string,
     datos: Omit<CrearDatoFinancieroDto, "empleado_id">,
   ): Promise<void> => {
-    await protectedHttpClient.post("/RRHH/dato-financiero", {
+    await protectedHttpClient.post("/rrhh/dato-financiero", {
       ...datos,
       empleado_id: empleadoId,
     });
@@ -67,7 +63,7 @@ export const datosFinancierosService = {
     dto: ActualizarDatoFinancieroDto,
   ): Promise<void> => {
     await protectedHttpClient.put(
-      `/RRHH/dato-financiero/empleado/${empleadoId}`,
+      `/rrhh/dato-financiero/empleado/${empleadoId}`,
       dto,
     );
   },

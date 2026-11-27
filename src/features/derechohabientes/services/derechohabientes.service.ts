@@ -17,16 +17,14 @@ export const derechohabientesService = {
    * Lista los derechohabientes de un empleado
    *
    * @remarks
-   * Se envía `incluir_inactivos` para cuando el backend implemente la mejora
-   * DH-F3 (listar también los quitados, con `activo` en cada fila). Hoy lo
-   * ignora y solo devuelve los activos.
+   * No se envía `incluir_inactivos` porque el backend ya lo acepta pero su
+   * respuesta no incluye `activo`, lo que haría mostrar a los quitados como
+   * activos. Se volverá a enviar cuando el listado traiga `activo` (DH-F3).
    */
   listByEmpleado: async (empleadoId: string): Promise<Derechohabiente[]> => {
     const response = await protectedHttpClient.get<
       ApiResponse<Derechohabiente[]>
-    >(`/rrhh/derechohabientes/empleado/${empleadoId}`, {
-      params: { incluir_inactivos: true },
-    });
+    >(`/rrhh/derechohabientes/empleado/${empleadoId}`);
 
     return response.data.data;
   },

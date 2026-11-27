@@ -1,5 +1,5 @@
 import type { SolicitarExportacionDto } from "@jyp/shared-contracts";
-import { z } from "zod/v3";
+import { z } from "zod";
 
 import { getPeriodoActual } from "@/lib/periodo.utils";
 import { CONCEPTOS_PLAME } from "../config/exportaciones.config";
@@ -49,7 +49,7 @@ export const NuevaExportacionFormSchema = z
   .superRefine((datos, ctx) => {
     if (datos.alcance === "COLABORADOR" && !datos.empleadoId?.trim()) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         path: ["empleadoId"],
         message: "Elige un colaborador",
       });
@@ -59,7 +59,7 @@ export const NuevaExportacionFormSchema = z
 
     if (!datos.confirmarMontosPagados) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         path: ["confirmarMontosPagados"],
         message: "Confirma que los montos del mes ya se pagaron y descontaron",
       });
@@ -69,7 +69,7 @@ export const NuevaExportacionFormSchema = z
       const valor = datos.conceptosPlame[campo].trim();
       if (valor !== "" && !/^\d{4}$/.test(valor)) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: "custom",
           path: ["conceptosPlame", campo],
           message: "Escribe un código de 4 dígitos",
         });

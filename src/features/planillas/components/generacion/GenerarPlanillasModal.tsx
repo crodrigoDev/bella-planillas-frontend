@@ -5,7 +5,7 @@ import {
   type GenerarPlanillasDto,
 } from "@jyp/shared-contracts";
 import { Controller, FormProvider, useForm, useWatch } from "react-hook-form";
-import { z } from "zod/v3";
+import { z } from "zod";
 
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
 import { SelectorMes } from "@/components/filters/SelectorMes";

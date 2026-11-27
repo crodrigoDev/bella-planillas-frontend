@@ -4,7 +4,7 @@ import {
   ResolverIncidenciaSchema,
   type ResolverDiaAsistenciaDto,
 } from "@jyp/shared-contracts";
-import { z } from "zod/v3";
+import { z } from "zod";
 
 import { toFechaHoraLima } from "../utils/asistencia.utils";
 

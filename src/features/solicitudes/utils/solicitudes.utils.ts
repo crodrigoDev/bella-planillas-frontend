@@ -85,9 +85,8 @@ export const requiereEfectoAsistencia = (tipo: TipoSolicitud): boolean =>
  * para licencia médica, permiso y justificación, y `undefined` para el resto
  *
  * @remarks
- * Para el resto no se envía nada: la base de datos solo admite
- * `PENDIENTE_DEFINIR`, `CON_GOCE`, `SIN_GOCE` y `SUBSIDIO`, y rechaza
- * `NO_APLICA` con un error 500.
+ * Para los demás tipos no se envía nada y el backend guarda
+ * `PENDIENTE_DEFINIR`.
  */
 export const getEfectoAprobacion = (
   tipo: TipoSolicitud,

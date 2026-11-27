@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod/v3";
+import { z } from "zod";
 
 import { formatDate } from "@/lib/format.utils";
 import { zodResolverOptions } from "@/lib/zodMessages.utils";
@@ -21,7 +21,7 @@ interface Opciones {
 export const createDarDeBajaSchema = ({ fechaInicio, hoy }: Opciones) =>
   z.object({
     motivo: z
-      .string({ required_error: "Selecciona un motivo" })
+      .string({ error: "Selecciona un motivo" })
       .min(1, "Selecciona un motivo"),
     fecha_cese: z
       .string()

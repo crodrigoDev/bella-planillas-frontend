@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Resolver } from "react-hook-form";
-import { z } from "zod/v3";
+import { z } from "zod";
 
 import { zodResolverOptions } from "@/lib/zodMessages.utils";
 
@@ -15,7 +15,7 @@ export const RegistrarNovedadSchema = z
         "DESCUENTO_AUTORIZADO",
         "DESCUENTO_DSO",
       ],
-      { errorMap: () => ({ message: "Elige el tipo de novedad" }) },
+      { error: "Elige el tipo de novedad" },
     ),
     monto: z.string().trim(),
     motivo: z
