@@ -3,6 +3,8 @@ import type { ReactNode } from "react";
 interface FormSectionProps {
   title: string;
   description: string;
+  /** Acción opcional en la cabecera de la sección */
+  action?: ReactNode;
   children: ReactNode;
 }
 
@@ -17,12 +19,16 @@ interface FormSectionProps {
 export function FormSection({
   title,
   description,
+  action,
   children,
 }: FormSectionProps) {
   return (
     <section className="grid gap-4 border-t pt-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,3fr)] lg:gap-8">
       <header>
-        <h2 className="text-base font-semibold">{title}</h2>
+        <div className="flex items-start justify-between gap-2">
+          <h2 className="text-base font-semibold">{title}</h2>
+          {action}
+        </div>
         <p className="mt-1 text-sm text-muted-foreground">{description}</p>
       </header>
 

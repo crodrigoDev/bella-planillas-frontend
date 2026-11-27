@@ -1,17 +1,19 @@
 import { protectedHttpClient } from "@/lib/api/protectedHttpClient";
-import type { PaginationApiResponse } from "@/lib/api/types/api.types";
+import type {
+  ApiResponse,
+  PaginationApiResponse,
+} from "@/lib/api/types/api.types";
 import { CATALOGO_LIMIT, toOptions } from "@/lib/catalogos.utils";
 import type { SelectOption } from "@/lib/types/options.types";
-import { TIPOS_DOCUMENTO_MOCK } from "../data/catalogos.mock";
 import type { Empleado, EmpleadoRelacion } from "../types/empleados.types";
+
+interface TipoDocumentoCatalogo {
+  id: string;
+  tipo_documento: string;
+}
 
 /**
  * Obtiene las listas de opciones que usan el listado y el registro de empleados
- *
- * @remarks
- * Los métodos marcados como TEMPORAL devuelven datos fijos de
- * `catalogos.mock.ts` porque el backend todavía no expone ese catálogo.
- * Cuando exista el endpoint, solo hay que reemplazar el cuerpo del método.
  */
 export const catalogosService = {
   /** Consulta las áreas activas */
@@ -76,6 +78,15 @@ export const catalogosService = {
     }));
   },
 
-  /** TEMPORAL: tipos de documento (DNI, CE, pasaporte...) */
-  listTiposDocumento: async (): Promise<SelectOption[]> => TIPOS_DOCUMENTO_MOCK,
+  /** Consulta los tipos de documento (DNI, CE, pasaporte...) */
+  listTiposDocumento: async (): Promise<SelectOption[]> => {
+    const response = await protectedHttpClient.get<
+      ApiResponse<TipoDocumentoCatalogo[]>
+    >("/core/catalogos/tipos-documento");
+
+    return response.data.data.map(({ id, tipo_documento }) => ({
+      value: id,
+      label: tipo_documento,
+    }));
+  },
 };

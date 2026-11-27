@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { useFormContext, useFormState, useWatch } from "react-hook-form";
 
 import { FormSection } from "@/components/form/FormSection";
@@ -14,10 +15,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { ESTADO_CIVIL_OPTIONS, SEXO_OPTIONS } from "@/lib/personas.config";
 import { useEmpleadosCatalogos, useTiposDocumento } from "../../hooks/useCatalogos";
+import {
+  AvisoDocumentoDuplicado,
+  type EmpleadoDuplicado,
+} from "./AvisoDocumentoDuplicado";
 
 interface DatosEmpleadoCamposProps {
   /** En la edición no se muestra el estado laboral: no se cambia desde ahí */
   isEdicion?: boolean;
+  /** Colaborador ya registrado con el número de documento actual */
+  empleadoDuplicado?: EmpleadoDuplicado;
+  /** Contenido adicional debajo del campo de documento (solo en registro) */
+  documentoExtra?: ReactNode;
 }
 
 /**
@@ -29,6 +38,8 @@ interface DatosEmpleadoCamposProps {
  */
 export function DatosEmpleadoCampos({
   isEdicion = false,
+  empleadoDuplicado,
+  documentoExtra,
 }: DatosEmpleadoCamposProps) {
   const { register, control, setValue } = useFormContext();
   const { errors } = useFormState({ control, name: "sexo" });
@@ -56,12 +67,18 @@ export function DatosEmpleadoCampos({
               : undefined
           }
         />
-        <TextField
-          name="nro_documento"
-          label="Nº de documento"
-          required
-          placeholder="Ej. 74839201 (8 a 20 caracteres)"
-        />
+        <div className="space-y-2">
+          <TextField
+            name="nro_documento"
+            label="Nº de documento"
+            required
+            placeholder="Ej. 74839201 (8 a 20 caracteres)"
+          />
+          {!isEdicion && empleadoDuplicado && (
+            <AvisoDocumentoDuplicado empleado={empleadoDuplicado} />
+          )}
+          {!isEdicion && documentoExtra}
+        </div>
         <TextField
           name="nombre"
           label="Nombres"

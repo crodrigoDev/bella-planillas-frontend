@@ -1,6 +1,7 @@
-import { CheckIcon } from "lucide-react";
+import { CheckIcon, PencilIcon } from "lucide-react";
 
 import { ErrorAlert } from "@/components/feedback/ErrorAlert";
+import { AccionButton } from "@/components/page/AccionButton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useCrearEmpleado } from "../../hooks/useCrearEmpleado";
 import { useNuevoEmpleadoStore } from "../../store/nuevoEmpleado.store";
@@ -10,14 +11,17 @@ import { ResumenDerechohabientes } from "./resumen/ResumenDerechohabientes";
 import { ResumenEmpleado } from "./resumen/ResumenEmpleado";
 import { ResumenFinancieros } from "./resumen/ResumenFinancieros";
 
+const MOTIVO_YA_GUARDADO =
+  "Ya se guardó; podrás cambiarlo desde la ficha del colaborador.";
+
 /**
  * Paso 5 del registro: resumen de todo lo ingresado y confirmación
  *
  * @remarks
- * Es la única pantalla que envía datos al backend. Si el envío falla a la
- * mitad, el empleado ya quedó creado: se avisa y el botón reintenta solo lo
- * que falta. Desde ese momento no se puede volver a los pasos anteriores,
- * porque lo que se cambie ya no se enviaría.
+ * Es la única pantalla que envía datos al backend. Antes de confirmar se puede
+ * volver a editar cualquier paso y regresar directo al resumen. Si el envío
+ * falla a la mitad, el empleado ya quedó creado: se avisa, se bloquea la
+ * edición de lo que ya se guardó y el botón reintenta solo lo que falta.
  */
 export function ResumenRegistro() {
   const datos = useNuevoEmpleadoStore((state) => state.datos);
@@ -28,13 +32,28 @@ export function ResumenRegistro() {
   const derechohabientes = useNuevoEmpleadoStore(
     (state) => state.derechohabientes,
   );
-  const empleadoCreado = useNuevoEmpleadoStore(
-    (state) => state.progreso.empleadoId !== null,
-  );
+  const progreso = useNuevoEmpleadoStore((state) => state.progreso);
+  const empleadoCreado = progreso.empleadoId !== null;
 
   const goToStep = useNuevoEmpleadoStore((state) => state.goToStep);
+  const editarPaso = useNuevoEmpleadoStore((state) => state.editarPaso);
 
   const mutation = useCrearEmpleado();
+
+  const renderEditar = (step: number, yaGuardado: boolean) => (
+    <AccionButton
+      label="Editar"
+      icon={PencilIcon}
+      onClick={() => editarPaso(step)}
+      disabledReason={
+        yaGuardado
+          ? MOTIVO_YA_GUARDADO
+          : mutation.isPending
+            ? "Guardando el registro…"
+            : undefined
+      }
+    />
+  );
 
   // Los pasos 1 a 3 son obligatorios: sin ellos no hay nada que confirmar
   if (!datos || !datosFinancieros || !contrato)
@@ -60,10 +79,22 @@ export function ResumenRegistro() {
           " El empleado ya se creó: al reintentar se completará solo lo que falta."}
       </ErrorAlert>
 
-      <ResumenEmpleado datos={datos} />
-      <ResumenFinancieros datos={datosFinancieros} />
-      <ResumenContrato contrato={contrato} />
-      <ResumenDerechohabientes derechohabientes={derechohabientes} />
+      <ResumenEmpleado
+        datos={datos}
+        action={renderEditar(0, empleadoCreado)}
+      />
+      <ResumenFinancieros
+        datos={datosFinancieros}
+        action={renderEditar(1, empleadoCreado || progreso.financierosListos)}
+      />
+      <ResumenContrato
+        contrato={contrato}
+        action={renderEditar(2, progreso.contratoListo)}
+      />
+      <ResumenDerechohabientes
+        derechohabientes={derechohabientes}
+        action={renderEditar(3, progreso.derechohabientesListos > 0)}
+      />
 
       <RegistroFooter
         step={4}

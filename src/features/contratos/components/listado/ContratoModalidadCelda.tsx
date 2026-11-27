@@ -1,4 +1,4 @@
-import { getOptionLabel } from "@/lib/catalogos.utils";
+import { getModalidadLabel } from "../../config/contratos.config";
 import { useModalidadesContrato } from "../../hooks/useCatalogos";
 
 interface ContratoModalidadCeldaProps {
@@ -18,5 +18,5 @@ export function ContratoModalidadCelda({
 }: ContratoModalidadCeldaProps) {
   const modalidades = useModalidadesContrato();
 
-  return <span>{getOptionLabel(modalidades.data, modalidad)}</span>;
+  return <span>{getModalidadLabel(modalidades.data, modalidad)}</span>;
 }

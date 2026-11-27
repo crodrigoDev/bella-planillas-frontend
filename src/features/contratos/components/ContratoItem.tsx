@@ -12,11 +12,10 @@ import { AccionButton } from "@/components/page/AccionButton";
 import { StatusBadge } from "@/components/feedback/StatusBadge";
 import { TONE_DOT } from "@/components/feedback/statusTone.config";
 import { Button } from "@/components/ui/button";
-import { getOptionLabel } from "@/lib/catalogos.utils";
 import { getTodayIsoDate } from "@/lib/date.utils";
 import { formatDate } from "@/lib/format.utils";
 import { cn } from "@/lib/utils";
-import { ESTADO_CONTRATO } from "../config/contratos.config";
+import { ESTADO_CONTRATO, getModalidadLabel } from "../config/contratos.config";
 import { useModalidadesContrato } from "../hooks/useCatalogos";
 import type { Contrato } from "../types/contratos.types";
 import {
@@ -83,7 +82,7 @@ export function ContratoItem({ contrato, empleadoActivo }: ContratoItemProps) {
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 space-y-1">
             <h3 className="text-base font-semibold">
-              {getOptionLabel(modalidades.data, contrato.tipo_modalidad)}
+              {getModalidadLabel(modalidades.data, contrato.tipo_modalidad)}
             </h3>
             <p className="text-sm text-muted-foreground">
               {contrato.fecha_fin

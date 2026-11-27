@@ -5,15 +5,10 @@ import type {
 } from "@/lib/api/types/api.types";
 import { CATALOGO_LIMIT, toOptions } from "@/lib/catalogos.utils";
 import type { SelectOption } from "@/lib/types/options.types";
-import { REGIMENES_PENSION_MOCK } from "../data/catalogos.mock";
 import type { RegimenPension } from "../types/datosFinancieros.types";
 
 /**
  * Listas de opciones de los datos financieros
- *
- * @remarks
- * Los métodos marcados como TEMPORAL devuelven datos fijos de
- * `catalogos.mock.ts` porque el backend todavía no expone ese catálogo.
  */
 export const datosFinancierosCatalogosService = {
   /** Consulta las administradoras de AFP */
@@ -34,7 +29,12 @@ export const datosFinancierosCatalogosService = {
     return toOptions(response.data.data);
   },
 
-  /** TEMPORAL: regímenes de pensión (ONP y SPP) */
-  listRegimenesPension: async (): Promise<RegimenPension[]> =>
-    REGIMENES_PENSION_MOCK,
+  /** Consulta los regímenes de pensión (ONP y SPP) */
+  listRegimenesPension: async (): Promise<RegimenPension[]> => {
+    const response = await protectedHttpClient.get<
+      ApiResponse<RegimenPension[]>
+    >("/core/catalogos/regimenes-pensionarios");
+
+    return response.data.data;
+  },
 };

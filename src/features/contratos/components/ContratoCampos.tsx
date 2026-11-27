@@ -4,7 +4,7 @@ import { FormField } from "@/components/form/FormField";
 import { SelectField } from "@/components/form/SelectField";
 import { TextField } from "@/components/form/TextField";
 import { Textarea } from "@/components/ui/textarea";
-import { MODALIDAD_INDETERMINADA } from "../config/contratos.config";
+import { esModalidadSinFechaFin } from "../config/contratos.config";
 import { useModalidadesContrato } from "../hooks/useCatalogos";
 
 /**
@@ -39,7 +39,7 @@ export function ContratoCampos() {
         required
         type="date"
       />
-      {modalidad !== MODALIDAD_INDETERMINADA && (
+      {!esModalidadSinFechaFin(modalidad) && (
         <TextField
           name="fecha_fin"
           label="Fecha de fin"

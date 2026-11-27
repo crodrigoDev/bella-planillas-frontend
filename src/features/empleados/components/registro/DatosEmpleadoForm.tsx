@@ -1,4 +1,4 @@
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   CrearEmpleadoSchema,
@@ -6,7 +6,9 @@ import {
 } from "@jyp/shared-contracts";
 
 import { zodResolverOptions } from "@/lib/zodMessages.utils";
+import { useDocumentoDisponible } from "../../hooks/useDocumentoDisponible";
 import { useNuevoEmpleadoStore } from "../../store/nuevoEmpleado.store";
+import { BuscarReniecButton } from "./BuscarReniecButton";
 import { DatosEmpleadoCampos } from "./DatosEmpleadoCampos";
 import { RegistroFooter } from "./RegistroFooter";
 
@@ -55,9 +57,23 @@ export function DatosEmpleadoForm() {
     // Si el usuario vuelve a este paso, recupera lo que ya había escrito
     defaultValues: datos ?? INITIAL_VALUES,
   });
-  const { handleSubmit } = methods;
+  const { control, handleSubmit, setError } = methods;
+
+  const nroDocumento = useWatch({ control, name: "nro_documento" });
+  const disponibilidad = useDocumentoDisponible(nroDocumento);
+  const empleadoDuplicado =
+    disponibilidad.data && !disponibilidad.data.disponible
+      ? disponibilidad.data.empleado
+      : undefined;
 
   const onSubmit = (values: CrearEmpleadoDto) => {
+    if (empleadoDuplicado) {
+      setError("nro_documento", {
+        message: "Ya hay un colaborador con este documento.",
+      });
+      return;
+    }
+
     saveDatos(values);
     goToStep(1);
   };
@@ -65,7 +81,10 @@ export function DatosEmpleadoForm() {
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
-        <DatosEmpleadoCampos />
+        <DatosEmpleadoCampos
+          empleadoDuplicado={empleadoDuplicado}
+          documentoExtra={<BuscarReniecButton />}
+        />
 
         <RegistroFooter step={0} />
       </form>

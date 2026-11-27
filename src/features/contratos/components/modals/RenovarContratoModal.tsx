@@ -14,7 +14,11 @@ import {
 import { getTodayIsoDate, toDateInput } from "@/lib/date.utils";
 import { formatDate } from "@/lib/format.utils";
 import { zodResolverOptions } from "@/lib/zodMessages.utils";
-import { ESTADO_CONTRATO } from "../../config/contratos.config";
+import {
+  ESTADO_CONTRATO,
+  esModalidadSinFechaFin,
+  normalizarModalidad,
+} from "../../config/contratos.config";
 import { useRenovarContrato } from "../../hooks/useContratoActions";
 import { RenovarContratoFormSchema } from "../../schemas/contrato.schema";
 import type { Contrato } from "../../types/contratos.types";
@@ -73,7 +77,7 @@ function RenovarContratoForm({ contrato, onClose }: RenovarContratoFormProps) {
     resolver,
     // El contrato nuevo empieza el día siguiente al fin del actual
     defaultValues: {
-      tipo_modalidad: contrato.tipo_modalidad,
+      tipo_modalidad: normalizarModalidad(contrato.tipo_modalidad),
       fecha_inicio: contrato.fecha_fin
         ? getDiaSiguiente(toDateInput(contrato.fecha_fin))
         : getTodayIsoDate(),
@@ -82,7 +86,12 @@ function RenovarContratoForm({ contrato, onClose }: RenovarContratoFormProps) {
 
   const onSubmit = (values: RenovarContratoDatos) => {
     mutation.mutate(
-      { ...values, fecha_fin: values.fecha_fin ?? null },
+      {
+        ...values,
+        fecha_fin: esModalidadSinFechaFin(values.tipo_modalidad)
+          ? null
+          : (values.fecha_fin ?? null),
+      },
       { onSuccess: onClose },
     );
   };

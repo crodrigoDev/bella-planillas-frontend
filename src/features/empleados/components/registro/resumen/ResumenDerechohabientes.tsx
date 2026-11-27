@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 import { FormSection } from "@/components/form/FormSection";
 import { getOptionLabel } from "@/lib/catalogos.utils";
 import { formatDate } from "@/lib/format.utils";
@@ -6,6 +8,7 @@ import type { DerechohabienteDraft } from "@/features/derechohabientes/schemas/d
 
 interface ResumenDerechohabientesProps {
   derechohabientes: DerechohabienteDraft[];
+  action?: ReactNode;
 }
 
 /**
@@ -13,11 +16,13 @@ interface ResumenDerechohabientesProps {
  */
 export function ResumenDerechohabientes({
   derechohabientes,
+  action,
 }: ResumenDerechohabientesProps) {
   return (
     <FormSection
       title="Derechohabientes"
       description="Familiares con derecho a beneficios."
+      action={action}
     >
       {derechohabientes.length === 0 ? (
         <p className="text-sm text-muted-foreground col-span-full">

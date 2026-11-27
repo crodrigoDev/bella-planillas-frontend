@@ -1,5 +1,7 @@
+import type { ReactNode } from "react";
+
 import { FormSection } from "@/components/form/FormSection";
-import { getOptionLabel } from "@/lib/catalogos.utils";
+import { getModalidadLabel } from "@/features/contratos/config/contratos.config";
 import { formatDate, orDash } from "@/lib/format.utils";
 import { useModalidadesContrato } from "@/features/contratos/hooks/useCatalogos";
 import type { DatosContratoDraft } from "../../../schemas/datosContrato.schema";
@@ -7,22 +9,24 @@ import { ResumenCampo } from "@/components/form/ResumenCampo";
 
 interface ResumenContratoProps {
   contrato: DatosContratoDraft;
+  action?: ReactNode;
 }
 
 /**
  * Resumen del paso 3: modalidad y vigencia del contrato
  */
-export function ResumenContrato({ contrato }: ResumenContratoProps) {
+export function ResumenContrato({ contrato, action }: ResumenContratoProps) {
   const modalidades = useModalidadesContrato();
 
   return (
     <FormSection
       title="Contrato"
       description="Modalidad y vigencia del vínculo laboral."
+      action={action}
     >
       <ResumenCampo
         label="Modalidad"
-        value={getOptionLabel(modalidades.data, contrato.tipo_modalidad)}
+        value={getModalidadLabel(modalidades.data, contrato.tipo_modalidad)}
       />
       <ResumenCampo
         label="Fecha de inicio"

@@ -30,6 +30,8 @@ const INITIAL_PROGRESO: ProgresoRegistro = {
 interface NuevoEmpleadoState {
   /** Paso del registro que se muestra, empezando en 0 */
   step: number;
+  /** Si se entró a editar un paso desde el resumen, al guardar vuelve directo a él */
+  volverAlResumen: boolean;
   /** Datos del paso 1 ya validados; null mientras no se completa */
   datos: CrearEmpleadoDto | null;
   /** Datos del paso 2 ya validados; null mientras no se completa */
@@ -51,11 +53,15 @@ interface NuevoEmpleadoState {
   removeDerechohabiente: (index: number) => void;
   updateProgreso: (progreso: Partial<ProgresoRegistro>) => void;
   goToStep: (step: number) => void;
+  editarPaso: (step: number) => void;
   reset: () => void;
 }
 
+const RESUMEN_STEP = 4;
+
 const INITIAL_STATE = {
   step: 0,
+  volverAlResumen: false,
   datos: null,
   datosFinancieros: null,
   contrato: null,
@@ -93,6 +99,18 @@ export const useNuevoEmpleadoStore = create<NuevoEmpleadoState>()((set) => ({
     })),
   updateProgreso: (progreso) =>
     set((state) => ({ progreso: { ...state.progreso, ...progreso } })),
-  goToStep: (step) => set({ step }),
+  goToStep: (step) =>
+    set((state) => {
+      // Al editar desde el resumen, avanzar lleva directo al resumen; retroceder ("Atrás") sigue igual
+      const destino =
+        state.volverAlResumen && step > state.step ? RESUMEN_STEP : step;
+
+      return {
+        step: destino,
+        volverAlResumen:
+          destino === RESUMEN_STEP ? false : state.volverAlResumen,
+      };
+    }),
+  editarPaso: (step) => set({ step, volverAlResumen: true }),
   reset: () => set(INITIAL_STATE),
 }));

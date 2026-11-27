@@ -41,8 +41,18 @@ export function RegistroFooter({
   isSubmitting = false,
   hideBack = false,
 }: RegistroFooterProps) {
+  const volverAlResumen = useNuevoEmpleadoStore(
+    (state) => state.volverAlResumen,
+  );
+  const empleadoCreado = useNuevoEmpleadoStore(
+    (state) => state.progreso.empleadoId !== null,
+  );
   const goToStep = useNuevoEmpleadoStore((state) => state.goToStep);
   const reset = useNuevoEmpleadoStore((state) => state.reset);
+
+  const label =
+    volverAlResumen && step < 4 ? "Guardar y volver al resumen" : nextLabel;
+  const bloquearAtras = hideBack || empleadoCreado;
 
   return (
     <StepperFooter
@@ -59,7 +69,7 @@ export function RegistroFooter({
       }
       progressLabel={`Paso ${step + 1} de ${NUEVO_EMPLEADO_STEPS.length}`}
     >
-      {step > 0 && !hideBack && (
+      {step > 0 && !bloquearAtras && (
         <Button
           type="button"
           variant="outline"
@@ -76,7 +86,7 @@ export function RegistroFooter({
         isLoading={isSubmitting}
         icon={NextIcon}
       >
-        {nextLabel}
+        {label}
       </LoadingButton>
     </StepperFooter>
   );

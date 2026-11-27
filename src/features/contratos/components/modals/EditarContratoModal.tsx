@@ -16,6 +16,10 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { toDateInput } from "@/lib/date.utils";
 import { zodResolverOptions } from "@/lib/zodMessages.utils";
+import {
+  esModalidadSinFechaFin,
+  normalizarModalidad,
+} from "../../config/contratos.config";
 import { useEditarContrato } from "../../hooks/useContratoActions";
 import { useContratoDetalle } from "../../hooks/useContratos";
 import { EditarContratoFormSchema } from "../../schemas/contrato.schema";
@@ -110,7 +114,8 @@ function EditarContratoForm({ contrato, onClose }: EditarContratoFormProps) {
   >({
     resolver,
     defaultValues: {
-      tipo_modalidad: contrato.tipo_modalidad ?? undefined,
+      // Contratos anteriores guardaron "INDETERMINADO"; se equivale a "INDEFINIDO" del catálogo
+      tipo_modalidad: normalizarModalidad(contrato.tipo_modalidad),
       fecha_inicio: toDateInput(contrato.fecha_inicio),
       fecha_fin: toDateInput(contrato.fecha_fin) || undefined,
       observacion: contrato.observacion ?? undefined,
@@ -123,7 +128,9 @@ function EditarContratoForm({ contrato, onClose }: EditarContratoFormProps) {
     mutation.mutate(
       {
         ...values,
-        fecha_fin: values.fecha_fin ?? null,
+        fecha_fin: esModalidadSinFechaFin(values.tipo_modalidad)
+          ? null
+          : (values.fecha_fin ?? null),
         observacion: values.observacion ?? null,
       },
       { onSuccess: onClose },
