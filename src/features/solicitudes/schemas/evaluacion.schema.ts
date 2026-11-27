@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod/v3";
+import { z } from "zod";
 
 import { zodResolverOptions } from "@/lib/zodMessages.utils";
 import { LIMITES } from "../config/solicitudes.config";

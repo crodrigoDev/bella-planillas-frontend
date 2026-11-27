@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Resolver } from "react-hook-form";
-import { z } from "zod/v3";
+import { z } from "zod";
 
 import { zodResolverOptions } from "@/lib/zodMessages.utils";
 
@@ -21,7 +21,7 @@ export const SUELDO_MINIMO_DEFECTO = "1130";
  */
 export const CargoFormSchema = z
   .object({
-    id_area: z.string().uuid("Elige un área"),
+    id_area: z.uuid("Elige un área"),
     nombre: z
       .string()
       .trim()

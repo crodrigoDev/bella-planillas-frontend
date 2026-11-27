@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { Resolver } from "react-hook-form";
-import { z } from "zod/v3";
+import { z } from "zod";
 
 import { zodResolverOptions } from "@/lib/zodMessages.utils";
 import {
